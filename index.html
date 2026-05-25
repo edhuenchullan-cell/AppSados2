@@ -230,9 +230,8 @@ tailwind.config = {
     transform: scale(1.18);
   }
 
-  /* FAQ accordion */
-  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-  .faq-answer.open { max-height: 200px; }
+  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .faq-answer.open { max-height: 600px; }
 
   /* Budget buttons */
   .budget-btn.selected { border-color: #810900; background-color: #fff; box-shadow: 0 0 0 2px #81090033; }
@@ -331,7 +330,7 @@ tailwind.config = {
               <span class="material-symbols-outlined fill-icon">groups</span>
               Invitados
             </h3>
-            <span id="guestBadge" class="text-sm font-bold bg-secondary/10 text-secondary px-3 py-1 rounded-full">Paso 1 de 2</span>
+            <span id="guestBadge" class="text-sm font-bold bg-secondary/10 text-secondary px-3 py-1 rounded-full"><span id="totalGuestsBadge">10</span> invitados</span>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -556,7 +555,7 @@ tailwind.config = {
               </div>
             </div>
             <div class="mt-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button class="w-full bg-surface-container-high text-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all active:scale-95">
+              <button onclick="contactButcher('chat','El Rincón del Novillo')" class="w-full bg-surface-container-high text-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all active:scale-95">
                 <span class="material-symbols-outlined text-lg">chat</span> Chat
               </button>
               <button onclick="openReservation('El Rincón del Novillo')" class="w-full bg-primary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
@@ -588,7 +587,7 @@ tailwind.config = {
                 <p class="text-xs text-on-surface-variant">Providencia · Delivery disponible</p>
               </div>
               <div class="grid grid-cols-2 gap-2 mt-3">
-                <button class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
+                <button onclick="contactButcher('chat','Carnes La Pampa')" class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
                 <button onclick="openReservation('Carnes La Pampa')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
               </div>
             </div>
@@ -614,7 +613,7 @@ tailwind.config = {
                 <p class="text-xs text-on-surface-variant">Ñuñoa · Embutidos y cecinas</p>
               </div>
               <div class="grid grid-cols-2 gap-2 mt-3">
-                <button class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
+                <button onclick="contactButcher('chat','Charcutería Don Víctor')" class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
                 <button onclick="openReservation('Charcutería Don Víctor')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
               </div>
             </div>
@@ -638,7 +637,7 @@ tailwind.config = {
                 <p class="text-xs text-on-surface-variant">Maipú · Gran variedad económica</p>
               </div>
               <div class="grid grid-cols-2 gap-2 mt-3">
-                <button class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
+                <button onclick="contactButcher('chat','Carnicería El Gaucho')" class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
                 <button onclick="openReservation('Carnicería El Gaucho')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
               </div>
             </div>
@@ -679,8 +678,8 @@ tailwind.config = {
         <!-- Cost estimate -->
         <div class="md:col-span-5 bg-primary-container text-on-primary-container rounded-3xl p-8 flex flex-col justify-center items-center text-center shadow-[0_4px_24px_rgba(129,9,0,0.06)]">
           <span class="material-symbols-outlined fill-icon text-4xl mb-4">payments</span>
-          <h3 class="font-headline text-4xl font-bold mb-2" id="meatCost">$58.400</h3>
-          <p class="text-sm opacity-90 font-medium px-4">Costo total estimado (promedio mercado nacional)</p>
+          <h3 class="font-headline text-4xl font-bold mb-2" id="meatCost"></h3>
+          <p class="text-sm opacity-90 font-medium px-4" id="meatCostSub"><span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span></p>
           <button onclick="navigate('carnicerias')" class="mt-6 bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95">
             Encontrar carnicería
           </button>
@@ -698,9 +697,9 @@ tailwind.config = {
             <span class="material-symbols-outlined">lightbulb</span>
             <span class="uppercase tracking-widest text-xs">Consejo del Parrillero</span>
           </div>
-          <h3 class="font-headline text-3xl font-extrabold text-on-surface">¿Cómo calcular el carbón?</h3>
-          <p class="text-on-surface-variant leading-relaxed">
-            Para un asado de <strong class="text-on-surface">5kg</strong>, recomendamos al menos <strong class="text-on-surface">2 sacos de 2.5kg</strong>. La regla de oro: 1 kilo de carbón por cada kilo de carne, más un margen de seguridad.
+          <h3 class="font-headline text-3xl font-extrabold text-on-surface">¿Cuánto carbón necesitas?</h3>
+          <p class="text-on-surface-variant leading-relaxed" id="carbonTip">
+            La regla de oro: 1 kilo de carbón por cada kilo de carne, más un margen de seguridad.
           </p>
           <div class="pt-2">
             <button onclick="navigate('tips')" class="text-primary font-bold flex items-center gap-1 hover:underline">
@@ -855,7 +854,7 @@ tailwind.config = {
           </div>
           <div class="bg-surface-container-low rounded-2xl overflow-hidden">
             <button onclick="toggleFaq(this)" class="flex items-center justify-between w-full p-6 text-left group">
-              <span class="font-bold">¿Carbón o leña?</span>
+              <span class="font-bold">¿Carbón o leña? El eterno dilema.</span>
               <span class="material-symbols-outlined text-primary transition-transform duration-200">add</span>
             </button>
             <div class="faq-answer px-6">
@@ -1128,283 +1127,6 @@ tailwind.config = {
 </nav>
 
 <script>
-  // ---- Cuts data per Chilean category and budget tier ----
-  const CUTS_DATA = {
-    vacuno: {
-      label: 'Vacuno',
-      icon: 'restaurant',
-      accentClass: 'bg-primary/10 text-primary',
-      headerColor: 'text-primary',
-      kgPerAdult: 0.34,
-      kgPerKid: 0.13,
-      cuts: [
-        {
-          id: 'vacuno-huachalomo',
-          name: 'Huachalomo',
-          tier: 'low',
-          pricePerKg: 8990,
-          badge: 'Barato',
-          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Corte chileno rendidor, sabroso y accesible. Funciona bien en parrilla si se corta delgado y se cocina con paciencia.',
-          tag: 'Económico',
-          tagStyle: 'bg-surface-container-low text-on-surface-variant',
-          img: 'https://www.procarne.cl/cdn/shop/files/HuachalomoSeleccionado_1000x1000_34a8e859-f62a-4dcf-b001-89cc49deb628.jpg?v=1716498043&width=416'
-        },
-        {
-          id: 'vacuno-sobrecostilla', 
-          name: 'Sobrecostilla',
-          tier: 'low',
-          pricePerKg: 9490,
-          badge: 'Rinde',
-          badgeStyle: 'bg-secondary/10 text-secondary',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Muy usada en Chile para parrilla y horno. Tiene buen sabor, precio amable y tolera bien una cocción lenta.',
-          tag: 'Accesible',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://tienda.valledor.cl/cdn/shop/products/Sobrecostillacaja2.jpg?v=1673898777'
-        },
-        {
-          id: 'vacuno-asado-carnicero',
-          name: 'Asado Carnicero',
-          tier: 'mid',
-          pricePerKg: 11990,
-          badge: 'Clásico',
-          badgeStyle: 'bg-primary text-white',
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Corte plano y fibroso, típico del asado chileno. Queda muy bien sellado y servido en láminas.',
-          tag: 'Tradicional',
-          tagStyle: 'bg-primary/10 text-primary',
-          img: 'https://unimarc.vtexassets.com/arquivos/ids/230371/000000000000400613-KGV-01.jpg?v=638037818636670000'
-        },
-        {
-          id: 'vacuno-punta-paleta',
-          name: 'Punta Paleta',
-          tier: 'mid',
-          pricePerKg: 12990,
-          badge: null,
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Buena relación precio-sabor. Requiere limpiar nervio central si se busca una experiencia más fina.',
-          tag: 'Buen equilibrio',
-          tagStyle: 'bg-surface-container-low text-on-surface-variant',
-          img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg'
-        },
-        {
-          id: 'vacuno-lomo-vetado',
-          name: 'Lomo Vetado',
-          tier: 'high',
-          pricePerKg: 18990,
-          badge: 'Premium',
-          badgeStyle: 'bg-primary text-white',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Favorito para parrilla por su grasa infiltrada, jugosidad y sabor intenso. Ideal para un asado más premium.',
-          tag: 'Más jugoso',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg'
-        },
-        {
-          id: 'vacuno-lomo-liso',
-          name: 'Lomo Liso',
-          tier: 'high',
-          pricePerKg: 17490,
-          badge: 'Premium',
-          badgeStyle: 'bg-primary text-white',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Corte magro, blando y parejo. Funciona muy bien para porciones limpias y cocción controlada.',
-          tag: 'Corte fino',
-          tagStyle: 'bg-primary/10 text-primary',
-          img: 'https://images.unsplash.com/photo-1603048297172-c92544798d5a?q=80&w=1200&auto=format&fit=crop'
-        }
-      ]
-    },
-    cerdo: {
-      label: 'Cerdo',
-      icon: 'set_meal',
-      accentClass: 'bg-secondary/10 text-secondary',
-      headerColor: 'text-secondary',
-      kgPerAdult: 0.22,
-      kgPerKid: 0.09,
-      cuts: [
-        {
-          id: 'cerdo-pulpa-paleta',
-          name: 'Pulpa Paleta',
-          tier: 'low',
-          pricePerKg: 3990,
-          badge: 'Barato',
-          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Corte económico y versátil. Sirve para parrilla en trozos o medallones, y rinde muy bien en grupos grandes.',
-          tag: 'Rendidor',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://elcarnicero.cl/media/catalog/product/8/6/8625_pulpa_pierna_deshuesada_cerdo.jpg'
-        },
-        {
-          id: 'cerdo-pulpa-pierna',
-          name: 'Pulpa Pierna',
-          tier: 'low',
-          pricePerKg: 4990,
-          badge: null,
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Opción magra y accesible. Conviene marinarla para sumar jugosidad antes de la parrilla.',
-          tag: 'Accesible',
-          tagStyle: 'bg-surface-container-low text-on-surface-variant',
-          img: 'https://elcarnicero.cl/media/catalog/product/8/6/8625_pulpa_pierna_deshuesada_cerdo.jpg'
-        },
-        {
-          id: 'cerdo-costillar',
-          name: 'Costillar de Cerdo',
-          tier: 'mid',
-          pricePerKg: 9990,
-          badge: 'Imperdible',
-          badgeStyle: 'bg-secondary text-white',
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'El costillar bien marinado es una estrella de los asados mixtos. Se cocina lento y queda jugoso.',
-          tag: 'Sabor intenso',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCXm6oS1osk0fVgU2wwGupfSh3nT3jbfOHt7k4vz2AWYPYIFSm-9EUlEzojTNHFR-B1gyzbsGur446qWAeDfURhdtULn-9jon1uO1lCv0VwBXK482mrNTK0zP26YFfJSG-rLMWXtR4AWGYLmJdpZkK0NDkgRSstK2KZLjmcI4wzve00PAFtkWiTvtmgx73DGONi7pBVCR31Z1nYuSolg3wVNu-A1AnFKvn8hHS_qyLi5XI9B8O6FyfL5VMTv11iTcmKVoG7XC3LvC4'
-        },
-        {
-          id: 'cerdo-malaya',
-          name: 'Malaya de Cerdo',
-          tier: 'mid',
-          pricePerKg: 12990,
-          badge: null,
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Muy parrillera y sabrosa. Se asa rápido, queda crocante y combina bien con sal gruesa y limón.',
-          tag: 'Parrillera',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://carnesproductor.cl/wp-content/uploads/2025/10/Malaya-de-cerdo-Carnes-Productor.webp'
-        },
-        {
-          id: 'cerdo-solomillo',
-          name: 'Solomillo de Cerdo',
-          tier: 'high',
-          pricePerKg: 9990,
-          badge: 'Premium',
-          badgeStyle: 'bg-secondary text-white',
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Corte más fino y magro. Necesita cocción cuidada para no secarse, pero queda muy elegante.',
-          tag: 'Corte fino',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop'
-        }
-      ]
-    },
-    embutidos: {
-      label: 'Embutidos',
-      icon: 'outdoor_grill',
-      accentClass: 'bg-secondary/10 text-secondary',
-      headerColor: 'text-secondary',
-      kgPerAdult: 0.12,
-      kgPerKid: 0.06,
-      cuts: [
-        {
-          id: 'embutidos-prieta',
-          name: 'Prieta',
-          tier: 'low',
-          pricePerKg: 6490,
-          badge: 'Barato',
-          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Clásico acompañamiento de parrilla chilena. Intenso, económico y pensado para porciones pequeñas.',
-          tag: 'Acompañamiento',
-          tagStyle: 'bg-surface-container-low text-on-surface-variant',
-          img: 'https://granjamagdalena.cl/cdn/shop/products/prietas-nogadas-4-unidades-de-125-g-cada-una-aprox-gourmet-internacional-granja-magdalena-829392.jpg?v=1623771450'
-        },
-        {
-          id: 'embutidos-chorizo',
-          name: 'Chorizo Parrillero',
-          tier: 'mid',
-          pricePerKg: 8490,
-          badge: null,
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Ideal para choripanes y picoteo inicial. Suma grasa, sabor y rapidez al asado.',
-          tag: 'Picoteo',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://elcarnicero.cl/media/catalog/product/cache/1/image/1000x/9df78eab33525d08d6e5fb8d27136e95/c/h/chorizo_parrillero.jpg'
-        },
-        {
-          id: 'embutidos-longaniza',
-          name: 'Longaniza sureña',
-          tier: 'high',
-          pricePerKg: 10990,
-          badge: 'Premium',
-          badgeStyle: 'bg-secondary text-white',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Longaniza artesanal o de Chillán para un asado con carácter chileno. Mejor en fuego medio.',
-          tag: 'Sello chileno',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://comidaschilenas.com/wp-content/uploads/2019/05/Receta-de-longanizas-de-Chillán.jpg.webp'
-        }
-      ]
-    },
-    pollo: {
-      label: 'Pollo',
-      icon: 'egg',
-      accentClass: 'bg-tertiary/10 text-tertiary',
-      headerColor: 'text-tertiary',
-      kgPerAdult: 0.24,
-      kgPerKid: 0.12,
-      cuts: [
-        {
-          id: 'pollo-tutos',
-          name: 'Tutos',
-          tier: 'low',
-          pricePerKg: 3990,
-          badge: 'Barato',
-          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Jugosos, económicos y fáciles de asar. El hueso ayuda a mantener sabor y humedad.',
-          tag: 'Fácil',
-          tagStyle: 'bg-surface-container-low text-on-surface-variant',
-          img: 'https://granjamagdalena.cl/cdn/shop/products/trutros-largos-de-pollo-800-g-aprox-pollos-100-natural-granja-magdalena-763596.jpg?v=1742226083'
-        },
-        {
-          id: 'pollo-alitas',
-          name: 'Alitas Adobadas',
-          tier: 'mid',
-          pricePerKg: 4990,
-          badge: null,
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Buenas para picoteo y grupos con niños. Quedan doradas y crujientes si se cocinan sin apuro.',
-          tag: 'Picoteo',
-          tagStyle: 'bg-tertiary/10 text-tertiary',
-          img: 'https://thecookinglab.es/wp-content/uploads/2024/09/Alitas-de-pollo-en-freidora-de-aire-1.jpg'
-        },
-        {
-          id: 'pollo-pechuga',
-          name: 'Pechuga Entera',
-          tier: 'high',
-          pricePerKg: 6490,
-          badge: 'Magra',
-          badgeStyle: 'bg-tertiary text-white',
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Opción magra y limpia. Conviene marinar y cocinar a fuego medio indirecto para mantener jugosidad.',
-          tag: 'Alto en proteína',
-          tagStyle: 'bg-tertiary/10 text-tertiary',
-          img: 'https://granjamagdalena.cl/cdn/shop/files/pechuga-de-pollo-entera-con-hueso-750-a-900-g-pollos-100-natural-granja-magdalena-758281.jpg?v=1741202844'
-        }
-      ]
-    }
-  };
-
   // ---- Chilean asado cuts used by the planner ----
   // Tiers follow practical Chilean retail ranges: economical keeps accessible
   // crowd cuts, intermediate groups everyday parrilla upgrades, premium keeps
@@ -1687,13 +1409,17 @@ tailwind.config = {
   let toastTimer = null;
   let selectedCutIds = new Set();   // cuts the user has checked
   let deselectedByUser = new Set(); // explicitly unchecked IDs (survive re-renders)
+  let userSelectedByUser = new Set(); // explicitly checked by user
   let cutKg = {};                   // cutId → kg chosen by user
   let lastCutSignature = '';
   let lastPlanResults = [];
   const CUT_STEP = 0.5;
   const CUT_MAX  = 8.0;
+  // Cálculo Maestro: se fija al entrar a recomendaciones, solo se resetea si cambian los invitados
+  let masterKgFixed = null;
+  let masterGuestsFixed = null;
   function getCutMin(categoryKey) {
-    return ['pollo', 'embutidos'].includes(categoryKey) ? 0.5 : 1.0;
+    return 0; // todos los sliders parten en 0 por diseño
   }
   function sliderPct(value, min, max) {
     return (((value - min) / (max - min)) * 100).toFixed(1);
@@ -1733,6 +1459,14 @@ tailwind.config = {
 
     // Fill dynamic data on recomendaciones
     if (page === 'recomendaciones') updateRecomendaciones();
+    // Si vuelve a inicio, resetear cálculo maestro para recalcular con nuevos invitados
+    if (page === 'inicio') {
+      masterKgFixed = null;
+      masterGuestsFixed = null;
+      userSelectedByUser = new Set();
+      lastCutSignature = '';
+      cutKg = {};
+    }
 
     currentPage = page;
   }
@@ -1747,12 +1481,17 @@ tailwind.config = {
   function adjustCount(key, delta) {
     counts[key] = Math.max(0, counts[key] + delta);
     document.getElementById('count-' + key).textContent = counts[key];
+    // Resetear el Cálculo del Maestro: los invitados cambiaron
+    masterKgFixed = null;
+    masterGuestsFixed = null;
     updateGauge();
   }
 
   function updateGauge() {
     const total = counts.men + counts.women + counts.kids;
     document.getElementById('totalGuests').textContent = total;
+    const badge = document.getElementById('totalGuestsBadge');
+    if (badge) badge.textContent = total;
     const intensity = Math.min(1, total / 16);
     const heat = document.getElementById('guestHeat');
     const label = document.getElementById('heatLabel');
@@ -1820,13 +1559,16 @@ tailwind.config = {
     for (const id of deselectedByUser) {
       if (!availableIds.has(id)) deselectedByUser.delete(id);
     }
-    // Rebuild selectedCutIds: add new ones unless user deselected them
+    // Rebuild selectedCutIds: por defecto NINGUNO seleccionado
+    // Solo mantenemos lo que el usuario explícitamente eligió antes
     selectedCutIds = new Set();
     availableCuts.forEach(cut => {
-      if (!deselectedByUser.has(cut.id)) selectedCutIds.add(cut.id);
-      // Init kg only for new cuts
+      // Solo agregar si el usuario lo marcó explícitamente (no está en deselectedByUser
+      // Y ya estaba en selectedCutIds antes — es decir, fue marcado por el usuario)
+      if (userSelectedByUser.has(cut.id)) selectedCutIds.add(cut.id);
+      // Init kg solo para cortes nuevos
       if (cutKg[cut.id] === undefined) {
-        cutKg[cut.id] = getCutMin(cut.categoryKey);
+        cutKg[cut.id] = 0;
       }
     });
   }
@@ -1834,10 +1576,10 @@ tailwind.config = {
   function toggleCutSelection(cutId) {
     if (selectedCutIds.has(cutId)) {
       selectedCutIds.delete(cutId);
-      deselectedByUser.add(cutId);
+      userSelectedByUser.delete(cutId);
     } else {
       selectedCutIds.add(cutId);
-      deselectedByUser.delete(cutId);
+      userSelectedByUser.add(cutId);
     }
     updateRecomendaciones();
   }
@@ -1886,15 +1628,38 @@ tailwind.config = {
     const totalKg   = cutResults.reduce((s, c) => s + c.kg,   0);
     const totalCost = cutResults.reduce((s, c) => s + c.cost, 0);
 
-    // ── Bento summary ───────────────────────────────────────────────────────
-    document.getElementById('meatKg').innerHTML = totalKg > 0
-      ? totalKg.toFixed(1) + ' <span class="text-2xl font-bold">kg</span>'
-      : '— <span class="text-2xl font-bold">kg</span>';
-    document.getElementById('meatCost').textContent = totalCost > 0
-      ? '$' + Math.round(totalCost).toLocaleString('es-CL') : '$0';
-    document.getElementById('meatDesc').innerHTML = totalKg > 0
-      ? `Tu plan para <strong>${total}</strong> comensales · cortes ${tierLabels[selectedBudget]}.`
-      : `Selecciona cortes abajo para calcular cantidades.`;
+    // ── Cálculo del Maestro: ESTÁTICO — basado solo en invitados ────────────
+    // Solo se actualiza si cambia el número de invitados (masterKgFixed)
+    if (masterKgFixed === null) {
+      // Calculo basado en proteínas seleccionadas y cantidad de personas
+      let masterKg = 0;
+      selected.forEach(key => {
+        const cat = APP_CUTS_DATA[key];
+        masterKg += adults * cat.kgPerAdult + kids * cat.kgPerKid;
+      });
+      // Si no hay proteínas seleccionadas o invitados, usamos referencia general (0.35 kg/adulto)
+      if (masterKg === 0) masterKg = adults * 0.35 + kids * 0.13;
+      masterKg = Math.round(masterKg * 2) / 2; // redondear a 0.5 kg
+      masterKgFixed = masterKg;
+      masterGuestsFixed = total;
+    }
+
+    // Actualizar UI del Cuadro 1 (siempre el valor fijo)
+    document.getElementById('meatKg').innerHTML = masterKgFixed.toFixed(1) + ' <span class="text-2xl font-bold">kg</span>';
+    document.getElementById('meatDesc').innerHTML = `Tu plan para <strong>${masterGuestsFixed}</strong> comensales · cortes ${tierLabels[selectedBudget]}.`;
+
+    // ── Cuadro 2: Costo — solo si hay cortes seleccionados con kg > 0 ───────
+    const meatCostEl = document.getElementById('meatCost');
+    const meatCostSubEl = document.getElementById('meatCostSub');
+    if (totalCost > 0 && activeCuts.length > 0) {
+      meatCostEl.textContent = '$' + Math.round(totalCost).toLocaleString('es-CL');
+      if (meatCostSubEl) meatCostSubEl.textContent = 'Costo total estimado (promedio mercado nacional)';
+    } else {
+      meatCostEl.textContent = '';
+      if (meatCostSubEl) meatCostSubEl.innerHTML = `<span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span>`;
+    }
+
+    // ── Resumen categorías ───────────────────────────────────────────────────
     document.getElementById('categorySummary').innerHTML = `
       <div class="bg-surface-container-low rounded-2xl p-3 text-center">
         <p class="text-xs font-bold text-on-surface-variant">Proteínas</p>
@@ -1970,15 +1735,29 @@ tailwind.config = {
     }).join('');
 
     // ── Sliders (only for active / checked cuts) ─────────────────────────────
+    const masterKgRef = masterKgFixed || 0;
+    function buildSliderHint(totalKgSoFar) {
+      if (masterKgRef === 0) return '';
+      const diff = totalKgSoFar - masterKgRef;
+      const absDiff = Math.abs(diff).toFixed(1);
+      if (Math.abs(diff) <= 0.25) {
+        return `<p class="text-xs font-bold text-green-600 mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> ¡Justo! Estás en el total recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
+      } else if (diff < 0) {
+        return `<p class="text-xs font-semibold text-amber-600 mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-sm">arrow_downward</span> Te faltan ${absDiff} kg para llegar al recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
+      } else {
+        return `<p class="text-xs font-semibold text-red-600 mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-sm">arrow_upward</span> Superaste el recomendado por ${absDiff} kg (${masterKgRef.toFixed(1)} kg sugeridos)</p>`;
+      }
+    }
     const slidersHtml = activeCuts.length === 0
       ? `<div class="flex flex-col items-center gap-3 py-8 text-center">
            <span class="material-symbols-outlined text-3xl text-on-surface-variant">check_box_outline_blank</span>
            <p class="text-on-surface-variant text-sm">Marca al menos un corte arriba para ajustar cantidades.</p>
          </div>`
       : activeCuts.map(cut => {
-          const min = getCutMin(cut.categoryKey);
-          const kg  = cutKg[cut.id] ?? min;
-          const pct = sliderPct(kg, min, CUT_MAX);
+          const min = 0;
+          const kg  = cutKg[cut.id] ?? 0;
+          const pct = CUT_MAX > 0 ? ((kg / CUT_MAX) * 100).toFixed(1) : '0';
+          const kgSoFar = totalKg;
           return `
             <div class="bg-surface-container-lowest rounded-2xl p-4">
               <div class="flex items-start justify-between gap-3 mb-2">
@@ -1992,14 +1771,15 @@ tailwind.config = {
                 </div>
               </div>
               <input class="cut-slider w-full" type="range"
-                min="${min}" max="${CUT_MAX}" step="${CUT_STEP}"
+                min="0" max="${CUT_MAX}" step="${CUT_STEP}"
                 value="${kg}" style="--pct:${pct}%"
                 oninput="onKgSlider('${cut.id}', this.value)"
                 aria-label="Cantidad de ${cut.name}">
               <div class="flex justify-between text-[10px] text-on-surface-variant mt-1 px-0.5">
-                <span>${min} kg</span>
+                <span>0 kg</span>
                 <span>${CUT_MAX} kg</span>
               </div>
+              ${buildSliderHint(kgSoFar)}
             </div>`;
         }).join('');
 
@@ -2015,7 +1795,7 @@ tailwind.config = {
         </div>
 
         <div>
-          <p class="text-xs font-bold uppercase text-on-surface-variant mb-3 tracking-wider">Cortes disponibles</p>
+          <p class="text-xs font-bold uppercase text-on-surface-variant mb-3 tracking-wider">Selecciona los cortes de tu asado</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             ${checkboxGrid}
           </div>
@@ -2057,6 +1837,13 @@ tailwind.config = {
         </section>`;
     });
     container.innerHTML = html;
+
+    // Update carbon tip dynamically
+    const carbonTip = document.getElementById('carbonTip');
+    if (carbonTip && totalKg > 0) {
+      const sacos = Math.ceil(totalKg / 2.5);
+      carbonTip.innerHTML = `Para tu asado de <strong class="text-on-surface">${totalKg.toFixed(1)} kg</strong> necesitas aproximadamente <strong class="text-on-surface">${sacos} saco${sacos !== 1 ? 's' : ''} de 2,5 kg</strong> de carbón. La regla de oro: 1 kg de carbón por kg de carne, más margen de seguridad.`;
+    }
   }
 
   function showToast(message) {
@@ -2073,8 +1860,14 @@ tailwind.config = {
       showToast('Agrega al menos un invitado para calcular tu asado.');
       return;
     }
-    if (getSelectedProteins().length === 0) {
+    const selected = getSelectedProteins();
+    if (selected.length === 0) {
       showToast('Elige al menos una proteína para recibir recomendaciones.');
+      return;
+    }
+    const availableCuts = getRecommendedCuts(selected);
+    if (availableCuts.length === 0) {
+      showToast('No hay cortes para ese presupuesto y proteínas. Prueba otra combinación.');
       return;
     }
     navigate('recomendaciones');
@@ -2101,7 +1894,7 @@ tailwind.config = {
   });
 
   // ---- Budget selection ----
-  function selectBudget(btn, value = 'mid') {
+  function selectBudget(btn, value = 'low') {
     document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedBudget = value;
@@ -2134,7 +1927,7 @@ tailwind.config = {
         (activeButcherFilter === 'premium' && text.includes('$$$')) ||
         (activeButcherFilter === 'cerca' && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
         (activeButcherFilter === 'delivery' && text.includes('delivery')) ||
-        (activeButcherFilter === 'ofertas' && (text.includes('premium') || text.includes('económica') || text.includes('oferta')));
+        (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('económica') || text.includes('$') && !text.includes('$$$')));
       const isVisible = matchesSearch && matchesFilter;
       card.classList.toggle('is-hidden', !isVisible);
       if (isVisible) visibleCount++;
@@ -2284,7 +2077,7 @@ tailwind.config = {
 
   const butcherProducts = [
     { name: 'Lomo Vetado', price: 24990, stock: 24.5, img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg' },
-    { name: 'Malaya de Cerdo', price: 13990, stock: 15, img: 'https://carnesproductor.cl/wp-content/uploads/2025/10/Malaya-de-cerdo-Carnes-Productor.webp' },
+    { name: 'Malaya de Cerdo', price: 13990, stock: 15, img: 'https://supercerdo.cl/wp-content/uploads/2023/02/malaya.jpg' },
     { name: 'Asado Carnicero', price: 9690, stock: 4, img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop' }
   ];
 
@@ -2297,7 +2090,7 @@ tailwind.config = {
   const salesHistory = [
     { customer: 'Reserva Carlos M.', item: '3 kg Lomo Vetado', total: 56970, state: 'Pagado' },
     { customer: 'Pedido Valentina R.', item: '2 kg Costillar Cerdo', total: 25000, state: 'Pendiente' },
-    { customer: 'Reserva Manuel F.', item: '1.5 kg Punta Paleta', total: 19485, state: 'Pagado' }
+    { customer: 'Venta mostrador', item: '1.5 kg Punta Paleta', total: 19485, state: 'Pagado' }
   ];
 
   function money(value) {
@@ -2484,7 +2277,7 @@ tailwind.config = {
 
   function renderSalesHistory() {
     if (document.getElementById('salesHistory')) return;
-    const panelGrid = document.querySelector('#screen-panel .grid.grid-cols-1.md\\:grid-cols-12');
+    const panelGrid = document.getElementById('screen-panel')?.querySelector('.grid');
     const section = document.createElement('section');
     section.id = 'salesHistory';
     section.className = 'md:col-span-12 bg-surface-container-low rounded-3xl p-6';
