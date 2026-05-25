@@ -165,9 +165,69 @@ tailwind.config = {
     50% { transform: translateY(-3px) scale(1.08); }
   }
 
-  /* Cut distribution sliders */
+  /* Cut distribution sliders — cross-browser, touch-friendly */
   .cut-slider {
-    accent-color: #810900;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 0;
+    box-sizing: content-box;
+    margin: 4px 0;
+  }
+  .cut-slider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #810900 var(--pct,50%), #e4e2e1 var(--pct,50%));
+    transition: background 0.1s ease;
+  }
+  .cut-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2.5px solid #810900;
+    box-shadow: 0 2px 8px rgba(129,9,0,0.22);
+    margin-top: -10px;
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cut-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.18);
+    box-shadow: 0 4px 16px rgba(129,9,0,0.32);
+  }
+  .cut-slider:hover::-webkit-slider-thumb {
+    box-shadow: 0 2px 12px rgba(129,9,0,0.30);
+  }
+  .cut-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: #e4e2e1;
+  }
+  .cut-slider::-moz-range-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: #810900;
+  }
+  .cut-slider::-moz-range-thumb {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2.5px solid #810900;
+    box-shadow: 0 2px 8px rgba(129,9,0,0.22);
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cut-slider::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.18);
   }
 
   /* FAQ accordion */
@@ -408,14 +468,10 @@ tailwind.config = {
         <!-- Budget -->
         <section class="space-y-4">
           <h3 class="font-headline font-bold text-lg text-on-surface px-1">Presupuesto estimado</h3>
-          <div class="grid grid-cols-3 gap-3">
-            <button onclick="selectBudget(this,'low')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="selectBudget(this,'low')" class="budget-btn selected bg-surface-container-lowest py-4 rounded-xl border-2 border-primary/20 flex flex-col items-center gap-1 transition-all active:scale-95">
               <span class="text-lg font-bold text-secondary">$</span>
               <span class="text-xs font-semibold text-on-surface-variant">Económico</span>
-            </button>
-            <button onclick="selectBudget(this,'mid')" class="budget-btn selected bg-surface-container-lowest py-4 rounded-xl border-2 border-primary/20 flex flex-col items-center gap-1 transition-all active:scale-95">
-              <span class="text-lg font-bold text-primary">$$</span>
-              <span class="text-xs font-semibold text-on-surface-variant">Intermedio</span>
             </button>
             <button onclick="selectBudget(this,'high')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
               <span class="text-lg font-bold text-secondary">$$$</span>
@@ -1040,14 +1096,14 @@ tailwind.config = {
 <div id="toast" class="toast fixed left-1/2 bottom-28 z-[70] -translate-x-1/2 bg-inverse-surface text-white px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold max-w-[calc(100vw-2rem)] text-center" role="status" aria-live="polite"></div>
 
 <div id="appModal" class="modal-backdrop fixed inset-0 z-[80] items-end sm:items-center justify-center bg-black/35 px-4 py-6" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:90dvh">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
       <h3 id="modalTitle" class="font-headline text-2xl font-bold text-on-surface">Acción</h3>
       <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-primary" aria-label="Cerrar">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
-    <div id="modalBody" class="p-6"></div>
+    <div id="modalBody" class="p-6 overflow-y-auto flex-1"></div>
   </div>
 </div>
 
@@ -1407,10 +1463,10 @@ tailwind.config = {
         {
           id: 'vacuno-asiento',
           name: 'Asiento',
-          tier: 'mid',
+          tier: 'low',
           pricePerKg: 12990,
-          badge: 'Intermedio',
-          badgeStyle: 'bg-primary text-white',
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
           desc: 'Corte limpio y versátil, más fino que los cortes económicos y todavía razonable para una parrilla familiar.',
@@ -1487,10 +1543,10 @@ tailwind.config = {
         {
           id: 'cerdo-costillar',
           name: 'Costillar de Cerdo',
-          tier: 'mid',
+          tier: 'low',
           pricePerKg: 6990,
-          badge: 'Intermedio',
-          badgeStyle: 'bg-secondary text-white',
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
           desc: 'Estrella de los asados mixtos. Se cocina lento, se marina bien y aporta mucho sabor.',
@@ -1525,10 +1581,10 @@ tailwind.config = {
         {
           id: 'embutidos-chorizo',
           name: 'Chorizo Parrillero',
-          tier: 'mid',
+          tier: 'low',
           pricePerKg: 9490,
-          badge: 'Intermedio',
-          badgeStyle: 'bg-secondary/10 text-secondary',
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
           desc: 'Base del choripán y del picoteo inicial. Suma grasa, sabor y rapidez al asado.',
@@ -1539,10 +1595,10 @@ tailwind.config = {
         {
           id: 'embutidos-longaniza',
           name: 'Longaniza / Longa Sureña',
-          tier: 'mid',
+          tier: 'low',
           pricePerKg: 10990,
-          badge: 'Intermedio',
-          badgeStyle: 'bg-secondary/10 text-secondary',
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
           desc: 'Longaniza o longa sureña para un asado con carácter chileno. Mejor a fuego medio para dorar sin reventar.',
@@ -1553,10 +1609,10 @@ tailwind.config = {
         {
           id: 'embutidos-butifarra',
           name: 'Butifarra',
-          tier: 'mid',
+          tier: 'high',
           pricePerKg: 9990,
-          badge: 'Intermedio',
-          badgeStyle: 'bg-secondary/10 text-secondary',
+          badge: 'Premium',
+          badgeStyle: 'bg-secondary text-white',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
           desc: 'Embutido parrillero suave y especiado. Buena alternativa para variar el choripán clásico.',
@@ -1591,10 +1647,10 @@ tailwind.config = {
         {
           id: 'pollo-alitas',
           name: 'Alitas Adobadas',
-          tier: 'mid',
+          tier: 'low',
           pricePerKg: 4990,
-          badge: 'Intermedio',
-          badgeStyle: 'bg-tertiary/10 text-tertiary',
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
           desc: 'Buenas para picoteo y grupos con niños. Quedan doradas y crujientes si se cocinan sin apuro.',
@@ -1622,16 +1678,26 @@ tailwind.config = {
 
   // ---- State ----
   const counts = { men: 4, women: 4, kids: 2 };
-  const budgetLabels = { low: 'económico', mid: 'intermedio', high: 'premium' };
-  const tierLabels = { low: 'económicos', mid: 'intermedios', high: 'premium' };
-  let selectedBudget = 'mid';
+  const budgetLabels = { low: 'económico', high: 'premium' };
+  const tierLabels = { low: 'económicos', high: 'premium' };
+  let selectedBudget = 'low';
   let activeButcherFilter = 'todas';
   let currentPage = 'inicio';
   let history = ['inicio'];
   let toastTimer = null;
-  let cutDistribution = {};
+  let selectedCutIds = new Set();   // cuts the user has checked
+  let deselectedByUser = new Set(); // explicitly unchecked IDs (survive re-renders)
+  let cutKg = {};                   // cutId → kg chosen by user
   let lastCutSignature = '';
   let lastPlanResults = [];
+  const CUT_STEP = 0.5;
+  const CUT_MAX  = 8.0;
+  function getCutMin(categoryKey) {
+    return ['pollo', 'embutidos'].includes(categoryKey) ? 0.5 : 1.0;
+  }
+  function sliderPct(value, min, max) {
+    return (((value - min) / (max - min)) * 100).toFixed(1);
+  }
   let selectedButcher = null;
   const chatHistory = {};
   const reservations = [];
@@ -1744,113 +1810,109 @@ tailwind.config = {
     });
   }
 
-  function initializeDistribution(cuts) {
-    const signature = cuts.map(cut => cut.id).join('|') + ':' + selectedBudget;
-    if (signature === lastCutSignature && cuts.every(cut => cutDistribution[cut.id] !== undefined)) return;
+  // ── Cut state management ──────────────────────────────────────────────────
+  function initializeCutState(availableCuts) {
+    const signature = availableCuts.map(c => c.id).join('|') + ':' + selectedBudget;
+    if (signature === lastCutSignature) return;
     lastCutSignature = signature;
-    cutDistribution = {};
-    if (cuts.length === 0) return;
-    const base = Math.floor(100 / cuts.length);
-    let remainder = 100 - (base * cuts.length);
-    cuts.forEach((cut, index) => {
-      cutDistribution[cut.id] = base + (index < remainder ? 1 : 0);
-    });
-  }
-
-  function rebalanceDistribution(cutId, nextValue) {
-    const ids = Object.keys(cutDistribution);
-    if (ids.length === 1) {
-      cutDistribution[cutId] = 100;
-      return;
+    const availableIds = new Set(availableCuts.map(c => c.id));
+    // Remove no-longer-available IDs from deselectedByUser
+    for (const id of deselectedByUser) {
+      if (!availableIds.has(id)) deselectedByUser.delete(id);
     }
-    const value = Math.max(0, Math.min(100, Math.round(Number(nextValue) || 0)));
-    const others = ids.filter(id => id !== cutId);
-    const remaining = 100 - value;
-    const previousOtherTotal = others.reduce((sum, id) => sum + cutDistribution[id], 0);
-    cutDistribution[cutId] = value;
-
-    if (previousOtherTotal <= 0) {
-      const base = Math.floor(remaining / others.length);
-      let remainder = remaining - (base * others.length);
-      others.forEach((id, index) => {
-        cutDistribution[id] = base + (index < remainder ? 1 : 0);
-      });
-      return;
-    }
-
-    const scaled = others.map(id => {
-      const raw = (cutDistribution[id] / previousOtherTotal) * remaining;
-      return { id, value: Math.floor(raw), fraction: raw - Math.floor(raw) };
-    });
-    let used = scaled.reduce((sum, item) => sum + item.value, 0);
-    scaled.sort((a, b) => b.fraction - a.fraction);
-    scaled.forEach(item => {
-      if (used < remaining) {
-        item.value += 1;
-        used += 1;
+    // Rebuild selectedCutIds: add new ones unless user deselected them
+    selectedCutIds = new Set();
+    availableCuts.forEach(cut => {
+      if (!deselectedByUser.has(cut.id)) selectedCutIds.add(cut.id);
+      // Init kg only for new cuts
+      if (cutKg[cut.id] === undefined) {
+        cutKg[cut.id] = getCutMin(cut.categoryKey);
       }
-      cutDistribution[item.id] = item.value;
     });
   }
 
-  function onCutSlider(cutId, value) {
-    rebalanceDistribution(cutId, value);
+  function toggleCutSelection(cutId) {
+    if (selectedCutIds.has(cutId)) {
+      selectedCutIds.delete(cutId);
+      deselectedByUser.add(cutId);
+    } else {
+      selectedCutIds.add(cutId);
+      deselectedByUser.delete(cutId);
+    }
     updateRecomendaciones();
+  }
+
+  function onKgSlider(cutId, value) {
+    cutKg[cutId] = parseFloat(value);
+    syncSliderTracks();
+    updateRecomendaciones();
+  }
+
+  function syncSliderTracks() {
+    document.querySelectorAll('.cut-slider').forEach(slider => {
+      const min = parseFloat(slider.min);
+      const max = parseFloat(slider.max);
+      const val = parseFloat(slider.value);
+      const pct = (((val - min) / (max - min)) * 100).toFixed(1);
+      slider.style.setProperty('--pct', pct + '%');
+    });
   }
 
   function updateRecomendaciones() {
     const adults = counts.men + counts.women;
-    const kids = counts.kids;
-    const total = adults + kids;
+    const kids   = counts.kids;
+    const total  = adults + kids;
     const selected = getSelectedProteins();
-    const cuts = getRecommendedCuts(selected);
-    initializeDistribution(cuts);
+    const availableCuts = getRecommendedCuts(selected); // all cuts for chosen proteins+budget
+    initializeCutState(availableCuts);
 
-    let totalKg = 0;
+    // Active cuts = those the user has checked
+    const activeCuts = availableCuts.filter(cut => selectedCutIds.has(cut.id));
+
+    // Build per-category totals from direct kg
     const plannedByCategory = {};
     selected.forEach(key => {
-      const category = APP_CUTS_DATA[key];
-      const kg = (adults * category.kgPerAdult) + (kids * category.kgPerKid);
-      totalKg += kg;
-      plannedByCategory[key] = { label: category.label, kg, total: 0 };
+      plannedByCategory[key] = { label: APP_CUTS_DATA[key].label, total: 0 };
     });
 
-    const cutResults = cuts.map(cut => {
-      const percent = cutDistribution[cut.id] || 0;
-      const kg = totalKg * (percent / 100);
+    const cutResults = activeCuts.map(cut => {
+      const kg   = cutKg[cut.id] ?? getCutMin(cut.categoryKey);
       const cost = kg * cut.pricePerKg;
       if (plannedByCategory[cut.categoryKey]) plannedByCategory[cut.categoryKey].total += kg;
-      return { ...cut, percent, kg, cost };
+      return { ...cut, kg, cost };
     });
     lastPlanResults = cutResults;
-    const totalCost = cutResults.reduce((sum, cut) => sum + cut.cost, 0);
 
+    const totalKg   = cutResults.reduce((s, c) => s + c.kg,   0);
+    const totalCost = cutResults.reduce((s, c) => s + c.cost, 0);
+
+    // ── Bento summary ───────────────────────────────────────────────────────
     document.getElementById('meatKg').innerHTML = totalKg > 0
       ? totalKg.toFixed(1) + ' <span class="text-2xl font-bold">kg</span>'
       : '— <span class="text-2xl font-bold">kg</span>';
     document.getElementById('meatCost').textContent = totalCost > 0
-      ? '$' + Math.round(totalCost).toLocaleString('es-CL')
-      : '$0';
+      ? '$' + Math.round(totalCost).toLocaleString('es-CL') : '$0';
     document.getElementById('meatDesc').innerHTML = totalKg > 0
-      ? `Total sugerido para <strong id="meatGuests">${total}</strong> comensales con cortes ${tierLabels[selectedBudget]}.`
-      : `Total sugerido de carne para <strong id="meatGuests">${total}</strong> comensales.`;
+      ? `Tu plan para <strong>${total}</strong> comensales · cortes ${tierLabels[selectedBudget]}.`
+      : `Selecciona cortes abajo para calcular cantidades.`;
     document.getElementById('categorySummary').innerHTML = `
       <div class="bg-surface-container-low rounded-2xl p-3 text-center">
-        <p class="text-xs font-bold text-on-surface-variant">Categorías</p>
+        <p class="text-xs font-bold text-on-surface-variant">Proteínas</p>
         <p class="font-headline text-xl font-bold text-primary">${selected.length}</p>
       </div>
       <div class="bg-surface-container-low rounded-2xl p-3 text-center">
-        <p class="text-xs font-bold text-on-surface-variant">Cortes</p>
-        <p class="font-headline text-xl font-bold text-primary">${cuts.length}</p>
+        <p class="text-xs font-bold text-on-surface-variant">Cortes activos</p>
+        <p class="font-headline text-xl font-bold text-primary">${activeCuts.length}</p>
       </div>
       <div class="bg-surface-container-low rounded-2xl p-3 text-center">
-        <p class="text-xs font-bold text-on-surface-variant">Asignado</p>
-        <p class="font-headline text-xl font-bold text-primary">${Object.values(cutDistribution).reduce((a, b) => a + b, 0)}%</p>
+        <p class="text-xs font-bold text-on-surface-variant">Total plan</p>
+        <p class="font-headline text-xl font-bold text-primary">${totalKg.toFixed(1)} kg</p>
       </div>`;
 
-    // Render cuts sections
-    const container = document.getElementById('cutsSection');
+    // ── Render containers ────────────────────────────────────────────────────
+    const container   = document.getElementById('cutsSection');
     const distribution = document.getElementById('distributionSection');
+
     if (selected.length === 0) {
       distribution.innerHTML = '';
       container.innerHTML = `
@@ -1867,7 +1929,7 @@ tailwind.config = {
       return;
     }
 
-    if (cuts.length === 0) {
+    if (availableCuts.length === 0) {
       distribution.innerHTML = '';
       container.innerHTML = `
         <section class="flex flex-col items-center justify-center text-center py-16 gap-4">
@@ -1883,6 +1945,7 @@ tailwind.config = {
       return;
     }
 
+    // ── Category kg summary pills ────────────────────────────────────────────
     const categoryRows = Object.values(plannedByCategory)
       .filter(row => row.total > 0)
       .map(row => `
@@ -1891,41 +1954,85 @@ tailwind.config = {
           <p class="font-headline text-2xl font-bold text-primary">${row.total.toFixed(1)} kg</p>
         </div>`).join('');
 
-    distribution.innerHTML = `
-      <section class="bg-surface-container-low rounded-3xl p-6 md:p-8 space-y-6">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-2 text-primary font-bold">
-              <span class="material-symbols-outlined">tune</span>
-              <span class="uppercase tracking-widest text-xs">Distribución manual</span>
-            </div>
-            <h3 class="font-headline text-3xl font-extrabold mt-2">Reparte tus cortes</h3>
-            <p class="text-sm text-on-surface-variant mt-2 max-w-2xl">Los sliders siempre suman 100%. Al subir un corte, los demás se reajustan para no pasarse.</p>
-          </div>
-          <div class="bg-surface-container-lowest rounded-2xl px-4 py-3 text-right">
-            <p class="text-xs font-bold text-on-surface-variant uppercase">Total distribuido</p>
-            <p class="font-headline text-2xl font-bold text-primary">100%</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          ${cutResults.map(cut => `
+    // ── Checkbox grid (select / deselect cuts) ───────────────────────────────
+    const checkboxGrid = availableCuts.map(cut => {
+      const checked = selectedCutIds.has(cut.id);
+      return `
+        <label class="flex items-center gap-3 bg-surface-container-lowest rounded-xl p-3 cursor-pointer select-none transition-colors hover:bg-surface-container ${checked ? '' : 'opacity-50'}">
+          <input type="checkbox" ${checked ? 'checked' : ''}
+            onchange="toggleCutSelection('${cut.id}')"
+            class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 shrink-0 cursor-pointer">
+          <span class="min-w-0">
+            <span class="block font-bold text-sm truncate">${cut.name}</span>
+            <span class="block text-[10px] text-on-surface-variant">${cut.categoryLabel} · ${money(cut.pricePerKg)}/kg</span>
+          </span>
+        </label>`;
+    }).join('');
+
+    // ── Sliders (only for active / checked cuts) ─────────────────────────────
+    const slidersHtml = activeCuts.length === 0
+      ? `<div class="flex flex-col items-center gap-3 py-8 text-center">
+           <span class="material-symbols-outlined text-3xl text-on-surface-variant">check_box_outline_blank</span>
+           <p class="text-on-surface-variant text-sm">Marca al menos un corte arriba para ajustar cantidades.</p>
+         </div>`
+      : activeCuts.map(cut => {
+          const min = getCutMin(cut.categoryKey);
+          const kg  = cutKg[cut.id] ?? min;
+          const pct = sliderPct(kg, min, CUT_MAX);
+          return `
             <div class="bg-surface-container-lowest rounded-2xl p-4">
-              <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="flex items-start justify-between gap-3 mb-2">
                 <div>
                   <p class="font-bold text-on-surface">${cut.name}</p>
                   <p class="text-xs text-on-surface-variant">${cut.categoryLabel} · ${money(cut.pricePerKg)}/kg</p>
                 </div>
-                <div class="text-right">
-                  <p class="font-headline text-xl font-bold text-primary">${cut.kg.toFixed(1)} kg</p>
-                  <p class="text-xs font-bold text-on-surface-variant">${cut.percent}%</p>
+                <div class="text-right shrink-0">
+                  <p class="font-headline text-xl font-bold text-primary">${kg.toFixed(1)} kg</p>
+                  <p class="text-xs font-bold text-secondary">${money(kg * cut.pricePerKg)}</p>
                 </div>
               </div>
-              <input class="cut-slider w-full" type="range" min="0" max="100" value="${cut.percent}" oninput="onCutSlider('${cut.id}', this.value)" aria-label="Porcentaje de ${cut.name}">
-            </div>`).join('')}
+              <input class="cut-slider w-full" type="range"
+                min="${min}" max="${CUT_MAX}" step="${CUT_STEP}"
+                value="${kg}" style="--pct:${pct}%"
+                oninput="onKgSlider('${cut.id}', this.value)"
+                aria-label="Cantidad de ${cut.name}">
+              <div class="flex justify-between text-[10px] text-on-surface-variant mt-1 px-0.5">
+                <span>${min} kg</span>
+                <span>${CUT_MAX} kg</span>
+              </div>
+            </div>`;
+        }).join('');
+
+    distribution.innerHTML = `
+      <section class="bg-surface-container-low rounded-3xl p-6 md:p-8 space-y-6">
+        <div>
+          <div class="flex items-center gap-2 text-primary font-bold">
+            <span class="material-symbols-outlined">tune</span>
+            <span class="uppercase tracking-widest text-xs">Personaliza tu asado</span>
+          </div>
+          <h3 class="font-headline text-3xl font-extrabold mt-2">Elige y ajusta</h3>
+          <p class="text-sm text-on-surface-variant mt-1 max-w-2xl">Marca los cortes que quieres incluir, luego mueve la barra para elegir la cantidad exacta (en pasos de 500 g).</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+
+        <div>
+          <p class="text-xs font-bold uppercase text-on-surface-variant mb-3 tracking-wider">Cortes disponibles</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            ${checkboxGrid}
+          </div>
+        </div>
+
+        ${activeCuts.length > 0 ? `
+        <div>
+          <p class="text-xs font-bold uppercase text-on-surface-variant mb-3 tracking-wider">Ajusta las cantidades</p>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            ${slidersHtml}
+          </div>
+        </div>` : slidersHtml}
+
+        ${categoryRows ? `
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           ${categoryRows}
-        </div>
+        </div>` : ''}
       </section>`;
 
     let html = '';
@@ -1941,7 +2048,7 @@ tailwind.config = {
             </div>
             <div>
               <h2 class="font-headline text-2xl font-extrabold tracking-tight text-on-surface">${d.label}</h2>
-              <p class="text-on-surface-variant text-xs mt-0.5">Cortes ${tierLabels[selectedBudget]} · ${(plannedByCategory[key]?.total || 0).toFixed(1)} kg asignados</p>
+              <p class="text-on-surface-variant text-xs mt-0.5">Cortes ${tierLabels[selectedBudget]} · ${(plannedByCategory[key]?.total || 0).toFixed(1)} kg en tu plan</p>
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -2110,20 +2217,26 @@ tailwind.config = {
   function openReservation(name) {
     selectedButcher = name;
     const items = getReservationItems();
-    const total = items.reduce((sum, item) => sum + (item.cost || item.kg * item.pricePerKg), 0);
+    const grandTotal = items.reduce((sum, item) => sum + (item.cost || item.kg * item.pricePerKg), 0);
     openModal(`Reservar en ${name}`, `
-      <form onsubmit="confirmReservation(event, '${name}')" class="space-y-4">
+      <form onsubmit="confirmReservation(event, '${name}')" class="flex flex-col gap-4">
         <div class="bg-surface-container-low rounded-2xl p-4">
           <p class="text-xs font-bold uppercase text-primary mb-3">Cortes sugeridos</p>
-          <div class="space-y-3">
-            ${items.map((item, index) => `
-              <label class="flex items-center justify-between gap-3 bg-surface-container-lowest rounded-xl p-3">
-                <span>
+          <div class="space-y-3 overflow-y-auto" style="max-height:38vh" id="reservationCutList">
+            ${items.map((item, index) => {
+              const itemCost = item.cost || item.kg * item.pricePerKg;
+              return `
+              <label class="flex items-center justify-between gap-3 bg-surface-container-lowest rounded-xl p-3 cursor-pointer select-none">
+                <span class="flex-1 min-w-0">
                   <span class="block font-bold text-sm">${item.name}</span>
-                  <span class="block text-xs text-on-surface-variant">${item.kg.toFixed(1)} kg · ${money(item.pricePerKg)}/kg</span>
+                  <span class="block text-xs text-on-surface-variant">${item.kg.toFixed(1)} kg · ${money(item.pricePerKg)}/kg · <strong class="text-on-surface">${money(itemCost)}</strong></span>
                 </span>
-                <input name="cut-${index}" type="checkbox" checked class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20">
-              </label>`).join('')}
+                <input name="cut-${index}" type="checkbox" checked
+                  data-cost="${itemCost}"
+                  onchange="updateReservationTotal()"
+                  class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 cursor-pointer shrink-0">
+              </label>`;
+            }).join('')}
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -2136,10 +2249,19 @@ tailwind.config = {
         </div>
         <div class="flex items-center justify-between bg-primary-container text-on-primary-container rounded-2xl p-4">
           <span class="font-bold">Total estimado</span>
-          <span class="font-headline text-2xl font-bold">${money(total)}</span>
+          <span id="reservationTotal" class="font-headline text-2xl font-bold">${money(grandTotal)}</span>
         </div>
-        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">Confirmar reserva</button>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold sticky bottom-0">Confirmar reserva</button>
       </form>`);
+  }
+
+  function updateReservationTotal() {
+    const checkboxes = document.querySelectorAll('#reservationCutList input[type="checkbox"]');
+    const total = Array.from(checkboxes).reduce((sum, cb) => {
+      return cb.checked ? sum + parseFloat(cb.dataset.cost || 0) : sum;
+    }, 0);
+    const totalEl = document.getElementById('reservationTotal');
+    if (totalEl) totalEl.textContent = money(total);
   }
 
   function confirmReservation(event, name) {
