@@ -650,10 +650,9 @@ tailwind.config = {
   <!-- ===== SCREEN: RECOMENDACIONES ===== -->
   <div id="screen-recomendaciones" class="screen">
     <div class="max-w-screen-xl mx-auto px-6 pt-8 pb-4 space-y-10">
-      <!-- Bento Summary -->
-      <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <!-- Meat total -->
-        <div class="md:col-span-7 bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-[0_4px_24px_rgba(129,9,0,0.06)] ember-glow">
+      <!-- Bento Summary: solo Cálculo del Maestro -->
+      <section>
+        <div class="bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-[0_4px_24px_rgba(129,9,0,0.06)] ember-glow">
           <div class="relative z-10">
             <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Cálculo del Maestro</span>
             <h2 class="font-headline text-6xl font-extrabold text-on-surface tracking-tighter mb-3" id="meatKg">5.0 <span class="text-2xl font-bold">kg</span></h2>
@@ -675,20 +674,21 @@ tailwind.config = {
             </div>
           </div>
         </div>
-        <!-- Cost estimate -->
-        <div class="md:col-span-5 bg-primary-container text-on-primary-container rounded-3xl p-8 flex flex-col justify-center items-center text-center shadow-[0_4px_24px_rgba(129,9,0,0.06)]">
-          <span class="material-symbols-outlined fill-icon text-4xl mb-4">payments</span>
-          <h3 class="font-headline text-4xl font-bold mb-2" id="meatCost"></h3>
-          <p class="text-sm opacity-90 font-medium px-4" id="meatCostSub"><span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span></p>
-          <button onclick="navigate('carnicerias')" class="mt-6 bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95">
-            Encontrar carnicería
-          </button>
-        </div>
       </section>
 
       <!-- Distribution and cuts sections: rendered dynamically by JS -->
       <div id="distributionSection"></div>
       <div id="cutsSection"></div>
+
+      <!-- Cost estimate: aparece al final, después de ajustar todo -->
+      <div class="bg-primary-container text-on-primary-container rounded-3xl p-8 flex flex-col justify-center items-center text-center shadow-[0_4px_24px_rgba(129,9,0,0.06)]">
+        <span class="material-symbols-outlined fill-icon text-4xl mb-4">payments</span>
+        <h3 class="font-headline text-4xl font-bold mb-2" id="meatCost"></h3>
+        <p class="text-sm opacity-90 font-medium px-4" id="meatCostSub"><span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span></p>
+        <button onclick="navigate('carnicerias')" class="mt-6 bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95">
+          Encontrar carnicería
+        </button>
+      </div>
 
       <!-- Tips Banner -->
       <section class="bg-surface-container-low rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
@@ -2077,7 +2077,7 @@ tailwind.config = {
 
   const butcherProducts = [
     { name: 'Lomo Vetado', price: 24990, stock: 24.5, img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg' },
-    { name: 'Malaya de Cerdo', price: 13990, stock: 15, img: 'https://carnesproductor.cl/wp-content/uploads/2025/10/Malaya-de-cerdo-Carnes-Productor.webp' },
+    { name: 'Malaya de Cerdo', price: 13990, stock: 15, img: 'https://supercerdo.cl/wp-content/uploads/2023/02/malaya.jpg' },
     { name: 'Asado Carnicero', price: 9690, stock: 4, img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop' }
   ];
 
