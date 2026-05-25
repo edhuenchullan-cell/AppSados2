@@ -85,8 +85,90 @@ tailwind.config = {
   /* Child counter */
   .counter-val { min-width: 1.5rem; text-align: center; }
 
-  /* Guest tracker bar */
-  .gauge-fill { transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  /* Guest heat indicator */
+  .heat-orb {
+    width: clamp(4.5rem, 18vw, 6.8rem);
+    height: clamp(4.5rem, 18vw, 6.8rem);
+    position: relative;
+    filter: drop-shadow(0 18px 28px rgba(129, 9, 0, 0.16));
+  }
+  .heat-panel {
+    background:
+      radial-gradient(circle at 22% 15%, rgba(252, 96, 24, 0.13), transparent 34%),
+      linear-gradient(135deg, #ffffff 0%, #fff7f2 48%, #f6f3f2 100%);
+    border: 1px solid rgba(226, 191, 184, 0.36);
+  }
+  .heat-orb::before {
+    content: "";
+    position: absolute;
+    inset: 6%;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(252, 96, 24, 0.2), transparent 62%);
+    opacity: var(--glow-opacity, 0.45);
+    transform: scale(var(--glow-scale, 0.9));
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+  .heat-flame {
+    position: absolute;
+    inset: 14%;
+    border-radius: 58% 42% 52% 48% / 66% 58% 42% 34%;
+    background: radial-gradient(circle at 54% 62%, #ffdfa0 0 18%, #fc6018 38%, #a42312 68%, #810900 100%);
+    transform: rotate(-45deg) scale(var(--heat-scale, 0.72));
+    opacity: var(--heat-opacity, 0.72);
+    animation: flameBreath 2.4s ease-in-out infinite;
+  }
+  .heat-core {
+    position: absolute;
+    inset: 36% 33% 22% 33%;
+    border-radius: 60% 40% 55% 45%;
+    background: #ffdfa0;
+    transform: rotate(-45deg) scale(var(--core-scale, 0.62));
+    opacity: 0.86;
+    animation: flameBreath 1.8s ease-in-out infinite reverse;
+  }
+  .coal-bed {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 8%;
+    height: 22%;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 20% 50%, #810900 0 12%, transparent 13%),
+      radial-gradient(circle at 42% 55%, #fc6018 0 10%, transparent 11%),
+      radial-gradient(circle at 62% 42%, #513b00 0 12%, transparent 13%),
+      radial-gradient(circle at 80% 55%, #a42312 0 9%, transparent 10%),
+      #303030;
+    opacity: 0.9;
+  }
+  .heat-waves {
+    height: 0.45rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(129,9,0,0.16), rgba(252,96,24,0.68), rgba(248,189,42,0.72));
+    width: var(--heat-width, 62%);
+    box-shadow: 0 0 18px rgba(252, 96, 24, 0.18);
+    transition: width 0.5s ease;
+  }
+  .ember-row span {
+    width: var(--ember-size, 0.48rem);
+    height: var(--ember-size, 0.48rem);
+    opacity: var(--ember-opacity, 0.45);
+    animation: emberPulse 2.1s ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes flameBreath {
+    0%, 100% { transform: rotate(-45deg) scale(var(--heat-scale, 0.72)); }
+    50% { transform: rotate(-43deg) scale(calc(var(--heat-scale, 0.72) + 0.05)); }
+  }
+  @keyframes emberPulse {
+    0%, 100% { transform: translateY(0) scale(0.92); }
+    50% { transform: translateY(-3px) scale(1.08); }
+  }
+
+  /* Cut distribution sliders */
+  .cut-slider {
+    accent-color: #810900;
+  }
 
   /* FAQ accordion */
   .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
@@ -120,6 +202,22 @@ tailwind.config = {
   /* Chip active */
   .chip.active { background: #a83900; color: white; }
   .chip:not(.active) { background: #eae7e7; color: #5a413c; }
+
+  /* Basic accessibility and feedback */
+  button, input, [role="button"] { outline-offset: 3px; }
+  button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: 3px solid rgba(129, 9, 0, 0.35);
+  }
+  .toast {
+    transform: translateY(18px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .modal-backdrop { display: none; }
+  .modal-backdrop.open { display: flex; }
+  .is-hidden { display: none !important; }
 </style>
 </head>
 <body class="bg-background text-on-surface antialiased">
@@ -227,35 +325,28 @@ tailwind.config = {
             </div>
           </div>
 
-          <!-- Guest gauge -->
-          <div class="mt-6 space-y-2">
-            <div class="flex justify-between text-xs font-bold text-tertiary">
-              <span>Poca carne</span>
-              <span id="gaugeLabel">¡Punto Exacto!</span>
+          <!-- Guest heat -->
+          <div id="guestHeat" class="heat-panel mt-6 rounded-2xl p-5 flex items-center gap-5" style="--heat-scale:.82; --core-scale:.72; --heat-opacity:.82; --ember-opacity:.58; --ember-size:.54rem; --heat-width:62%; --glow-opacity:.52; --glow-scale:.92;">
+            <div class="heat-orb shrink-0" aria-hidden="true">
+              <div class="heat-flame"></div>
+              <div class="heat-core"></div>
+              <div class="coal-bed"></div>
             </div>
-            <div class="h-2.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-              <div id="gaugeFill" class="h-full bg-primary rounded-full gauge-fill" style="width: 75%"></div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <p id="heatLabel" class="font-headline text-xl font-bold text-primary">Brasas listas</p>
+                <p class="text-xs text-on-surface-variant font-bold whitespace-nowrap"><span id="totalGuests">10</span> invitados</p>
+              </div>
+              <div class="heat-waves mb-3" aria-hidden="true"></div>
+              <div class="ember-row flex items-end gap-2" aria-label="Intensidad del asado">
+                <span class="rounded-full bg-primary" style="--delay:0s"></span>
+                <span class="rounded-full bg-secondary" style="--delay:.16s"></span>
+                <span class="rounded-full bg-tertiary-fixed-dim" style="--delay:.32s"></span>
+                <span class="rounded-full bg-primary-container" style="--delay:.48s"></span>
+                <span class="rounded-full bg-secondary" style="--delay:.64s"></span>
+              </div>
+              <p id="heatHint" class="mt-3 text-xs text-on-surface-variant font-semibold">Un asado equilibrado, sin exceso ni apuro.</p>
             </div>
-            <p class="text-xs text-on-surface-variant font-semibold text-right"><span id="totalGuests">10</span> comensales en total</p>
-          </div>
-        </section>
-
-        <!-- Budget -->
-        <section class="space-y-4">
-          <h3 class="font-headline font-bold text-lg text-on-surface px-1">Presupuesto estimado</h3>
-          <div class="grid grid-cols-3 gap-3">
-            <button onclick="selectBudget(this,'low')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
-              <span class="text-lg font-bold text-secondary">$</span>
-              <span class="text-xs font-semibold text-on-surface-variant">Apretado</span>
-            </button>
-            <button onclick="selectBudget(this,'mid')" class="budget-btn selected bg-surface-container-lowest py-4 rounded-xl border-2 border-primary/20 flex flex-col items-center gap-1 transition-all active:scale-95">
-              <span class="text-lg font-bold text-primary">$$</span>
-              <span class="text-xs font-semibold text-on-surface-variant">Equilibrado</span>
-            </button>
-            <button onclick="selectBudget(this,'high')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
-              <span class="text-lg font-bold text-secondary">$$$</span>
-              <span class="text-xs font-semibold text-on-surface-variant">Premium</span>
-            </button>
           </div>
         </section>
 
@@ -281,11 +372,23 @@ tailwind.config = {
                   <span class="material-symbols-outlined">set_meal</span>
                 </div>
                 <div>
-                  <span class="block font-bold text-on-surface">Cerdo y Embutidos</span>
-                  <span class="text-xs text-on-surface-variant">Chorizos y pulpa</span>
+                  <span class="block font-bold text-on-surface">Cerdo</span>
+                  <span class="text-xs text-on-surface-variant">Costillar, pulpa y malaya</span>
                 </div>
               </div>
               <input id="check-cerdo" checked type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 cursor-pointer"/>
+            </label>
+            <label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined">outdoor_grill</span>
+                </div>
+                <div>
+                  <span class="block font-bold text-on-surface">Embutidos</span>
+                  <span class="text-xs text-on-surface-variant">Chorizo, longaniza y butifarra</span>
+                </div>
+              </div>
+              <input id="check-embutidos" checked type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 cursor-pointer"/>
             </label>
             <label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
               <div class="flex items-center gap-4">
@@ -302,9 +405,28 @@ tailwind.config = {
           </div>
         </section>
 
+        <!-- Budget -->
+        <section class="space-y-4">
+          <h3 class="font-headline font-bold text-lg text-on-surface px-1">Presupuesto estimado</h3>
+          <div class="grid grid-cols-3 gap-3">
+            <button onclick="selectBudget(this,'low')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
+              <span class="text-lg font-bold text-secondary">$</span>
+              <span class="text-xs font-semibold text-on-surface-variant">Económico</span>
+            </button>
+            <button onclick="selectBudget(this,'mid')" class="budget-btn selected bg-surface-container-lowest py-4 rounded-xl border-2 border-primary/20 flex flex-col items-center gap-1 transition-all active:scale-95">
+              <span class="text-lg font-bold text-primary">$$</span>
+              <span class="text-xs font-semibold text-on-surface-variant">Intermedio</span>
+            </button>
+            <button onclick="selectBudget(this,'high')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
+              <span class="text-lg font-bold text-secondary">$$$</span>
+              <span class="text-xs font-semibold text-on-surface-variant">Premium</span>
+            </button>
+          </div>
+        </section>
+
         <!-- CTA -->
         <div class="pt-2 pb-4">
-          <button onclick="navigate('recomendaciones')" class="w-full py-5 rounded-3xl bg-gradient-to-r from-primary to-primary-container text-white font-bold text-lg shadow-xl shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all">
+          <button onclick="planAsado()" class="w-full py-5 rounded-3xl bg-gradient-to-r from-primary to-primary-container text-white font-bold text-lg shadow-xl shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all">
             Planificar mi asado
           </button>
           <p class="text-center mt-4 text-xs font-semibold text-on-surface-variant opacity-60">
@@ -328,9 +450,10 @@ tailwind.config = {
         <div class="flex flex-col sm:flex-row gap-3 mt-8">
           <div class="flex-1 relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input class="w-full bg-surface-container-highest border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-medium" placeholder="Buscar por nombre o barrio..." type="text"/>
+            <label class="sr-only" for="butcherSearch">Buscar carnicerías</label>
+            <input id="butcherSearch" class="w-full bg-surface-container-highest border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-medium" placeholder="Buscar por nombre o barrio..." type="search"/>
           </div>
-          <button class="bg-surface-container-high px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors">
+          <button onclick="toggleFilterHelp()" class="bg-surface-container-high px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors">
             <span class="material-symbols-outlined">tune</span>
             Filtros
           </button>
@@ -339,11 +462,11 @@ tailwind.config = {
 
       <!-- Chips -->
       <div class="flex gap-3 overflow-x-auto no-scrollbar pb-6">
-        <button onclick="setChip(this)" class="chip active px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Todas</button>
-        <button onclick="setChip(this)" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Premium</button>
-        <button onclick="setChip(this)" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Cerca de mí</button>
-        <button onclick="setChip(this)" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Con Delivery</button>
-        <button onclick="setChip(this)" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Ofertas</button>
+        <button onclick="setChip(this)" data-filter="todas" class="chip active px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Todas</button>
+        <button onclick="setChip(this)" data-filter="premium" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Premium</button>
+        <button onclick="setChip(this)" data-filter="cerca" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Cerca de mí</button>
+        <button onclick="setChip(this)" data-filter="delivery" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Con Delivery</button>
+        <button onclick="setChip(this)" data-filter="ofertas" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Ofertas</button>
       </div>
 
       <!-- Bento Grid -->
@@ -365,7 +488,7 @@ tailwind.config = {
               <h3 class="font-headline text-3xl font-bold tracking-tight">El Rincón del Novillo</h3>
               <div class="text-primary font-bold">$$$</div>
             </div>
-            <p class="text-on-surface-variant mb-5 leading-relaxed">Expertos en cortes premium y madurados. Especialidad en Tomahawk y Entraña.</p>
+            <p class="text-on-surface-variant mb-5 leading-relaxed">Expertos en cortes premium y madurados. Especialidad en Lomo Vetado y Entraña.</p>
             <div class="flex items-center gap-4 mb-6 text-sm font-semibold">
               <div class="flex items-center gap-1 text-secondary">
                 <span class="material-symbols-outlined text-lg">schedule</span>
@@ -376,12 +499,12 @@ tailwind.config = {
                 <span>Las Condes</span>
               </div>
             </div>
-            <div class="mt-auto grid grid-cols-2 gap-3">
-              <button class="bg-surface-container-high text-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all active:scale-95">
+            <div class="mt-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button class="w-full bg-surface-container-high text-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all active:scale-95">
                 <span class="material-symbols-outlined text-lg">chat</span> Chat
               </button>
-              <button class="bg-primary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
-                <span class="material-symbols-outlined text-lg">call</span> Llamar
+              <button onclick="openReservation('El Rincón del Novillo')" class="w-full bg-primary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
+                <span class="material-symbols-outlined text-lg">event_available</span> Reservar
               </button>
             </div>
           </div>
@@ -408,9 +531,9 @@ tailwind.config = {
                 </div>
                 <p class="text-xs text-on-surface-variant">Providencia · Delivery disponible</p>
               </div>
-              <div class="flex gap-2 mt-3">
-                <button class="flex-1 bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
-                <button class="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Llamar</button>
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <button class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
+                <button onclick="openReservation('Carnes La Pampa')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
               </div>
             </div>
           </article>
@@ -434,9 +557,9 @@ tailwind.config = {
                 </div>
                 <p class="text-xs text-on-surface-variant">Ñuñoa · Embutidos y cecinas</p>
               </div>
-              <div class="flex gap-2 mt-3">
-                <button class="flex-1 bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
-                <button class="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Llamar</button>
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <button class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
+                <button onclick="openReservation('Charcutería Don Víctor')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
               </div>
             </div>
           </article>
@@ -458,9 +581,9 @@ tailwind.config = {
                 </div>
                 <p class="text-xs text-on-surface-variant">Maipú · Gran variedad económica</p>
               </div>
-              <div class="flex gap-2 mt-3">
-                <button class="flex-1 bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
-                <button class="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Llamar</button>
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <button class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
+                <button onclick="openReservation('Carnicería El Gaucho')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
               </div>
             </div>
           </article>
@@ -481,14 +604,19 @@ tailwind.config = {
             <h2 class="font-headline text-6xl font-extrabold text-on-surface tracking-tighter mb-3" id="meatKg">5.0 <span class="text-2xl font-bold">kg</span></h2>
             <p class="text-on-surface-variant max-w-xs" id="meatDesc">Total sugerido de carne para tu asado basado en <strong id="meatGuests">10</strong> comensales.</p>
           </div>
-          <!-- Gauge -->
-          <div class="mt-8 flex flex-col gap-2 relative z-10">
-            <div class="flex justify-between text-xs font-bold text-tertiary">
-              <span>Invitados</span>
-              <span>¡Punto Exacto!</span>
+          <!-- Dynamic summary -->
+          <div class="mt-8 grid grid-cols-3 gap-3 relative z-10" id="categorySummary">
+            <div class="bg-surface-container-low rounded-2xl p-3 text-center">
+              <p class="text-xs font-bold text-on-surface-variant">Categorías</p>
+              <p class="font-headline text-xl font-bold text-primary">0</p>
             </div>
-            <div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
-              <div class="h-full bg-primary rounded-full" style="width:85%"></div>
+            <div class="bg-surface-container-low rounded-2xl p-3 text-center">
+              <p class="text-xs font-bold text-on-surface-variant">Cortes</p>
+              <p class="font-headline text-xl font-bold text-primary">0</p>
+            </div>
+            <div class="bg-surface-container-low rounded-2xl p-3 text-center">
+              <p class="text-xs font-bold text-on-surface-variant">Asignado</p>
+              <p class="font-headline text-xl font-bold text-primary">100%</p>
             </div>
           </div>
         </div>
@@ -503,7 +631,8 @@ tailwind.config = {
         </div>
       </section>
 
-      <!-- Cuts Section: rendered dynamically by JS -->
+      <!-- Distribution and cuts sections: rendered dynamically by JS -->
+      <div id="distributionSection"></div>
       <div id="cutsSection"></div>
 
       <!-- Tips Banner -->
@@ -699,6 +828,10 @@ tailwind.config = {
         <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-3 block">Dashboard</span>
         <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-2">Panel del Carnicero</h2>
         <p class="text-on-surface-variant font-medium">Gestiona tu stock, promociones y el crecimiento de tu carnicería.</p>
+        <button onclick="openVerificationForm()" id="verificationBadge" class="mt-4 inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-bold">
+          <span class="material-symbols-outlined text-base">verified</span>
+          Carnicería verificada
+        </button>
       </div>
 
       <!-- Bento Grid -->
@@ -766,7 +899,7 @@ tailwind.config = {
             <h3 class="font-headline text-lg font-bold">Promociones Activas</h3>
             <span class="material-symbols-outlined text-secondary">campaign</span>
           </div>
-          <div class="space-y-4 flex-1">
+          <div id="promoList" class="space-y-4 flex-1">
             <div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm border-l-4 border-primary">
               <p class="text-xs font-bold text-primary uppercase mb-1">Pack Parrillero</p>
               <p class="text-sm font-semibold mb-2">2kg Lomo Vetado + Carbón</p>
@@ -792,7 +925,7 @@ tailwind.config = {
               </div>
             </div>
           </div>
-          <button class="mt-5 w-full py-3 bg-surface-container-high text-on-surface font-bold rounded-xl hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-2">
+          <button onclick="openPromoForm()" class="mt-5 w-full py-3 bg-surface-container-high text-on-surface font-bold rounded-xl hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-sm">add</span>
             Nueva Promo
           </button>
@@ -805,16 +938,17 @@ tailwind.config = {
             <div class="flex gap-3">
               <div class="bg-surface-container px-4 py-2 rounded-full flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">search</span>
-                <input class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32 md:w-48" placeholder="Buscar corte..." type="text"/>
+                <label class="sr-only" for="productSearch">Buscar corte</label>
+                <input id="productSearch" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32 md:w-48" placeholder="Buscar corte..." type="search"/>
               </div>
-              <button class="bg-primary text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+              <button onclick="openProductForm()" class="bg-primary text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
                 <span class="material-symbols-outlined text-sm">restaurant_menu</span>
                 Añadir Corte
               </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Card 1 -->
             <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm group card-lift">
               <div class="h-40 overflow-hidden">
@@ -868,11 +1002,11 @@ tailwind.config = {
               <div class="h-40 overflow-hidden">
                 <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZsdKMtXbbZWkU32z9CU1H4aPvfoOR5VP4djcwPd4ZX5-8JTfgpqVOeZKzE6Qs28zDTUOIZaSq6NKmeMuO8qsFQrawp7ZnKEbEn11SxbDVxEQc6RXGVOif1_v6nzG2322XviTB17nHrGsrHsVrtCU-P4w_HEVLxG6ZcUurYGERcMcE6sW4T9LHmwgVmjFV0zBsPt1J1obAtkPnICrqkZ4VU_-2xUzdLXxR4gWHE1OgcBFBxoRcmjn7YwDOqo8Cn5d8MxaI8vt5ZQE"
-                  alt="Punta Picana"/>
+                  alt="Punta Paleta"/>
               </div>
               <div class="p-5">
                 <div class="flex justify-between items-start mb-2">
-                  <h4 class="font-bold text-lg">Punta Picana</h4>
+                  <h4 class="font-bold text-lg">Punta Paleta</h4>
                   <span class="text-tertiary material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors">edit</span>
                 </div>
                 <div class="flex justify-between items-end">
@@ -888,7 +1022,7 @@ tailwind.config = {
               </div>
             </div>
             <!-- Add Card -->
-            <div class="border-2 border-dashed border-outline-variant/40 rounded-3xl flex flex-col items-center justify-center p-8 bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
+            <div onclick="openProductForm()" role="button" tabindex="0" class="border-2 border-dashed border-outline-variant/40 rounded-3xl flex flex-col items-center justify-center p-8 bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
               <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined text-primary">add_circle</span>
               </div>
@@ -902,6 +1036,20 @@ tailwind.config = {
   </div>
 
 </main>
+
+<div id="toast" class="toast fixed left-1/2 bottom-28 z-[70] -translate-x-1/2 bg-inverse-surface text-white px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold max-w-[calc(100vw-2rem)] text-center" role="status" aria-live="polite"></div>
+
+<div id="appModal" class="modal-backdrop fixed inset-0 z-[80] items-end sm:items-center justify-center bg-black/35 px-4 py-6" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <h3 id="modalTitle" class="font-headline text-2xl font-bold text-on-surface">Acción</h3>
+      <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-primary" aria-label="Cerrar">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div id="modalBody" class="p-6"></div>
+  </div>
+</div>
 
 <!-- ===================== BOTTOM NAV ===================== -->
 <nav class="glass-nav fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 rounded-t-3xl shadow-[0_-4px_24px_rgba(129,9,0,0.07)]">
@@ -924,89 +1072,227 @@ tailwind.config = {
 </nav>
 
 <script>
-  // ---- Cuts data per protein ----
+  // ---- Cuts data per Chilean category and budget tier ----
   const CUTS_DATA = {
     vacuno: {
       label: 'Vacuno',
       icon: 'restaurant',
       accentClass: 'bg-primary/10 text-primary',
       headerColor: 'text-primary',
-      pricePerKg: 11680,
-      kgPerAdult: 0.38,
-      kgPerKid: 0.15,
+      kgPerAdult: 0.34,
+      kgPerKid: 0.13,
       cuts: [
         {
-          name: 'Lomo Vetado',
-          badge: 'El Favorito',
-          badgeStyle: 'bg-primary text-white',
-          difficulty: 'Fácil',
-          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'El rey del asado. Su infiltración de grasa asegura jugosidad y sabor intenso en cada bocado.',
-          tag: 'Ideal para principiantes',
-          tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg'
-        },
-        {
+          id: 'vacuno-huachalomo',
           name: 'Huachalomo',
-          badge: null,
+          tier: 'low',
+          pricePerKg: 8990,
+          badge: 'Barato',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'El huachalomo es un corte chileno tradicional, ubicado entre la cabeza y el lomo vetado, que destaca por ser económico, sabroso y versátil para el asado. Al tener una buena infiltración de grasa, es ideal tanto para la parrilla como para el horno.',
-          tag: 'Gran Relación Precio',
+          desc: 'Corte chileno rendidor, sabroso y accesible. Funciona bien en parrilla si se corta delgado y se cocina con paciencia.',
+          tag: 'Económico',
           tagStyle: 'bg-surface-container-low text-on-surface-variant',
           img: 'https://www.procarne.cl/cdn/shop/files/HuachalomoSeleccionado_1000x1000_34a8e859-f62a-4dcf-b001-89cc49deb628.jpg?v=1716498043&width=416'
         },
         {
+          id: 'vacuno-sobrecostilla',
           name: 'Sobrecostilla',
-          badge: null,
+          tier: 'low',
+          pricePerKg: 9490,
+          badge: 'Rinde',
+          badgeStyle: 'bg-secondary/10 text-secondary',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'La sobrecostilla es un corte de vacuno versátil y económico, ideal para asado a la parrilla o al horno debido a su buena infiltración de grasa y sabor intenso. ',
-          tag: 'Ideal para principiantes',
+          desc: 'Muy usada en Chile para parrilla y horno. Tiene buen sabor, precio amable y tolera bien una cocción lenta.',
+          tag: 'Accesible',
           tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://i.bolder.run/r/czo0MTE4LGc6MTAwMHg/bc83e219/678589-640667-Sobrecostilla.jpg'
+        },
+        {
+          id: 'vacuno-asado-carnicero',
+          name: 'Asado Carnicero',
+          tier: 'mid',
+          pricePerKg: 11990,
+          badge: 'Clásico',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Corte plano y fibroso, típico del asado chileno. Queda muy bien sellado y servido en láminas.',
+          tag: 'Tradicional',
+          tagStyle: 'bg-primary/10 text-primary',
+          img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop'
+        },
+        {
+          id: 'vacuno-punta-paleta',
+          name: 'Punta Paleta',
+          tier: 'mid',
+          pricePerKg: 12990,
+          badge: null,
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Buena relación precio-sabor. Requiere limpiar nervio central si se busca una experiencia más fina.',
+          tag: 'Buen equilibrio',
+          tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg'
+        },
+        {
+          id: 'vacuno-lomo-vetado',
+          name: 'Lomo Vetado',
+          tier: 'high',
+          pricePerKg: 18990,
+          badge: 'Premium',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Favorito para parrilla por su grasa infiltrada, jugosidad y sabor intenso. Ideal para un asado más premium.',
+          tag: 'Más jugoso',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg'
+        },
+        {
+          id: 'vacuno-lomo-liso',
+          name: 'Lomo Liso',
+          tier: 'high',
+          pricePerKg: 17490,
+          badge: 'Premium',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Corte magro, blando y parejo. Funciona muy bien para porciones limpias y cocción controlada.',
+          tag: 'Corte fino',
+          tagStyle: 'bg-primary/10 text-primary',
+          img: 'https://images.unsplash.com/photo-1603048297172-c92544798d5a?q=80&w=1200&auto=format&fit=crop'
         }
       ]
     },
     cerdo: {
-      label: 'Cerdo y Embutidos',
+      label: 'Cerdo',
       icon: 'set_meal',
       accentClass: 'bg-secondary/10 text-secondary',
       headerColor: 'text-secondary',
-      pricePerKg: 8900,
-      kgPerAdult: 0.25,
-      kgPerKid: 0.10,
+      kgPerAdult: 0.22,
+      kgPerKid: 0.09,
       cuts: [
         {
+          id: 'cerdo-pulpa-paleta',
+          name: 'Pulpa Paleta',
+          tier: 'low',
+          pricePerKg: 6990,
+          badge: 'Barato',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Corte económico y versátil. Sirve para parrilla en trozos o medallones, y rinde muy bien en grupos grandes.',
+          tag: 'Rendidor',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://i5.walmartimages.cl/asr/57656ab0-460f-4234-ac02-1fcc0e6c7c41.4bd9973e8d766ccad9cead210d648e68.jpeg?null'
+        },
+        {
+          id: 'cerdo-pulpa-pierna',
+          name: 'Pulpa Pierna',
+          tier: 'low',
+          pricePerKg: 7490,
+          badge: null,
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Opción magra y accesible. Conviene marinarla para sumar jugosidad antes de la parrilla.',
+          tag: 'Accesible',
+          tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://i5.walmartimages.cl/asr/57656ab0-460f-4234-ac02-1fcc0e6c7c41.4bd9973e8d766ccad9cead210d648e68.jpeg?null'
+        },
+        {
+          id: 'cerdo-costillar',
           name: 'Costillar de Cerdo',
+          tier: 'mid',
+          pricePerKg: 9990,
           badge: 'Imperdible',
           badgeStyle: 'bg-secondary text-white',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'El costillar bien marinado es la estrella de los asados mixtos. Se cocina lento y queda jugosísimo.',
+          desc: 'El costillar bien marinado es una estrella de los asados mixtos. Se cocina lento y queda jugoso.',
           tag: 'Sabor intenso',
           tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCXm6oS1osk0fVgU2wwGupfSh3nT3jbfOHt7k4vz2AWYPYIFSm-9EUlEzojTNHFR-B1gyzbsGur446qWAeDfURhdtULn-9jon1uO1lCv0VwBXK482mrNTK0zP26YFfJSG-rLMWXtR4AWGYLmJdpZkK0NDkgRSstK2KZLjmcI4wzve00PAFtkWiTvtmgx73DGONi7pBVCR31Z1nYuSolg3wVNu-A1AnFKvn8hHS_qyLi5XI9B8O6FyfL5VMTv11iTcmKVoG7XC3LvC4'
         },
         {
-          name: 'Chorizo Parrillero',
+          id: 'cerdo-malaya',
+          name: 'Malaya de Cerdo',
+          tier: 'mid',
+          pricePerKg: 10990,
           badge: null,
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'El infaltable para el picoteo. Se cocina rápido y es perfecto para entretener a los invitados mientras espera la carne.',
-          tag: 'Picoteo perfecto',
+          desc: 'Muy parrillera y sabrosa. Se asa rápido, queda crocante y combina bien con sal gruesa y limón.',
+          tag: 'Parrillera',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://supercerdo.cl/wp-content/uploads/2023/02/malaya.jpg'
+        },
+        {
+          id: 'cerdo-solomillo',
+          name: 'Solomillo de Cerdo',
+          tier: 'high',
+          pricePerKg: 13990,
+          badge: 'Premium',
+          badgeStyle: 'bg-secondary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Corte más fino y magro. Necesita cocción cuidada para no secarse, pero queda muy elegante.',
+          tag: 'Corte fino',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop'
+        }
+      ]
+    },
+    embutidos: {
+      label: 'Embutidos',
+      icon: 'outdoor_grill',
+      accentClass: 'bg-secondary/10 text-secondary',
+      headerColor: 'text-secondary',
+      kgPerAdult: 0.12,
+      kgPerKid: 0.06,
+      cuts: [
+        {
+          id: 'embutidos-prieta',
+          name: 'Prieta',
+          tier: 'low',
+          pricePerKg: 6490,
+          badge: 'Barato',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Clásico acompañamiento de parrilla chilena. Intenso, económico y pensado para porciones pequeñas.',
+          tag: 'Acompañamiento',
           tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://images.unsplash.com/photo-1599819055803-717bba43890f?q=80&w=1200&auto=format&fit=crop'
+        },
+        {
+          id: 'embutidos-chorizo',
+          name: 'Chorizo Parrillero',
+          tier: 'mid',
+          pricePerKg: 8490,
+          badge: null,
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Ideal para choripanes y picoteo inicial. Suma grasa, sabor y rapidez al asado.',
+          tag: 'Picoteo',
+          tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://b4139586.smushcdn.com/4139586/wp-content/uploads/2021/11/puro-cerdo.jpeg?lossy=2&strip=0&webp=1'
         },
         {
-          name: 'Pulpa de Cerdo',
-          badge: null,
+          id: 'embutidos-longaniza',
+          name: 'Longaniza',
+          tier: 'high',
+          pricePerKg: 10990,
+          badge: 'Premium',
+          badgeStyle: 'bg-secondary text-white',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Versátil y económica. Ideal en trozos grandes para cocción indirecta o en cortes más delgados para parrilla directa.',
-          tag: 'Económico y rendidor',
+          desc: 'Longaniza artesanal o de Chillán para un asado con carácter chileno. Mejor en fuego medio.',
+          tag: 'Sello chileno',
           tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://i5.walmartimages.cl/asr/57656ab0-460f-4234-ac02-1fcc0e6c7c41.4bd9973e8d766ccad9cead210d648e68.jpeg?null'
+          img: 'https://images.unsplash.com/photo-1599819055803-717bba43890f?q=80&w=1200&auto=format&fit=crop'
         }
       ]
     },
@@ -1015,40 +1301,320 @@ tailwind.config = {
       icon: 'egg',
       accentClass: 'bg-tertiary/10 text-tertiary',
       headerColor: 'text-tertiary',
-      pricePerKg: 4200,
-      kgPerAdult: 0.30,
-      kgPerKid: 0.15,
+      kgPerAdult: 0.24,
+      kgPerKid: 0.12,
       cuts: [
         {
-          name: 'Pechuga Entera',
-          badge: 'Saludable',
-          badgeStyle: 'bg-tertiary text-white',
-          difficulty: 'Medio',
-          diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'La opción más magra. Se recomienda marinar por al menos 2 horas antes y cocinar a fuego medio indirecto.',
-          tag: 'Alto en proteína',
-          tagStyle: 'bg-tertiary/10 text-tertiary',
-          img: 'https://granjamagdalena.cl/cdn/shop/files/pechuga-de-pollo-entera-con-hueso-750-a-900-g-pollos-100-natural-granja-magdalena-758281.jpg?v=1741202844'
-        },
-        {
+          id: 'pollo-tutos',
           name: 'Tutos',
-          badge: null,
+          tier: 'low',
+          pricePerKg: 3990,
+          badge: 'Barato',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'La parte más jugosa del pollo. El hueso aporta sabor durante la cocción y son mucho más tolerantes al fuego que la pechuga.',
-          tag: 'Más fácil de asar',
+          desc: 'Jugosos, económicos y fáciles de asar. El hueso ayuda a mantener sabor y humedad.',
+          tag: 'Fácil',
           tagStyle: 'bg-surface-container-low text-on-surface-variant',
           img: 'https://granjamagdalena.cl/cdn/shop/products/trutros-largos-de-pollo-800-g-aprox-pollos-100-natural-granja-magdalena-763596.jpg?v=1742226083'
         },
         {
+          id: 'pollo-alitas',
           name: 'Alitas Adobadas',
+          tier: 'mid',
+          pricePerKg: 4990,
           badge: null,
           difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'El snack favorito del asado. Adobadas con ajo, limón y paprika, quedan crujientes por fuera y jugosas por dentro.',
-          tag: 'Favorito de los niños',
+          desc: 'Buenas para picoteo y grupos con niños. Quedan doradas y crujientes si se cocinan sin apuro.',
+          tag: 'Picoteo',
           tagStyle: 'bg-tertiary/10 text-tertiary',
           img: 'https://thecookinglab.es/wp-content/uploads/2024/09/Alitas-de-pollo-en-freidora-de-aire-1.jpg'
+        },
+        {
+          id: 'pollo-pechuga',
+          name: 'Pechuga Entera',
+          tier: 'high',
+          pricePerKg: 6490,
+          badge: 'Magra',
+          badgeStyle: 'bg-tertiary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Opción magra y limpia. Conviene marinar y cocinar a fuego medio indirecto para mantener jugosidad.',
+          tag: 'Alto en proteína',
+          tagStyle: 'bg-tertiary/10 text-tertiary',
+          img: 'https://granjamagdalena.cl/cdn/shop/files/pechuga-de-pollo-entera-con-hueso-750-a-900-g-pollos-100-natural-granja-magdalena-758281.jpg?v=1741202844'
+        }
+      ]
+    }
+  };
+
+  // ---- Chilean asado cuts used by the planner ----
+  // Tiers follow practical Chilean retail ranges: economical keeps accessible
+  // crowd cuts, intermediate groups everyday parrilla upgrades, premium keeps
+  // the cuts with consistently higher kilo prices.
+  const APP_CUTS_DATA = {
+    vacuno: {
+      label: 'Vacuno',
+      icon: 'restaurant',
+      accentClass: 'bg-primary/10 text-primary',
+      headerColor: 'text-primary',
+      kgPerAdult: 0.34,
+      kgPerKid: 0.13,
+      cuts: [
+        {
+          id: 'vacuno-huachalomo',
+          name: 'Huachalomo',
+          tier: 'low',
+          pricePerKg: 8990,
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Corte chileno rendidor, sabroso y accesible. Funciona bien a la parrilla si se corta delgado y se cocina con paciencia.',
+          tag: 'Rendidor',
+          tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://www.procarne.cl/cdn/shop/files/HuachalomoSeleccionado_1000x1000_34a8e859-f62a-4dcf-b001-89cc49deb628.jpg?v=1716498043&width=416'
+        },
+        {
+          id: 'vacuno-sobrecostilla',
+          name: 'Sobrecostilla',
+          tier: 'low',
+          pricePerKg: 9690,
+          badge: 'Económico',
+          badgeStyle: 'bg-secondary/10 text-secondary',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Clásico chileno para parrilla, horno y cocciones largas. Tiene buen sabor y precio amable.',
+          tag: 'Accesible',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://i.bolder.run/r/czo0MTE4LGc6MTAwMHg/bc83e219/678589-640667-Sobrecostilla.jpg'
+        },
+        {
+          id: 'vacuno-asado-carnicero',
+          name: 'Asado Carnicero',
+          tier: 'low',
+          pricePerKg: 9690,
+          badge: 'Económico',
+          badgeStyle: 'bg-primary/10 text-primary',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Corte popular para asado chileno, de buena relación precio-sabor. Conviene servirlo en láminas.',
+          tag: 'Tradicional',
+          tagStyle: 'bg-primary/10 text-primary',
+          img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop'
+        },
+        {
+          id: 'vacuno-asiento',
+          name: 'Asiento',
+          tier: 'mid',
+          pricePerKg: 12990,
+          badge: 'Intermedio',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Corte limpio y versátil, más fino que los cortes económicos y todavía razonable para una parrilla familiar.',
+          tag: 'Buen equilibrio',
+          tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop'
+        },
+        {
+          id: 'vacuno-lomo-vetado',
+          name: 'Lomo Vetado',
+          tier: 'high',
+          pricePerKg: 24990,
+          badge: 'Premium',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Favorito parrillero por su grasa infiltrada, jugosidad y sabor intenso. Ideal para un asado premium.',
+          tag: 'Jugoso',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg'
+        },
+        {
+          id: 'vacuno-entrana',
+          name: 'Entraña',
+          tier: 'high',
+          pricePerKg: 27990,
+          badge: 'Premium',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Corte delgado, sabroso y muy buscado para parrilla. Se cocina rápido y conviene servirlo jugoso.',
+          tag: 'Muy parrillera',
+          tagStyle: 'bg-primary/10 text-primary',
+          img: 'https://images.unsplash.com/photo-1603048297172-c92544798d5a?q=80&w=1200&auto=format&fit=crop'
+        },
+        {
+          id: 'vacuno-filete',
+          name: 'Filete',
+          tier: 'high',
+          pricePerKg: 29990,
+          badge: 'Premium',
+          badgeStyle: 'bg-primary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Corte muy blando y de precio alto. Mejor para un asado especial, con cocción precisa y porciones controladas.',
+          tag: 'Corte fino',
+          tagStyle: 'bg-primary/10 text-primary',
+          img: 'https://images.unsplash.com/photo-1603048297172-c92544798d5a?q=80&w=1200&auto=format&fit=crop'
+        }
+      ]
+    },
+    cerdo: {
+      label: 'Cerdo',
+      icon: 'set_meal',
+      accentClass: 'bg-secondary/10 text-secondary',
+      headerColor: 'text-secondary',
+      kgPerAdult: 0.22,
+      kgPerKid: 0.09,
+      cuts: [
+        {
+          id: 'cerdo-pulpa',
+          name: 'Pulpa de Cerdo',
+          tier: 'low',
+          pricePerKg: 6490,
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Corte económico y versátil. Rinde muy bien para grupos grandes y acepta marinados simples.',
+          tag: 'Rendidor',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://i5.walmartimages.cl/asr/57656ab0-460f-4234-ac02-1fcc0e6c7c41.4bd9973e8d766ccad9cead210d648e68.jpeg?null'
+        },
+        {
+          id: 'cerdo-costillar',
+          name: 'Costillar de Cerdo',
+          tier: 'mid',
+          pricePerKg: 10990,
+          badge: 'Intermedio',
+          badgeStyle: 'bg-secondary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Estrella de los asados mixtos. Se cocina lento, se marina bien y aporta mucho sabor.',
+          tag: 'Sabor intenso',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCXm6oS1osk0fVgU2wwGupfSh3nT3jbfOHt7k4vz2AWYPYIFSm-9EUlEzojTNHFR-B1gyzbsGur446qWAeDfURhdtULn-9jon1uO1lCv0VwBXK482mrNTK0zP26YFfJSG-rLMWXtR4AWGYLmJdpZkK0NDkgRSstK2KZLjmcI4wzve00PAFtkWiTvtmgx73DGONi7pBVCR31Z1nYuSolg3wVNu-A1AnFKvn8hHS_qyLi5XI9B8O6FyfL5VMTv11iTcmKVoG7XC3LvC4'
+        },
+        {
+          id: 'cerdo-malaya',
+          name: 'Malaya de Cerdo',
+          tier: 'high',
+          pricePerKg: 13990,
+          badge: 'Premium',
+          badgeStyle: 'bg-secondary text-white',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Muy parrillera, sabrosa y crocante. Sube de nivel por demanda y precio frente a cortes económicos de cerdo.',
+          tag: 'Parrillera',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://supercerdo.cl/wp-content/uploads/2023/02/malaya.jpg'
+        }
+      ]
+    },
+    embutidos: {
+      label: 'Embutidos',
+      icon: 'outdoor_grill',
+      accentClass: 'bg-secondary/10 text-secondary',
+      headerColor: 'text-secondary',
+      kgPerAdult: 0.12,
+      kgPerKid: 0.06,
+      cuts: [
+        {
+          id: 'embutidos-chorizo',
+          name: 'Chorizo Parrillero',
+          tier: 'mid',
+          pricePerKg: 9490,
+          badge: 'Intermedio',
+          badgeStyle: 'bg-secondary/10 text-secondary',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Base del choripán y del picoteo inicial. Suma grasa, sabor y rapidez al asado.',
+          tag: 'Picoteo',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://b4139586.smushcdn.com/4139586/wp-content/uploads/2021/11/puro-cerdo.jpeg?lossy=2&strip=0&webp=1'
+        },
+        {
+          id: 'embutidos-longaniza',
+          name: 'Longaniza / Longa Sureña',
+          tier: 'mid',
+          pricePerKg: 10990,
+          badge: 'Intermedio',
+          badgeStyle: 'bg-secondary/10 text-secondary',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Longaniza o longa sureña para un asado con carácter chileno. Mejor a fuego medio para dorar sin reventar.',
+          tag: 'Sello chileno',
+          tagStyle: 'bg-secondary/10 text-secondary',
+          img: 'https://images.unsplash.com/photo-1599819055803-717bba43890f?q=80&w=1200&auto=format&fit=crop'
+        },
+        {
+          id: 'embutidos-butifarra',
+          name: 'Butifarra',
+          tier: 'mid',
+          pricePerKg: 9990,
+          badge: 'Intermedio',
+          badgeStyle: 'bg-secondary/10 text-secondary',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Embutido parrillero suave y especiado. Buena alternativa para variar el choripán clásico.',
+          tag: 'Parrillera',
+          tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://images.unsplash.com/photo-1599819055803-717bba43890f?q=80&w=1200&auto=format&fit=crop'
+        }
+      ]
+    },
+    pollo: {
+      label: 'Pollo',
+      icon: 'egg',
+      accentClass: 'bg-tertiary/10 text-tertiary',
+      headerColor: 'text-tertiary',
+      kgPerAdult: 0.24,
+      kgPerKid: 0.12,
+      cuts: [
+        {
+          id: 'pollo-tutos',
+          name: 'Tutos',
+          tier: 'low',
+          pricePerKg: 3990,
+          badge: 'Económico',
+          badgeStyle: 'bg-surface-container-high text-on-surface-variant',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Jugosos, económicos y fáciles de asar. Buena opción para bajar costo sin salir de la parrilla.',
+          tag: 'Fácil',
+          tagStyle: 'bg-surface-container-low text-on-surface-variant',
+          img: 'https://granjamagdalena.cl/cdn/shop/products/trutros-largos-de-pollo-800-g-aprox-pollos-100-natural-granja-magdalena-763596.jpg?v=1742226083'
+        },
+        {
+          id: 'pollo-alitas',
+          name: 'Alitas Adobadas',
+          tier: 'mid',
+          pricePerKg: 4990,
+          badge: 'Intermedio',
+          badgeStyle: 'bg-tertiary/10 text-tertiary',
+          difficulty: 'Fácil',
+          diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+          desc: 'Buenas para picoteo y grupos con niños. Quedan doradas y crujientes si se cocinan sin apuro.',
+          tag: 'Picoteo',
+          tagStyle: 'bg-tertiary/10 text-tertiary',
+          img: 'https://thecookinglab.es/wp-content/uploads/2024/09/Alitas-de-pollo-en-freidora-de-aire-1.jpg'
+        },
+        {
+          id: 'pollo-pechuga',
+          name: 'Pechuga Entera',
+          tier: 'high',
+          pricePerKg: 6490,
+          badge: 'Premium',
+          badgeStyle: 'bg-tertiary text-white',
+          difficulty: 'Medio',
+          diffStyle: 'bg-surface-container-high text-on-surface-variant',
+          desc: 'Opción magra y limpia. Conviene marinar y cocinar a fuego medio indirecto para mantener jugosidad.',
+          tag: 'Alto en proteína',
+          tagStyle: 'bg-tertiary/10 text-tertiary',
+          img: 'https://granjamagdalena.cl/cdn/shop/files/pechuga-de-pollo-entera-con-hueso-750-a-900-g-pollos-100-natural-granja-magdalena-758281.jpg?v=1741202844'
         }
       ]
     }
@@ -1056,13 +1622,27 @@ tailwind.config = {
 
   // ---- State ----
   const counts = { men: 4, women: 4, kids: 2 };
+  const budgetLabels = { low: 'económico', mid: 'intermedio', high: 'premium' };
+  const tierLabels = { low: 'económicos', mid: 'intermedios', high: 'premium' };
+  let selectedBudget = 'mid';
+  let activeButcherFilter = 'todas';
   let currentPage = 'inicio';
   let history = ['inicio'];
+  let toastTimer = null;
+  let cutDistribution = {};
+  let lastCutSignature = '';
+  let lastPlanResults = [];
+  let selectedButcher = null;
+  const chatHistory = {};
+  const reservations = [];
 
   // ---- Navigation ----
-  function navigate(page) {
-    document.getElementById('screen-' + currentPage).classList.remove('active');
-    document.getElementById('screen-' + page).classList.add('active');
+  function navigate(page, options = {}) {
+    const nextScreen = document.getElementById('screen-' + page);
+    const currentScreen = document.getElementById('screen-' + currentPage);
+    if (!nextScreen) return;
+    if (currentScreen) currentScreen.classList.remove('active');
+    nextScreen.classList.add('active');
     
     // Update nav pills
     document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
@@ -1076,7 +1656,10 @@ tailwind.config = {
     });
 
     // Back button
-    if (page !== 'inicio') history.push(page);
+    if (options.pushHistory !== false && page !== currentPage) {
+      if (page === 'inicio') history = ['inicio'];
+      else if (history[history.length - 1] !== page) history.push(page);
+    }
     document.getElementById('backBtn').classList.toggle('hidden', page === 'inicio');
 
     // Scroll to top
@@ -1089,9 +1672,9 @@ tailwind.config = {
   }
 
   function goBack() {
-    history.pop();
+    if (history.length > 1) history.pop();
     const prev = history[history.length - 1] || 'inicio';
-    navigate(prev);
+    navigate(prev, { pushHistory: false });
   }
 
   // ---- Guest counters ----
@@ -1104,9 +1687,27 @@ tailwind.config = {
   function updateGauge() {
     const total = counts.men + counts.women + counts.kids;
     document.getElementById('totalGuests').textContent = total;
-    const pct = Math.min(100, Math.max(5, (total / 15) * 100));
-    document.getElementById('gaugeFill').style.width = pct + '%';
-    document.getElementById('gaugeLabel').textContent = total === 0 ? 'Sin invitados' : total <= 5 ? 'Asado íntimo' : total <= 10 ? '¡Punto Exacto!' : '¡Gran Asado!';
+    const intensity = Math.min(1, total / 16);
+    const heat = document.getElementById('guestHeat');
+    const label = document.getElementById('heatLabel');
+    const hint = document.getElementById('heatHint');
+    if (!heat || !label || !hint) return;
+    heat.style.setProperty('--heat-scale', (0.58 + intensity * 0.48).toFixed(2));
+    heat.style.setProperty('--core-scale', (0.46 + intensity * 0.42).toFixed(2));
+    heat.style.setProperty('--heat-opacity', (0.58 + intensity * 0.36).toFixed(2));
+    heat.style.setProperty('--ember-opacity', (0.34 + intensity * 0.5).toFixed(2));
+    heat.style.setProperty('--ember-size', (0.36 + intensity * 0.34).toFixed(2) + 'rem');
+    heat.style.setProperty('--heat-width', Math.round(28 + intensity * 72) + '%');
+    heat.style.setProperty('--glow-opacity', (0.32 + intensity * 0.46).toFixed(2));
+    heat.style.setProperty('--glow-scale', (0.72 + intensity * 0.48).toFixed(2));
+    label.textContent = total === 0 ? 'Brasas apagadas' : total <= 5 ? 'Fuego íntimo' : total <= 10 ? 'Brasas listas' : 'Parrilla intensa';
+    hint.textContent = total === 0
+      ? 'Agrega invitados para encender la planificación.'
+      : total <= 5
+        ? 'Pocas personas, porciones medidas y fuego suave.'
+        : total <= 10
+          ? 'Un asado equilibrado, sin exceso ni apuro.'
+          : 'Grupo grande: conviene asegurar variedad y margen.';
   }
 
   function buildCutCard(cut) {
@@ -1122,47 +1723,136 @@ tailwind.config = {
             <span class="${cut.diffStyle} text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase">${cut.difficulty}</span>
           </div>
           <p class="text-sm text-on-surface-variant mb-5 leading-relaxed">${cut.desc}</p>
-          <div class="mt-auto">
+          <div class="mt-auto flex items-center justify-between gap-3">
             <span class="${cut.tagStyle} font-bold text-xs px-3 py-1 rounded-full">${cut.tag}</span>
+            <span class="text-xs font-extrabold text-primary">${money(cut.pricePerKg)}/kg</span>
           </div>
         </div>
       </div>`;
+  }
+
+  function getSelectedProteins() {
+    return ['vacuno', 'cerdo', 'embutidos', 'pollo'].filter(key => document.getElementById('check-' + key)?.checked);
+  }
+
+  function getRecommendedCuts(selected) {
+    return selected.flatMap(key => {
+      const category = APP_CUTS_DATA[key];
+      return category.cuts
+        .filter(cut => cut.tier === selectedBudget)
+        .map(cut => ({ ...cut, categoryKey: key, categoryLabel: category.label, categoryIcon: category.icon, accentClass: category.accentClass }));
+    });
+  }
+
+  function initializeDistribution(cuts) {
+    const signature = cuts.map(cut => cut.id).join('|') + ':' + selectedBudget;
+    if (signature === lastCutSignature && cuts.every(cut => cutDistribution[cut.id] !== undefined)) return;
+    lastCutSignature = signature;
+    cutDistribution = {};
+    if (cuts.length === 0) return;
+    const base = Math.floor(100 / cuts.length);
+    let remainder = 100 - (base * cuts.length);
+    cuts.forEach((cut, index) => {
+      cutDistribution[cut.id] = base + (index < remainder ? 1 : 0);
+    });
+  }
+
+  function rebalanceDistribution(cutId, nextValue) {
+    const ids = Object.keys(cutDistribution);
+    if (ids.length === 1) {
+      cutDistribution[cutId] = 100;
+      return;
+    }
+    const value = Math.max(0, Math.min(100, Math.round(Number(nextValue) || 0)));
+    const others = ids.filter(id => id !== cutId);
+    const remaining = 100 - value;
+    const previousOtherTotal = others.reduce((sum, id) => sum + cutDistribution[id], 0);
+    cutDistribution[cutId] = value;
+
+    if (previousOtherTotal <= 0) {
+      const base = Math.floor(remaining / others.length);
+      let remainder = remaining - (base * others.length);
+      others.forEach((id, index) => {
+        cutDistribution[id] = base + (index < remainder ? 1 : 0);
+      });
+      return;
+    }
+
+    const scaled = others.map(id => {
+      const raw = (cutDistribution[id] / previousOtherTotal) * remaining;
+      return { id, value: Math.floor(raw), fraction: raw - Math.floor(raw) };
+    });
+    let used = scaled.reduce((sum, item) => sum + item.value, 0);
+    scaled.sort((a, b) => b.fraction - a.fraction);
+    scaled.forEach(item => {
+      if (used < remaining) {
+        item.value += 1;
+        used += 1;
+      }
+      cutDistribution[item.id] = item.value;
+    });
+  }
+
+  function onCutSlider(cutId, value) {
+    rebalanceDistribution(cutId, value);
+    updateRecomendaciones();
   }
 
   function updateRecomendaciones() {
     const adults = counts.men + counts.women;
     const kids = counts.kids;
     const total = adults + kids;
+    const selected = getSelectedProteins();
+    const cuts = getRecommendedCuts(selected);
+    initializeDistribution(cuts);
 
-    const vacunoOn = document.getElementById('check-vacuno').checked;
-    const cerdoOn  = document.getElementById('check-cerdo').checked;
-    const polloOn  = document.getElementById('check-pollo').checked;
-
-    const selected = [];
-    if (vacunoOn) selected.push('vacuno');
-    if (cerdoOn)  selected.push('cerdo');
-    if (polloOn)  selected.push('pollo');
-
-    // Compute kg and cost
-    let totalKg = 0, totalCost = 0;
+    let totalKg = 0;
+    const plannedByCategory = {};
     selected.forEach(key => {
-      const d = CUTS_DATA[key];
-      const kg = (adults * d.kgPerAdult) + (kids * d.kgPerKid);
-      totalKg  += kg;
-      totalCost += kg * d.pricePerKg;
+      const category = APP_CUTS_DATA[key];
+      const kg = (adults * category.kgPerAdult) + (kids * category.kgPerKid);
+      totalKg += kg;
+      plannedByCategory[key] = { label: category.label, kg, total: 0 };
     });
+
+    const cutResults = cuts.map(cut => {
+      const percent = cutDistribution[cut.id] || 0;
+      const kg = totalKg * (percent / 100);
+      const cost = kg * cut.pricePerKg;
+      if (plannedByCategory[cut.categoryKey]) plannedByCategory[cut.categoryKey].total += kg;
+      return { ...cut, percent, kg, cost };
+    });
+    lastPlanResults = cutResults;
+    const totalCost = cutResults.reduce((sum, cut) => sum + cut.cost, 0);
 
     document.getElementById('meatKg').innerHTML = totalKg > 0
       ? totalKg.toFixed(1) + ' <span class="text-2xl font-bold">kg</span>'
       : '— <span class="text-2xl font-bold">kg</span>';
-    document.getElementById('meatGuests').textContent = total;
     document.getElementById('meatCost').textContent = totalCost > 0
       ? '$' + Math.round(totalCost).toLocaleString('es-CL')
       : '$0';
+    document.getElementById('meatDesc').innerHTML = totalKg > 0
+      ? `Total sugerido para <strong id="meatGuests">${total}</strong> comensales con cortes ${tierLabels[selectedBudget]}.`
+      : `Total sugerido de carne para <strong id="meatGuests">${total}</strong> comensales.`;
+    document.getElementById('categorySummary').innerHTML = `
+      <div class="bg-surface-container-low rounded-2xl p-3 text-center">
+        <p class="text-xs font-bold text-on-surface-variant">Categorías</p>
+        <p class="font-headline text-xl font-bold text-primary">${selected.length}</p>
+      </div>
+      <div class="bg-surface-container-low rounded-2xl p-3 text-center">
+        <p class="text-xs font-bold text-on-surface-variant">Cortes</p>
+        <p class="font-headline text-xl font-bold text-primary">${cuts.length}</p>
+      </div>
+      <div class="bg-surface-container-low rounded-2xl p-3 text-center">
+        <p class="text-xs font-bold text-on-surface-variant">Asignado</p>
+        <p class="font-headline text-xl font-bold text-primary">${Object.values(cutDistribution).reduce((a, b) => a + b, 0)}%</p>
+      </div>`;
 
     // Render cuts sections
     const container = document.getElementById('cutsSection');
+    const distribution = document.getElementById('distributionSection');
     if (selected.length === 0) {
+      distribution.innerHTML = '';
       container.innerHTML = `
         <section class="flex flex-col items-center justify-center text-center py-16 gap-4">
           <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center">
@@ -1177,9 +1867,72 @@ tailwind.config = {
       return;
     }
 
+    if (cuts.length === 0) {
+      distribution.innerHTML = '';
+      container.innerHTML = `
+        <section class="flex flex-col items-center justify-center text-center py-16 gap-4">
+          <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl text-on-surface-variant">filter_alt_off</span>
+          </div>
+          <h3 class="font-headline text-xl font-bold text-on-surface">Sin cortes para ese filtro</h3>
+          <p class="text-on-surface-variant text-sm max-w-sm">Cambia el presupuesto o selecciona otra proteína para ver cortes disponibles.</p>
+          <button onclick="navigate('inicio')" class="mt-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">
+            Ajustar preferencias
+          </button>
+        </section>`;
+      return;
+    }
+
+    const categoryRows = Object.values(plannedByCategory)
+      .filter(row => row.total > 0)
+      .map(row => `
+        <div class="bg-surface-container-lowest rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase text-on-surface-variant">${row.label}</p>
+          <p class="font-headline text-2xl font-bold text-primary">${row.total.toFixed(1)} kg</p>
+        </div>`).join('');
+
+    distribution.innerHTML = `
+      <section class="bg-surface-container-low rounded-3xl p-6 md:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 text-primary font-bold">
+              <span class="material-symbols-outlined">tune</span>
+              <span class="uppercase tracking-widest text-xs">Distribución manual</span>
+            </div>
+            <h3 class="font-headline text-3xl font-extrabold mt-2">Reparte tus cortes</h3>
+            <p class="text-sm text-on-surface-variant mt-2 max-w-2xl">Los sliders siempre suman 100%. Al subir un corte, los demás se reajustan para no pasarse.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-2xl px-4 py-3 text-right">
+            <p class="text-xs font-bold text-on-surface-variant uppercase">Total distribuido</p>
+            <p class="font-headline text-2xl font-bold text-primary">100%</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          ${cutResults.map(cut => `
+            <div class="bg-surface-container-lowest rounded-2xl p-4">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div>
+                  <p class="font-bold text-on-surface">${cut.name}</p>
+                  <p class="text-xs text-on-surface-variant">${cut.categoryLabel} · ${money(cut.pricePerKg)}/kg</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-headline text-xl font-bold text-primary">${cut.kg.toFixed(1)} kg</p>
+                  <p class="text-xs font-bold text-on-surface-variant">${cut.percent}%</p>
+                </div>
+              </div>
+              <input class="cut-slider w-full" type="range" min="0" max="100" value="${cut.percent}" oninput="onCutSlider('${cut.id}', this.value)" aria-label="Porcentaje de ${cut.name}">
+            </div>`).join('')}
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          ${categoryRows}
+        </div>
+      </section>`;
+
     let html = '';
     selected.forEach(key => {
-      const d = CUTS_DATA[key];
+      const d = APP_CUTS_DATA[key];
+      const filteredCuts = cutResults.filter(cut => cut.categoryKey === key);
+      if (filteredCuts.length === 0) return;
       html += `
         <section class="space-y-5" style="animation: fadeSlide 0.35s ease">
           <div class="flex items-center gap-3 pt-2">
@@ -1188,27 +1941,474 @@ tailwind.config = {
             </div>
             <div>
               <h2 class="font-headline text-2xl font-extrabold tracking-tight text-on-surface">${d.label}</h2>
-              <p class="text-on-surface-variant text-xs mt-0.5">Cortes seleccionados · ${((adults * d.kgPerAdult) + (kids * d.kgPerKid)).toFixed(1)} kg estimados</p>
+              <p class="text-on-surface-variant text-xs mt-0.5">Cortes ${tierLabels[selectedBudget]} · ${(plannedByCategory[key]?.total || 0).toFixed(1)} kg asignados</p>
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            ${d.cuts.map(buildCutCard).join('')}
+            ${filteredCuts.map(buildCutCard).join('')}
           </div>
         </section>`;
     });
     container.innerHTML = html;
   }
 
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  function planAsado() {
+    const total = counts.men + counts.women + counts.kids;
+    if (total === 0) {
+      showToast('Agrega al menos un invitado para calcular tu asado.');
+      return;
+    }
+    if (getSelectedProteins().length === 0) {
+      showToast('Elige al menos una proteína para recibir recomendaciones.');
+      return;
+    }
+    navigate('recomendaciones');
+  }
+
+  function openModal(title, bodyHtml) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = bodyHtml;
+    document.getElementById('appModal').classList.add('open');
+    const firstField = document.querySelector('#modalBody input, #modalBody button');
+    if (firstField) setTimeout(() => firstField.focus(), 30);
+  }
+
+  function closeModal() {
+    document.getElementById('appModal').classList.remove('open');
+  }
+
+  document.getElementById('appModal').addEventListener('click', (event) => {
+    if (event.target.id === 'appModal') closeModal();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeModal();
+  });
+
   // ---- Budget selection ----
-  function selectBudget(btn) {
+  function selectBudget(btn, value = 'mid') {
     document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    selectedBudget = value;
+    lastCutSignature = '';
+    showToast(`Presupuesto ${budgetLabels[value]} aplicado: se mostrarán cortes ${tierLabels[value]}.`);
+    if (currentPage === 'recomendaciones') updateRecomendaciones();
   }
 
   // ---- Chips ----
   function setChip(btn) {
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
+    activeButcherFilter = btn.dataset.filter || 'todas';
+    filterButchers();
+  }
+
+  function toggleFilterHelp() {
+    showToast('Usa los chips para filtrar por premium, cercanía, delivery u ofertas.');
+  }
+
+  function filterButchers() {
+    const term = (document.getElementById('butcherSearch')?.value || '').trim().toLowerCase();
+    const cards = Array.from(document.querySelectorAll('#screen-carnicerias article'));
+    let visibleCount = 0;
+    cards.forEach((card) => {
+      const text = card.textContent.toLowerCase();
+      const matchesSearch = !term || text.includes(term);
+      const matchesFilter =
+        activeButcherFilter === 'todas' ||
+        (activeButcherFilter === 'premium' && text.includes('$$$')) ||
+        (activeButcherFilter === 'cerca' && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
+        (activeButcherFilter === 'delivery' && text.includes('delivery')) ||
+        (activeButcherFilter === 'ofertas' && (text.includes('premium') || text.includes('económica') || text.includes('oferta')));
+      const isVisible = matchesSearch && matchesFilter;
+      card.classList.toggle('is-hidden', !isVisible);
+      if (isVisible) visibleCount++;
+    });
+
+    let empty = document.getElementById('butcherEmptyState');
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'butcherEmptyState';
+      empty.className = 'is-hidden md:col-span-2 bg-surface-container-low rounded-3xl p-10 text-center';
+      empty.innerHTML = `
+        <span class="material-symbols-outlined text-4xl text-primary mb-3">search_off</span>
+        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerías</h3>
+        <p class="text-on-surface-variant text-sm">Prueba con otro barrio, nombre o filtro.</p>`;
+      document.querySelector('#screen-carnicerias .grid.grid-cols-1.md\\:grid-cols-2').appendChild(empty);
+    }
+    empty.classList.toggle('is-hidden', visibleCount > 0);
+  }
+
+  function contactButcher(action, name) {
+    selectedButcher = name;
+    if (!chatHistory[name]) chatHistory[name] = [];
+    renderChatModal(name);
+  }
+
+  function renderChatModal(name) {
+    const messages = chatHistory[name] || [];
+    const messagesHtml = messages.length
+      ? messages.map(msg => `
+          <div class="${msg.from === 'user' ? 'ml-8 bg-primary text-white' : 'mr-8 bg-surface-container-low'} rounded-2xl p-4">
+            <p class="text-[10px] font-bold uppercase ${msg.from === 'user' ? 'text-white/75' : 'text-primary'} mb-1">${msg.from === 'user' ? 'Tú' : name}</p>
+            <p class="text-sm">${msg.text}</p>
+          </div>`).join('')
+      : `<div class="bg-surface-container-low rounded-2xl p-6 text-center">
+          <span class="material-symbols-outlined text-3xl text-primary mb-2">forum</span>
+          <p class="font-bold text-on-surface">Aún no hay mensajes</p>
+          <p class="text-sm text-on-surface-variant mt-1">Pregunta por disponibilidad o reserva tus cortes desde AppSados.</p>
+        </div>`;
+
+    openModal(`Chat con ${name}`, `
+      <div class="space-y-4">
+        <div id="chatHistory" class="max-h-80 overflow-y-auto space-y-3 pr-1">${messagesHtml}</div>
+        <label class="block text-sm font-bold">Mensaje
+          <input id="chatMessage" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" placeholder="Escribe tu mensaje..." />
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button onclick="sendChatMessage('${name}')" class="w-full bg-primary text-white rounded-xl py-3 font-bold flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-base">send</span>
+            Enviar
+          </button>
+          <button onclick="openReservation('${name}')" class="w-full bg-surface-container-high text-primary rounded-xl py-3 font-bold flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-base">event_available</span>
+            Reservar cortes
+          </button>
+        </div>
+      </div>`);
+  }
+
+  function sendChatMessage(name) {
+    const message = document.getElementById('chatMessage')?.value.trim();
+    if (!message) {
+      showToast('Escribe un mensaje antes de enviarlo.');
+      return;
+    }
+    if (!chatHistory[name]) chatHistory[name] = [];
+    chatHistory[name].push({ from: 'user', text: message });
+    chatHistory[name].push({ from: 'butcher', text: 'Recibido. Revisaremos stock y te responderemos por este chat.' });
+    renderChatModal(name);
+    showToast(`Mensaje enviado a ${name}.`);
+  }
+
+  function getReservationItems() {
+    if (lastPlanResults.length > 0) return lastPlanResults.filter(cut => cut.kg > 0);
+    return [
+      { name: 'Lomo Vetado', kg: 1, pricePerKg: 24990, cost: 24990 },
+      { name: 'Chorizo Parrillero', kg: 0.5, pricePerKg: 9490, cost: 4745 }
+    ];
+  }
+
+  function openReservation(name) {
+    selectedButcher = name;
+    const items = getReservationItems();
+    const total = items.reduce((sum, item) => sum + (item.cost || item.kg * item.pricePerKg), 0);
+    openModal(`Reservar en ${name}`, `
+      <form onsubmit="confirmReservation(event, '${name}')" class="space-y-4">
+        <div class="bg-surface-container-low rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase text-primary mb-3">Cortes sugeridos</p>
+          <div class="space-y-3">
+            ${items.map((item, index) => `
+              <label class="flex items-center justify-between gap-3 bg-surface-container-lowest rounded-xl p-3">
+                <span>
+                  <span class="block font-bold text-sm">${item.name}</span>
+                  <span class="block text-xs text-on-surface-variant">${item.kg.toFixed(1)} kg · ${money(item.pricePerKg)}/kg</span>
+                </span>
+                <input name="cut-${index}" type="checkbox" checked class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20">
+              </label>`).join('')}
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block text-sm font-bold">Retiro
+            <input name="pickup" type="datetime-local" required class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+          </label>
+          <label class="block text-sm font-bold">Nombre
+            <input name="customer" required placeholder="Tu nombre" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+          </label>
+        </div>
+        <div class="flex items-center justify-between bg-primary-container text-on-primary-container rounded-2xl p-4">
+          <span class="font-bold">Total estimado</span>
+          <span class="font-headline text-2xl font-bold">${money(total)}</span>
+        </div>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">Confirmar reserva</button>
+      </form>`);
+  }
+
+  function confirmReservation(event, name) {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.target).entries());
+    const items = getReservationItems();
+    const selectedItems = items.filter((_, index) => data[`cut-${index}`] === 'on');
+    if (selectedItems.length === 0) {
+      showToast('Selecciona al menos un corte para reservar.');
+      return;
+    }
+    const total = selectedItems.reduce((sum, item) => sum + (item.cost || item.kg * item.pricePerKg), 0);
+    reservations.push({ butcher: name, items: selectedItems, pickup: data.pickup, customer: data.customer, total });
+    if (!chatHistory[name]) chatHistory[name] = [];
+    chatHistory[name].push({ from: 'user', text: `Reserva solicitada: ${selectedItems.map(item => `${item.kg.toFixed(1)} kg ${item.name}`).join(', ')}.` });
+    chatHistory[name].push({ from: 'butcher', text: `Reserva recibida por ${money(total)} aprox. Te confirmaremos disponibilidad pronto.` });
+    closeModal();
+    showToast(`Reserva enviada a ${name}.`);
+  }
+
+  const butcherProducts = [
+    { name: 'Lomo Vetado', price: 24990, stock: 24.5, img: 'https://i.bolder.run/r/czoyMzA2MixnOjEwMDB4/94e9283e/871873-739017-Lomo_Vetado_crudo.jpg' },
+    { name: 'Malaya de Cerdo', price: 13990, stock: 15, img: 'https://supercerdo.cl/wp-content/uploads/2023/02/malaya.jpg' },
+    { name: 'Asado Carnicero', price: 9690, stock: 4, img: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop' }
+  ];
+
+  const butcherPromos = [
+    { name: 'Pack Parrillero', cut: 'Lomo Vetado', discount: 15, status: 'Vence en 2h', tone: 'primary' },
+    { name: 'Oferta Flash', cut: 'Pulpa de Cerdo', discount: 20, status: 'Activa', tone: 'secondary' },
+    { name: 'Fin de Semana', cut: 'Entraña seleccionada', discount: 10, status: 'Activa', tone: 'tertiary' }
+  ];
+
+  const salesHistory = [
+    { customer: 'Reserva Carlos M.', item: '3 kg Lomo Vetado', total: 56970, state: 'Pagado' },
+    { customer: 'Pedido Valentina R.', item: '2 kg Costillar Cerdo', total: 25000, state: 'Pendiente' },
+    { customer: 'Venta mostrador', item: '1.5 kg Punta Paleta', total: 19485, state: 'Pagado' }
+  ];
+
+  function money(value) {
+    return '$' + Math.round(value).toLocaleString('es-CL');
+  }
+
+  function renderPromos() {
+    const list = document.getElementById('promoList');
+    if (!list) return;
+    if (butcherPromos.length === 0) {
+      list.innerHTML = '<div class="bg-surface-container-lowest p-6 rounded-2xl text-center text-sm text-on-surface-variant">Aún no tienes promociones activas.</div>';
+      return;
+    }
+    const toneClass = {
+      primary: { border: 'border-primary', text: 'text-primary', badge: 'bg-primary/10 text-primary' },
+      secondary: { border: 'border-secondary', text: 'text-secondary', badge: 'bg-secondary/10 text-secondary' },
+      tertiary: { border: 'border-tertiary', text: 'text-tertiary', badge: 'bg-tertiary/10 text-tertiary' }
+    };
+    list.innerHTML = butcherPromos.map((promo, index) => {
+      const tone = toneClass[promo.tone] || toneClass.primary;
+      return `
+      <div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm border-l-4 ${tone.border}">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-xs font-bold ${tone.text} uppercase mb-1">${promo.name}</p>
+            <p class="text-sm font-semibold mb-2">${promo.cut}</p>
+          </div>
+          <button onclick="editPromo(${index})" class="${tone.text} hover:text-primary" aria-label="Editar promoción ${promo.name}">
+            <span class="material-symbols-outlined text-base">edit</span>
+          </button>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-on-surface-variant italic">${promo.status}</span>
+          <span class="${tone.badge} text-xs font-bold px-2 py-1 rounded-full">-${promo.discount}% OFF</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+    const term = (document.getElementById('productSearch')?.value || '').trim().toLowerCase();
+    const filtered = butcherProducts.filter(product => product.name.toLowerCase().includes(term));
+    const cards = filtered.map((product, index) => `
+      <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm group card-lift">
+        <div class="h-40 overflow-hidden">
+          <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${product.img}" alt="${product.name}"/>
+        </div>
+        <div class="p-5">
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="font-bold text-lg">${product.name}</h4>
+            <button onclick="editProduct(${index})" class="text-tertiary hover:text-primary transition-colors" aria-label="Editar ${product.name}">
+              <span class="material-symbols-outlined text-sm">edit</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-end gap-3">
+            <div>
+              <p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tight">Precio / KG</p>
+              <p class="text-xl font-extrabold text-primary">${money(product.price)}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] text-on-surface-variant font-bold uppercase">Stock</p>
+              <p class="text-sm font-bold ${product.stock <= 5 ? 'text-error' : 'text-secondary'}">${product.stock <= 5 ? 'Bajo: ' : ''}${product.stock} kg</p>
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+    const empty = '<div class="bg-surface-container-low rounded-3xl p-8 text-center text-sm text-on-surface-variant">No hay cortes que coincidan con la búsqueda.</div>';
+    const addCard = `
+      <div onclick="openProductForm()" role="button" tabindex="0" class="border-2 border-dashed border-outline-variant/40 rounded-3xl flex flex-col items-center justify-center p-8 bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
+        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-primary">add_circle</span>
+        </div>
+        <p class="font-bold text-on-surface-variant">Agregar más cortes</p>
+        <p class="text-xs text-on-surface-variant/60 mt-1">Actualiza tu vitrina online</p>
+      </div>`;
+    grid.innerHTML = (cards || empty) + addCard;
+  }
+
+  function productExists(name, ignoreIndex = -1) {
+    const normalized = name.trim().toLowerCase();
+    return butcherProducts.some((product, index) => index !== ignoreIndex && product.name.toLowerCase() === normalized);
+  }
+
+  function promoExists(cut, ignoreIndex = -1) {
+    const normalized = cut.trim().toLowerCase();
+    return butcherPromos.some((promo, index) => index !== ignoreIndex && promo.cut.toLowerCase() === normalized);
+  }
+
+  function openProductForm(index = null) {
+    const product = index === null ? { name: '', price: '', stock: '', img: '' } : butcherProducts[index];
+    openModal(index === null ? 'Añadir corte' : 'Editar corte', `
+      <form onsubmit="saveProduct(event, ${index === null ? 'null' : index})" class="space-y-4">
+        <label class="block text-sm font-bold">Nombre del corte
+          <input name="name" required value="${product.name}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+        </label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block text-sm font-bold">Precio por kg
+            <input name="price" required min="1" type="number" value="${product.price}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+          </label>
+          <label class="block text-sm font-bold">Stock kg
+            <input name="stock" required min="0" step="0.1" type="number" value="${product.stock}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+          </label>
+        </div>
+        <label class="block text-sm font-bold">Imagen URL
+          <input name="img" value="${product.img}" placeholder="https://..." class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+        </label>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">${index === null ? 'Agregar corte' : 'Guardar cambios'}</button>
+      </form>`);
+  }
+
+  function editProduct(index) {
+    openProductForm(index);
+  }
+
+  function saveProduct(event, index) {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.target).entries());
+    if (productExists(data.name, index ?? -1)) {
+      showToast('Ese corte ya existe en tu vitrina.');
+      return;
+    }
+    const next = {
+      name: data.name.trim(),
+      price: Number(data.price),
+      stock: Number(data.stock),
+      img: data.img.trim() || 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=1200&auto=format&fit=crop'
+    };
+    if (index === null) butcherProducts.push(next);
+    else butcherProducts[index] = next;
+    renderProducts();
+    closeModal();
+    showToast(index === null ? 'Corte agregado correctamente.' : 'Corte actualizado.');
+  }
+
+  function openPromoForm(index = null) {
+    const promo = index === null ? { name: '', cut: '', discount: 10, status: 'Activa', tone: 'primary' } : butcherPromos[index];
+    openModal(index === null ? 'Nueva promo' : 'Editar promo', `
+      <form onsubmit="savePromo(event, ${index === null ? 'null' : index})" class="space-y-4">
+        <label class="block text-sm font-bold">Nombre
+          <input name="name" required value="${promo.name}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+        </label>
+        <label class="block text-sm font-bold">Corte asociado
+          <input name="cut" required value="${promo.cut}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+        </label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block text-sm font-bold">Descuento %
+            <input name="discount" required min="1" max="80" type="number" value="${promo.discount}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+          </label>
+          <label class="block text-sm font-bold">Estado
+            <input name="status" required value="${promo.status}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+          </label>
+        </div>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">${index === null ? 'Crear promoción' : 'Guardar promoción'}</button>
+      </form>`);
+  }
+
+  function editPromo(index) {
+    openPromoForm(index);
+  }
+
+  function savePromo(event, index) {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.target).entries());
+    if (promoExists(data.cut, index ?? -1)) {
+      showToast('Ya existe una promoción para ese corte.');
+      return;
+    }
+    const tones = ['primary', 'secondary', 'tertiary'];
+    const next = {
+      name: data.name.trim(),
+      cut: data.cut.trim(),
+      discount: Number(data.discount),
+      status: data.status.trim(),
+      tone: tones[(index ?? butcherPromos.length) % tones.length]
+    };
+    if (index === null) butcherPromos.push(next);
+    else butcherPromos[index] = next;
+    renderPromos();
+    closeModal();
+    showToast(index === null ? 'Promoción creada.' : 'Promoción actualizada.');
+  }
+
+  function renderSalesHistory() {
+    if (document.getElementById('salesHistory')) return;
+    const panelGrid = document.querySelector('#screen-panel .grid.grid-cols-1.md\\:grid-cols-12');
+    const section = document.createElement('section');
+    section.id = 'salesHistory';
+    section.className = 'md:col-span-12 bg-surface-container-low rounded-3xl p-6';
+    section.innerHTML = `
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-headline text-2xl font-bold">Historial reciente</h3>
+        <button onclick="editSalesHistory()" class="text-primary font-bold text-sm flex items-center gap-1">
+          <span class="material-symbols-outlined text-base">edit_note</span> Editar
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        ${salesHistory.map(sale => `
+          <div class="bg-surface-container-lowest rounded-2xl p-4">
+            <p class="font-bold">${sale.customer}</p>
+            <p class="text-sm text-on-surface-variant mt-1">${sale.item}</p>
+            <div class="flex justify-between items-center mt-4">
+              <span class="font-extrabold text-primary">${money(sale.total)}</span>
+              <span class="text-xs font-bold ${sale.state === 'Pagado' ? 'text-secondary' : 'text-tertiary'}">${sale.state}</span>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    panelGrid.appendChild(section);
+  }
+
+  function editSalesHistory() {
+    showToast('Historial listo para edición; en producción se conectaría al backend de ventas.');
+  }
+
+  function openVerificationForm() {
+    openModal('Verificación carnicero', `
+      <form onsubmit="saveVerification(event)" class="space-y-4">
+        <p class="text-sm text-on-surface-variant leading-relaxed">Esta demo mantiene la sesión verificada localmente. En producción, estos datos deben validarse contra un backend seguro.</p>
+        <label class="block text-sm font-bold">RUT empresa
+          <input name="rut" required placeholder="76.123.456-7" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+        </label>
+        <label class="block text-sm font-bold">Correo administrador
+          <input name="email" required type="email" placeholder="dueno@carniceria.cl" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
+        </label>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">Guardar verificación</button>
+      </form>`);
+  }
+
+  function saveVerification(event) {
+    event.preventDefault();
+    closeModal();
+    showToast('Cuenta carnicera verificada para esta sesión.');
   }
 
   // ---- FAQ accordion ----
@@ -1233,8 +2433,23 @@ tailwind.config = {
   }
 
   // ---- Init ----
+  document.getElementById('butcherSearch')?.addEventListener('input', filterButchers);
+  document.getElementById('productSearch')?.addEventListener('input', renderProducts);
+  document.querySelectorAll('#screen-carnicerias article').forEach((card) => {
+    const name = card.querySelector('h3, h4')?.textContent.trim() || 'la carnicería';
+    card.querySelectorAll('button').forEach((button) => {
+      if (!button.textContent.toLowerCase().includes('chat')) return;
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        contactButcher('chat', name);
+      });
+    });
+  });
   updateGauge();
-  navigate('inicio');
+  renderPromos();
+  renderProducts();
+  renderSalesHistory();
+  navigate('inicio', { pushHistory: false });
 </script>
 </body>
 </html>
