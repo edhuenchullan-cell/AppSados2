@@ -588,7 +588,6 @@ tailwind.config = {
         <button onclick="setChip(this)" data-filter="todas" class="chip active px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Todas</button>
         <button onclick="setChip(this)" data-filter="premium" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Premium</button>
         <button onclick="setChip(this)" data-filter="cerca" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Cerca de mí</button>
-        <button onclick="setChip(this)" data-filter="delivery" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Con Delivery</button>
         <button onclick="setChip(this)" data-filter="ofertas" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Ofertas</button>
         <button onclick="setChip(this)" data-filter="misCortes" id="chipMisCortes" class="chip hidden px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all items-center gap-1.5">🥩 Mis cortes</button>
       </div>
@@ -954,13 +953,61 @@ tailwind.config = {
       </div>
       <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Panel exclusivo para carnicerías</h2>
       <p class="text-on-surface-variant mb-8 leading-relaxed">Regístra tu carnicería, gestiona tu stock, publica tus cortes y aparece en las búsquedas de los parrilleros.</p>
-      <button onclick="openAuthModal()" class="bg-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
-        <span class="material-symbols-outlined">add_business</span> Unirme como Carnicería
+      <button onclick="fbUser ? fbSetRole('carnicero') : openAuthModal()" class="bg-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
+        <span class="material-symbols-outlined">add_business</span> Solicitar registro como Carnicería
       </button>
       <p class="text-xs text-on-surface-variant mt-4">¿Ya tienes cuenta? <button onclick="openAuthModal()" class="text-primary font-bold underline">Inicia sesión</button></p>
     </div>
-    <!-- Dashboard: shown when logged in as carnicero -->
-    <div id="panelDashboard" class="hidden">
+    <!-- Pending approval -->
+    <div id="panelPending" class="hidden max-w-lg mx-auto px-6 py-20 flex flex-col items-center text-center">
+      <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined text-4xl text-amber-600">schedule</span>
+      </div>
+      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Solicitud en revisión</h2>
+      <p class="text-on-surface-variant mb-6 leading-relaxed">Tu solicitud fue enviada y está siendo revisada. Te notificaremos cuando sea aprobada.</p>
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-sm text-amber-800 font-medium mb-8">
+        ⏳ Tiempo estimado de revisión: 24–48 horas hábiles
+      </div>
+      <button onclick="openCarniceroRegister()" class="text-sm text-primary font-bold underline">Editar mi solicitud</button>
+    </div>
+
+    <!-- Rejected -->
+    <div id="panelRejected" class="hidden max-w-lg mx-auto px-6 py-20 flex flex-col items-center text-center">
+      <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined text-4xl text-error">cancel</span>
+      </div>
+      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Solicitud no aprobada</h2>
+      <p class="text-on-surface-variant mb-8 leading-relaxed">Por el momento tu solicitud no fue aprobada. Puedes corregir los datos y volver a enviarla.</p>
+      <button onclick="openCarniceroRegister()" class="bg-primary text-white px-8 py-4 rounded-2xl font-bold hover:opacity-90 transition-all active:scale-95">Editar y reenviar solicitud</button>
+    </div>
+
+    <!-- Admin panel -->
+    <div id="panelAdmin" class="hidden max-w-4xl mx-auto px-6 py-8">
+      <div class="mb-8">
+        <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Administrador</span>
+        <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-2">Solicitudes de Carnicerías</h2>
+        <p class="text-on-surface-variant">Revisa y aprueba las solicitudes de registro.</p>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center">
+          <p class="text-3xl font-extrabold text-amber-700" id="adminCountPending">0</p>
+          <p class="text-xs font-bold text-amber-600 mt-1">Pendientes</p>
+        </div>
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
+          <p class="text-3xl font-extrabold text-green-700" id="adminCountApproved">0</p>
+          <p class="text-xs font-bold text-green-600 mt-1">Aprobadas</p>
+        </div>
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-5 text-center">
+          <p class="text-3xl font-extrabold text-red-700" id="adminCountRejected">0</p>
+          <p class="text-xs font-bold text-red-600 mt-1">Rechazadas</p>
+        </div>
+      </div>
+      <!-- List -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="adminPendingList">
+        <p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Cargando...</p>
+      </div>
+    </div>
     <div class="max-w-7xl mx-auto px-6 py-8 pb-4">
       <!-- Header -->
       <div class="mb-10">
@@ -2055,7 +2102,7 @@ tailwind.config = {
   }
 
   function toggleFilterHelp() {
-    showToast('Usa los chips para filtrar por premium, cercanía, delivery u ofertas.');
+    showToast('Usa los chips para filtrar por premium, cercanía u ofertas.');
   }
 
   function filterButchers() {
@@ -2069,7 +2116,7 @@ tailwind.config = {
         activeButcherFilter === 'todas' ||
         (activeButcherFilter === 'premium' && text.includes('$$$')) ||
         (activeButcherFilter === 'cerca' && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
-        (activeButcherFilter === 'delivery' && text.includes('delivery')) ||
+        
         (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('económica') || text.includes('$') && !text.includes('$$$')));
       const isVisible = matchesSearch && matchesFilter;
       card.classList.toggle('is-hidden', !isVisible);
@@ -2591,11 +2638,6 @@ tailwind.config = {
           <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="reg_presupuesto" value="high" class="accent-primary"/><span class="text-sm font-semibold">Premium ($$$)</span></label>
         </div>
       </div>
-      <!-- Delivery -->
-      <label class="flex items-center gap-3 cursor-pointer">
-        <input type="checkbox" id="reg_delivery" class="accent-primary w-4 h-4"/>
-        <span class="text-sm font-semibold">Ofrezco delivery</span>
-      </label>
       <!-- Cortes disponibles -->
       <div>
         <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-3">Cortes disponibles</span>
@@ -2652,6 +2694,434 @@ tailwind.config = {
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db   = firebase.firestore();
+
+  // ⬇ Cambia esto a tu correo real de Google
+  const ADMIN_EMAIL = 'elias.arteaga.r@gmail.com';
+
+  let fbUser     = null;
+  let fbRole     = null; // 'parrillero' | 'carnicero' | 'admin'
+  let fbProfile  = null; // carnicero doc from Firestore (includes status)
+
+  const CUT_LABELS = {
+    'vacuno-huachalomo':'Huachalomo','vacuno-sobrecostilla':'Sobrecostilla',
+    'vacuno-asado-carnicero':'Asado Carnicero','vacuno-asiento':'Asiento',
+    'vacuno-lomo-vetado':'Lomo Vetado','vacuno-entrana':'Entraña',
+    'vacuno-filete':'Filete','cerdo-pulpa':'Pulpa Cerdo',
+    'cerdo-costillar':'Costillar','cerdo-malaya':'Malaya',
+    'embutidos-chorizo':'Chorizo','embutidos-longaniza':'Longaniza',
+    'embutidos-butifarra':'Butifarra','pollo-tutos':'Tutos',
+    'pollo-alitas':'Alitas','pollo-pechuga':'Pechuga'
+  };
+
+  // ---- Auth state ----
+  auth.onAuthStateChanged(async user => {
+    fbUser = user;
+    if (!user) {
+      fbRole = null; fbProfile = null;
+      updateAuthUI(); return;
+    }
+    // Admin bypass
+    if (user.email === ADMIN_EMAIL) {
+      fbRole = 'admin';
+      updateAuthUI();
+      renderFirebaseCarniceros();
+      return;
+    }
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      if (snap.exists) {
+        fbRole = snap.data().role;
+        if (fbRole === 'carnicero') {
+          const pSnap = await db.collection('carniceros').doc(user.uid).get();
+          fbProfile = pSnap.exists ? pSnap.data() : null;
+        }
+        updateAuthUI();
+        renderFirebaseCarniceros();
+      } else {
+        updateAuthUI();
+        showRoleModal();
+      }
+    } catch(e) {
+      console.error('Firestore load error:', e);
+      updateAuthUI();
+    }
+  });
+
+  // ---- Panel state machine ----
+  // States: 'guest' | 'parrillero' | 'pending' | 'approved' | 'admin'
+  function getPanelState() {
+    if (!fbUser)               return 'guest';
+    if (fbRole === 'admin')    return 'admin';
+    if (fbRole === 'parrillero') return 'parrillero';
+    if (fbRole === 'carnicero') {
+      if (!fbProfile)                         return 'pending'; // submitted but no doc yet (shouldn't happen)
+      if (fbProfile.status === 'approved')    return 'approved';
+      if (fbProfile.status === 'rejected')    return 'rejected';
+      return 'pending'; // default for carnicero role
+    }
+    return 'guest';
+  }
+
+  function showPanelState() {
+    const state = getPanelState();
+    const gate      = document.getElementById('panelGate');
+    const pending   = document.getElementById('panelPending');
+    const rejected  = document.getElementById('panelRejected');
+    const dashboard = document.getElementById('panelDashboard');
+    const admin     = document.getElementById('panelAdmin');
+    [gate, pending, rejected, dashboard, admin].forEach(el => el?.classList.add('hidden'));
+    if (state === 'guest' || state === 'parrillero') gate?.classList.remove('hidden');
+    else if (state === 'pending')  pending?.classList.remove('hidden');
+    else if (state === 'rejected') rejected?.classList.remove('hidden');
+    else if (state === 'approved') dashboard?.classList.remove('hidden');
+    else if (state === 'admin')    { admin?.classList.remove('hidden'); renderAdminPanel(); }
+  }
+
+  // Legacy alias used elsewhere
+  function showPanelGate(show) { showPanelState(); }
+
+  // ---- UI updates ----
+  function updateAuthUI() {
+    const btn     = document.getElementById('authBtn');
+    const avatar  = document.getElementById('userAvatarBtn');
+    const initial = document.getElementById('userInitialCircle');
+    const badge   = document.getElementById('userRoleBadge');
+    const panelBtn    = document.getElementById('userMenuPanelBtn');
+    const registerBtn = document.getElementById('userMenuRegisterBtn');
+
+    if (!fbUser) {
+      btn.classList.remove('hidden'); btn.classList.add('flex');
+      avatar.classList.add('hidden'); avatar.classList.remove('flex');
+      showPanelState(); return;
+    }
+    btn.classList.add('hidden');
+    avatar.classList.remove('hidden'); avatar.classList.add('flex');
+    const name = fbUser.displayName || fbUser.email || '?';
+    initial.textContent = name[0].toUpperCase();
+    document.getElementById('userMenuName').textContent  = name;
+    document.getElementById('userMenuEmail').textContent = fbUser.email || '';
+
+    if (fbRole === 'admin') {
+      badge.textContent = '⚙️ Admin'; badge.classList.remove('hidden');
+      panelBtn.classList.remove('hidden');
+      registerBtn.classList.add('hidden');
+    } else if (fbRole === 'carnicero') {
+      const approved = fbProfile?.status === 'approved';
+      badge.textContent = approved ? '🥩 Carnicero' : '⏳ En revisión';
+      badge.classList.remove('hidden');
+      panelBtn.classList.remove('hidden');
+      registerBtn.classList.toggle('hidden', approved);
+    } else {
+      badge.textContent = '🔥 Parrillero'; badge.classList.remove('hidden');
+      panelBtn.classList.add('hidden');
+      registerBtn.classList.add('hidden');
+    }
+    updateMisCortesChip();
+    renderFirebaseCarniceros();
+    showPanelState();
+  }
+
+  function updateMisCortesChip() {
+    const chip = document.getElementById('chipMisCortes');
+    if (!chip) return;
+    const hasCuts = typeof selectedCutIds !== 'undefined' && selectedCutIds.size > 0;
+    chip.classList.toggle('hidden', !hasCuts);
+    if (!hasCuts) chip.classList.remove('flex'); else chip.classList.add('flex');
+  }
+
+  // ---- Modals ----
+  function openAuthModal() {
+    document.getElementById('fbAuthModal').classList.remove('hidden');
+    document.getElementById('fbAuthError').classList.add('hidden');
+    document.getElementById('fbEmail').value = '';
+    document.getElementById('fbPassword').value = '';
+    closeUserMenu();
+  }
+  function closeFbModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  function showRoleModal() {
+    document.getElementById('fbRoleModal').classList.remove('hidden');
+    const name = fbUser?.displayName || fbUser?.email?.split('@')[0] || 'amigo';
+    document.getElementById('fbRoleWelcome').textContent = `Hola, ${name} 👋`;
+  }
+
+  function openCarniceroRegister() {
+    closeUserMenu();
+    document.getElementById('fbRegisterModal').classList.remove('hidden');
+    if (fbProfile) {
+      document.getElementById('reg_nombre').value      = fbProfile.nombre || '';
+      document.getElementById('reg_rut').value         = fbProfile.rut || '';
+      document.getElementById('reg_descripcion').value = fbProfile.descripcion || '';
+      document.getElementById('reg_direccion').value   = fbProfile.direccion || '';
+      document.getElementById('reg_barrio').value      = fbProfile.barrio || '';
+      document.getElementById('reg_telefono').value    = fbProfile.telefono || '';
+      document.getElementById('reg_horario').value     = fbProfile.horario || '';
+      const presupuesto = fbProfile.presupuesto || 'low';
+      document.querySelector(`input[name="reg_presupuesto"][value="${presupuesto}"]`).checked = true;
+      document.querySelectorAll('.reg-cut').forEach(cb => {
+        cb.checked = (fbProfile.cortes || []).includes(cb.value);
+      });
+    }
+  }
+
+  // ---- Sign-in ----
+  async function fbSignInGoogle() {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+      closeFbModal('fbAuthModal');
+    } catch(e) { showAuthError(e.message); }
+  }
+
+  async function fbSignInEmail() {
+    const email = document.getElementById('fbEmail').value.trim();
+    const pass  = document.getElementById('fbPassword').value;
+    if (!email || !pass) { showAuthError('Ingresa correo y contraseña.'); return; }
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+      closeFbModal('fbAuthModal');
+    } catch(e) {
+      showAuthError(e.code === 'auth/user-not-found' ? 'Usuario no encontrado.' :
+                   e.code === 'auth/wrong-password'  ? 'Contraseña incorrecta.' : e.message);
+    }
+  }
+
+  async function fbCreateEmail() {
+    const email = document.getElementById('fbEmail').value.trim();
+    const pass  = document.getElementById('fbPassword').value;
+    if (!email || !pass) { showAuthError('Ingresa correo y contraseña.'); return; }
+    if (pass.length < 6)  { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
+    try {
+      await auth.createUserWithEmailAndPassword(email, pass);
+      closeFbModal('fbAuthModal');
+    } catch(e) {
+      showAuthError(e.code === 'auth/email-already-in-use' ? 'Este correo ya tiene una cuenta.' : e.message);
+    }
+  }
+
+  async function fbSignOut() {
+    await auth.signOut(); closeUserMenu(); showToast('Sesión cerrada.');
+  }
+
+  function showAuthError(msg) {
+    const el = document.getElementById('fbAuthError');
+    el.textContent = msg; el.classList.remove('hidden');
+  }
+
+  // ---- Role selection ----
+  async function fbSetRole(role) {
+    if (!fbUser) return;
+    fbRole = role;
+    try {
+      await db.collection('users').doc(fbUser.uid).set({
+        role, email: fbUser.email || '',
+        displayName: fbUser.displayName || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      closeFbModal('fbRoleModal');
+      updateAuthUI();
+      if (role === 'carnicero') setTimeout(() => openCarniceroRegister(), 300);
+      else showToast('¡Bienvenido, parrillero! 🔥');
+    } catch(e) { showToast('Error al guardar el rol. Intenta de nuevo.'); }
+  }
+
+  // ---- Save carnicero profile (status: pending) ----
+  async function fbSaveCarniceroProfile() {
+    if (!fbUser) return;
+    const nombre = document.getElementById('reg_nombre').value.trim();
+    const rut    = document.getElementById('reg_rut').value.trim();
+    const errEl  = document.getElementById('fbRegError');
+    if (!nombre) { errEl.textContent = 'El nombre es obligatorio.'; errEl.classList.remove('hidden'); return; }
+    if (!rut)    { errEl.textContent = 'El RUT es obligatorio.';    errEl.classList.remove('hidden'); return; }
+    errEl.classList.add('hidden');
+
+    const cortes      = Array.from(document.querySelectorAll('.reg-cut:checked')).map(cb => cb.value);
+    const presupuesto = document.querySelector('input[name="reg_presupuesto"]:checked').value;
+
+    const profile = {
+      uid: fbUser.uid, email: fbUser.email || '',
+      nombre, rut,
+      descripcion: document.getElementById('reg_descripcion').value.trim(),
+      direccion:   document.getElementById('reg_direccion').value.trim(),
+      barrio:      document.getElementById('reg_barrio').value.trim(),
+      telefono:    document.getElementById('reg_telefono').value.trim(),
+      horario:     document.getElementById('reg_horario').value.trim(),
+      presupuesto, cortes,
+      status: fbProfile?.status === 'approved' ? 'approved' : 'pending', // keep approved if re-editing
+      requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+      await db.collection('carniceros').doc(fbUser.uid).set(profile, { merge: true });
+      fbProfile = profile;
+      closeFbModal('fbRegisterModal');
+      updateAuthUI();
+      showPanelState();
+      renderFirebaseCarniceros();
+      if (profile.status === 'pending') {
+        showToast('¡Solicitud enviada! Te avisaremos cuando sea aprobada. 🥩');
+        navigate('panel');
+      } else {
+        showToast(`Perfil de ${nombre} actualizado. 🥩`);
+      }
+    } catch(e) {
+      errEl.textContent = 'Error al guardar. Intenta de nuevo.';
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  // ---- Admin: render pending approvals ----
+  async function renderAdminPanel() {
+    const container = document.getElementById('adminPendingList');
+    if (!container) return;
+    container.innerHTML = '<p class="text-sm text-on-surface-variant">Cargando solicitudes...</p>';
+    try {
+      const snap = await db.collection('carniceros').get();
+      const all  = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const pending  = all.filter(c => c.status === 'pending');
+      const approved = all.filter(c => c.status === 'approved');
+      const rejected = all.filter(c => c.status === 'rejected');
+
+      document.getElementById('adminCountPending').textContent  = pending.length;
+      document.getElementById('adminCountApproved').textContent = approved.length;
+      document.getElementById('adminCountRejected').textContent = rejected.length;
+
+      if (all.length === 0) { container.innerHTML = '<p class="text-sm text-on-surface-variant py-4 text-center">No hay solicitudes aún.</p>'; return; }
+
+      container.innerHTML = all.map(c => {
+        const cuts = (c.cortes || []).map(id => CUT_LABELS[id] || id).join(', ') || '—';
+        const statusColors = { pending:'bg-amber-100 text-amber-700', approved:'bg-green-100 text-green-700', rejected:'bg-red-100 text-red-700' };
+        const statusLabels = { pending:'⏳ Pendiente', approved:'✅ Aprobada', rejected:'❌ Rechazada' };
+        const st = c.status || 'pending';
+        return `
+          <div class="bg-surface-container-low rounded-2xl p-5 flex flex-col gap-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="font-bold text-on-surface truncate">${c.nombre}</p>
+                <p class="text-xs text-on-surface-variant">RUT: ${c.rut} · ${c.email}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">${c.barrio || ''} ${c.horario ? '· ' + c.horario : ''}</p>
+                <p class="text-xs text-on-surface-variant mt-1">🥩 ${cuts}</p>
+              </div>
+              <span class="shrink-0 text-xs font-bold px-3 py-1 rounded-full ${statusColors[st]}">${statusLabels[st]}</span>
+            </div>
+            ${st !== 'approved' ? `<button onclick="adminApprove('${c.id}')" class="w-full bg-primary text-white py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">✅ Aprobar</button>` : ''}
+            ${st !== 'rejected' ? `<button onclick="adminReject('${c.id}')" class="w-full bg-surface-container text-error py-2.5 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">❌ Rechazar</button>` : ''}
+          </div>`;
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<p class="text-sm text-error">Error cargando solicitudes.</p>';
+      console.error(e);
+    }
+  }
+
+  async function adminApprove(uid) {
+    await db.collection('carniceros').doc(uid).update({ status: 'approved' });
+    showToast('Carnicería aprobada ✅');
+    renderAdminPanel();
+    renderFirebaseCarniceros();
+  }
+
+  async function adminReject(uid) {
+    await db.collection('carniceros').doc(uid).update({ status: 'rejected' });
+    showToast('Solicitud rechazada.');
+    renderAdminPanel();
+    renderFirebaseCarniceros();
+  }
+
+  // ---- Render Firebase carniceros in listing (approved only) ----
+  async function renderFirebaseCarniceros() {
+    const container = document.getElementById('firebaseCarnicerosList');
+    if (!container) return;
+    try {
+      const snap = await db.collection('carniceros').where('status', '==', 'approved').get();
+      if (snap.empty) { container.innerHTML = ''; return; }
+      container.innerHTML = snap.docs.map(doc => {
+        const c = doc.data();
+        const cuts = (c.cortes || []).slice(0, 4).map(id => CUT_LABELS[id] || id).join(', ');
+        const priceSymbol = c.presupuesto === 'high' ? '$$$' : '$';
+        return `
+          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 card-lift"
+            data-cuts="${(c.cortes||[]).join(',')}" data-budget="${c.presupuesto||'low'}">
+            <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-3xl text-primary">storefront</span>
+            </div>
+            <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <h4 class="font-headline text-xl font-bold truncate">${c.nombre}</h4>
+                  <span class="text-primary text-sm font-bold ml-2 shrink-0">${priceSymbol}</span>
+                </div>
+                <p class="text-xs text-on-surface-variant">${c.barrio || ''}</p>
+                ${cuts ? `<p class="text-xs text-on-surface-variant mt-1 truncate">🥩 ${cuts}${(c.cortes||[]).length > 4 ? '...' : ''}</p>` : ''}
+              </div>
+              <div class="flex gap-2 mt-3 flex-wrap">
+                <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-secondary/10 text-secondary">
+                  <span class="material-symbols-outlined text-xs">verified</span> Verificada en AppSados
+                </span>
+                ${c.horario ? `<span class="text-[10px] font-semibold text-on-surface-variant">${c.horario}</span>` : ''}
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+    } catch(e) { console.error('Error loading carniceros:', e); }
+  }
+
+  // ---- User menu ----
+  function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('hidden'); }
+  function closeUserMenu()   { document.getElementById('userMenu')?.classList.add('hidden'); }
+  document.addEventListener('click', e => {
+    const avatar = document.getElementById('userAvatarBtn');
+    const menu   = document.getElementById('userMenu');
+    if (menu && !menu.classList.contains('hidden') && !avatar?.contains(e.target) && !menu.contains(e.target)) closeUserMenu();
+  });
+
+  // ---- Extend filterButchers for "Mis cortes" ----
+  const _origFilterButchers = filterButchers;
+  filterButchers = function() {
+    const term = (document.getElementById('butcherSearch')?.value || '').trim().toLowerCase();
+    const cards = Array.from(document.querySelectorAll('#screen-carnicerias article'));
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const matchesSearch = !term || text.includes(term);
+      let matchesFilter = true;
+      if (activeButcherFilter === 'misCortes') {
+        const cardCuts   = (card.dataset.cuts || '').split(',').filter(Boolean);
+        const cardBudget = card.dataset.budget || '';
+        const userCuts   = typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [];
+        const userBudget = typeof selectedBudget !== 'undefined' ? selectedBudget : '';
+        matchesFilter = (userCuts.length === 0 || userCuts.some(c => cardCuts.includes(c))) &&
+                        (!userBudget || cardBudget === userBudget || cardBudget === '');
+      } else {
+        matchesFilter =
+          activeButcherFilter === 'todas' ||
+          (activeButcherFilter === 'premium' && text.includes('$$$')) ||
+          (activeButcherFilter === 'cerca'   && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
+          (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('económica') || (text.includes('$') && !text.includes('$$$'))));
+      }
+      const isVisible = matchesSearch && matchesFilter;
+      card.classList.toggle('is-hidden', !isVisible);
+      if (isVisible) visibleCount++;
+    });
+    let empty = document.getElementById('butcherEmptyState');
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'butcherEmptyState';
+      empty.className = 'is-hidden md:col-span-2 bg-surface-container-low rounded-3xl p-10 text-center';
+      empty.innerHTML = `<span class="material-symbols-outlined text-4xl text-primary mb-3">search_off</span>
+        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerías</h3>
+        <p class="text-on-surface-variant text-sm">Prueba con otro barrio, nombre o filtro.</p>`;
+      document.querySelector('#screen-carnicerias .grid.grid-cols-1.md\\:grid-cols-2')?.appendChild(empty);
+    }
+    empty.classList.toggle('is-hidden', visibleCount > 0);
+  };
+
+  const _origToggle = typeof toggleCutSelection === 'function' ? toggleCutSelection : null;
+  if (_origToggle) {
+    toggleCutSelection = function(cutId) { _origToggle(cutId); updateMisCortesChip(); };
+  }
+</script>
+</body>
 
   let fbUser     = null; // Firebase User
   let fbRole     = null; // 'parrillero' | 'carnicero'
@@ -2775,7 +3245,7 @@ tailwind.config = {
       document.getElementById('reg_barrio').value      = fbProfile.barrio || '';
       document.getElementById('reg_telefono').value    = fbProfile.telefono || '';
       document.getElementById('reg_horario').value     = fbProfile.horario || '';
-      document.getElementById('reg_delivery').checked  = fbProfile.delivery || false;
+      
       const presupuesto = fbProfile.presupuesto || 'low';
       document.querySelector(`input[name="reg_presupuesto"][value="${presupuesto}"]`).checked = true;
       document.querySelectorAll('.reg-cut').forEach(cb => {
@@ -2878,7 +3348,7 @@ tailwind.config = {
       barrio:      document.getElementById('reg_barrio').value.trim(),
       telefono:    document.getElementById('reg_telefono').value.trim(),
       horario:     document.getElementById('reg_horario').value.trim(),
-      delivery:    document.getElementById('reg_delivery').checked,
+      
       presupuesto,
       cortes,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2933,7 +3403,7 @@ tailwind.config = {
                   <h4 class="font-headline text-xl font-bold truncate">${c.nombre}</h4>
                   <span class="text-primary text-sm font-bold ml-2 shrink-0">${priceSymbol}</span>
                 </div>
-                <p class="text-xs text-on-surface-variant">${c.barrio || ''}${c.delivery ? ' · Delivery' : ''}</p>
+                <p class="text-xs text-on-surface-variant">${c.barrio || ''}</p>
                 ${cuts ? `<p class="text-xs text-on-surface-variant mt-1 truncate">🥩 ${cuts}${(c.cortes||[]).length > 4 ? '...' : ''}</p>` : ''}
               </div>
               <div class="flex gap-2 mt-3">
@@ -2989,7 +3459,7 @@ tailwind.config = {
           activeButcherFilter === 'todas' ||
           (activeButcherFilter === 'premium'  && text.includes('$$$')) ||
           (activeButcherFilter === 'cerca'    && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
-          (activeButcherFilter === 'delivery' && text.includes('delivery')) ||
+          
           (activeButcherFilter === 'ofertas'  && (text.includes('oferta') || text.includes('económica') || (text.includes('$') && !text.includes('$$$'))));
       }
       const isVisible = matchesSearch && matchesFilter;
