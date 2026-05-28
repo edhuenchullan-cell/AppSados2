@@ -394,7 +394,7 @@ tailwind.config = {
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-3 mb-3">
                 <p id="heatLabel" class="font-headline text-xl font-bold text-primary">Brasas listas</p>
-                <p class="text-xs text-on-surface-variant font-bold whitespace-nowrap"><span id="totalGuests">0</span> invitados</p>
+                <p class="text-xs text-on-surface-variant font-bold whitespace-nowrap"><span id="totalGuests">10</span> invitados</p>
               </div>
               <div class="heat-waves mb-3" aria-hidden="true"></div>
               <div class="ember-row flex items-end gap-2" aria-label="Intensidad del asado">
@@ -1399,7 +1399,7 @@ tailwind.config = {
   };
 
   // ---- State ----
-  const counts = { men: 4, women: 4, kids: 2 };
+  const counts = { men: 0, women: 0, kids: 0 };
   const budgetLabels = { low: 'económico', high: 'premium' };
   const tierLabels = { low: 'económicos', high: 'premium' };
   let selectedBudget = 'low';
@@ -1413,7 +1413,7 @@ tailwind.config = {
   let cutKg = {};                   // cutId → kg chosen by user
   let lastCutSignature = '';
   let lastPlanResults = [];
-  const CUT_STEP = 0.5;
+  const CUT_STEP = 0.1;   // 100 g por paso
   const CUT_MAX  = 8.0;
   // Cálculo Maestro: se fija al entrar a recomendaciones, solo se resetea si cambian los invitados
   let masterKgFixed = null;
@@ -1585,7 +1585,15 @@ tailwind.config = {
   }
 
   function onKgSlider(cutId, value) {
-    cutKg[cutId] = parseFloat(value);
+    cutKg[cutId] = Math.round(parseFloat(value) * 10) / 10; // redondear a 100g
+    syncSliderTracks();
+    updateRecomendaciones();
+  }
+
+  function onKgManualInput(cutId, grams) {
+    const g = parseInt(grams, 10);
+    if (isNaN(g) || g < 0) return;
+    cutKg[cutId] = Math.min(Math.round(g / 100) * 0.1, CUT_MAX); // redondear a 100g, máx 8kg
     syncSliderTracks();
     updateRecomendaciones();
   }
@@ -1631,16 +1639,8 @@ tailwind.config = {
     // ── Cálculo del Maestro: ESTÁTICO — basado solo en invitados ────────────
     // Solo se actualiza si cambia el número de invitados (masterKgFixed)
     if (masterKgFixed === null) {
-      // Calculo basado en proteínas seleccionadas y cantidad de personas
-      let masterKg = 0;
-      selected.forEach(key => {
-        const cat = APP_CUTS_DATA[key];
-        masterKg += adults * cat.kgPerAdult + kids * cat.kgPerKid;
-      });
-      // Si no hay proteínas seleccionadas o invitados, usamos referencia general (0.35 kg/adulto)
-      if (masterKg === 0) masterKg = adults * 0.35 + kids * 0.13;
-      masterKg = Math.round(masterKg * 2) / 2; // redondear a 0.5 kg
-      masterKgFixed = masterKg;
+      // 450g por hombre, 350g por mujer, 250g por niño
+      masterKgFixed = (counts.men * 0.45) + (counts.women * 0.35) + (counts.kids * 0.25);
       masterGuestsFixed = total;
     }
 
@@ -1754,30 +1754,42 @@ tailwind.config = {
            <p class="text-on-surface-variant text-sm">Marca al menos un corte arriba para ajustar cantidades.</p>
          </div>`
       : activeCuts.map(cut => {
-          const min = 0;
           const kg  = cutKg[cut.id] ?? 0;
+          const g   = Math.round(kg * 1000);
           const pct = CUT_MAX > 0 ? ((kg / CUT_MAX) * 100).toFixed(1) : '0';
           const kgSoFar = totalKg;
+          const displayKg = kg >= 1 ? kg.toFixed(1) + ' kg' : g + ' g';
           return `
-            <div class="bg-surface-container-lowest rounded-2xl p-4">
-              <div class="flex items-start justify-between gap-3 mb-2">
+            <div class="bg-surface-container-lowest rounded-2xl p-4 space-y-3">
+              <!-- Header: nombre + precio / total -->
+              <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="font-bold text-on-surface">${cut.name}</p>
                   <p class="text-xs text-on-surface-variant">${cut.categoryLabel} · ${money(cut.pricePerKg)}/kg</p>
                 </div>
                 <div class="text-right shrink-0">
-                  <p class="font-headline text-xl font-bold text-primary">${kg.toFixed(1)} kg</p>
+                  <p class="font-headline text-xl font-bold text-primary">${displayKg}</p>
                   <p class="text-xs font-bold text-secondary">${money(kg * cut.pricePerKg)}</p>
                 </div>
               </div>
+              <!-- Slider 100g step -->
               <input class="cut-slider w-full" type="range"
                 min="0" max="${CUT_MAX}" step="${CUT_STEP}"
                 value="${kg}" style="--pct:${pct}%"
                 oninput="onKgSlider('${cut.id}', this.value)"
                 aria-label="Cantidad de ${cut.name}">
-              <div class="flex justify-between text-[10px] text-on-surface-variant mt-1 px-0.5">
-                <span>0 kg</span>
-                <span>${CUT_MAX} kg</span>
+              <div class="flex justify-between text-[10px] text-on-surface-variant px-0.5 -mt-1">
+                <span>0 g</span><span>8 kg</span>
+              </div>
+              <!-- Input manual en gramos -->
+              <div class="flex items-center gap-2 pt-1">
+                <label class="text-xs text-on-surface-variant whitespace-nowrap">Ingresar gramos:</label>
+                <input type="number" min="0" max="8000" step="100"
+                  value="${g}"
+                  class="flex-1 min-w-0 bg-surface-container border border-outline-variant rounded-xl px-3 py-1.5 text-sm font-bold text-on-surface text-center focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="ej: 450"
+                  onchange="onKgManualInput('${cut.id}', this.value)">
+                <span class="text-xs text-on-surface-variant">g</span>
               </div>
               ${buildSliderHint(kgSoFar)}
             </div>`;
@@ -1791,7 +1803,7 @@ tailwind.config = {
             <span class="uppercase tracking-widest text-xs">Personaliza tu asado</span>
           </div>
           <h3 class="font-headline text-3xl font-extrabold mt-2">Elige y ajusta</h3>
-          <p class="text-sm text-on-surface-variant mt-1 max-w-2xl">Marca los cortes que quieres incluir, luego mueve la barra para elegir la cantidad exacta (en pasos de 500 g).</p>
+          <p class="text-sm text-on-surface-variant mt-1 max-w-2xl">Marca los cortes que quieres incluir, luego mueve la barra (pasos de 100 g) o ingresa los gramos exactos en el campo manual.</p>
         </div>
 
         <div>
