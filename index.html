@@ -4,6 +4,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>AppSados — El arte del asado chileno</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,700;0,800;1,700;1,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -282,7 +285,7 @@ tailwind.config = {
 <body class="bg-background text-on-surface antialiased">
 
 <!-- ===================== TOP APP BAR ===================== -->
-<header class="glass-header sticky top-0 z-50 flex items-center justify-between px-6 py-4 w-full border-b border-outline-variant/10">
+<header class="glass-header sticky top-0 z-50 flex items-center justify-between px-6 py-4 w-full border-b border-outline-variant/10 relative">
   <div class="flex items-center gap-3">
     <button id="backBtn" onclick="goBack()" class="hover:opacity-70 transition-opacity hidden">
       <span class="material-symbols-outlined text-primary">arrow_back</span>
@@ -297,8 +300,26 @@ tailwind.config = {
       <button onclick="navigate('tips')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="tips">Tips</button>
       <button onclick="navigate('panel')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="panel">Panel Carnicero</button>
     </nav>
-    <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center">
-      <span class="material-symbols-outlined text-primary text-xl">notifications</span>
+    <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity" id="authBtn" onclick="openAuthModal()">
+      <span class="material-symbols-outlined text-primary text-xl">account_circle</span>
+    </div>
+    <div id="userAvatarBtn" class="hidden items-center gap-2 cursor-pointer" onclick="toggleUserMenu()">
+      <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm" id="userInitialCircle">?</div>
+      <div id="userRoleBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary/10 text-secondary"></div>
+    </div>
+    <!-- User dropdown -->
+    <div id="userMenu" class="hidden absolute right-4 top-16 bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 p-2 z-50 min-w-[200px]">
+      <p id="userMenuName" class="px-3 py-2 text-sm font-bold text-on-surface truncate"></p>
+      <p id="userMenuEmail" class="px-3 pb-2 text-xs text-on-surface-variant truncate border-b border-outline-variant/20"></p>
+      <button onclick="navigate('panel'); closeUserMenu()" id="userMenuPanelBtn" class="hidden w-full text-left px-3 py-2.5 text-sm font-semibold text-on-surface hover:bg-surface-container rounded-xl mt-1 flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">store</span> Mi Panel Carnicero
+      </button>
+      <button onclick="openCarniceroRegister()" id="userMenuRegisterBtn" class="hidden w-full text-left px-3 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-container rounded-xl flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">add_business</span> Registrar mi carnicería
+      </button>
+      <button onclick="fbSignOut()" class="w-full text-left px-3 py-2.5 text-sm font-semibold text-on-surface-variant hover:bg-surface-container rounded-xl flex items-center gap-2 mt-1">
+        <span class="material-symbols-outlined text-base">logout</span> Cerrar sesión
+      </button>
     </div>
   </div>
 </header>
@@ -569,12 +590,13 @@ tailwind.config = {
         <button onclick="setChip(this)" data-filter="cerca" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Cerca de mí</button>
         <button onclick="setChip(this)" data-filter="delivery" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Con Delivery</button>
         <button onclick="setChip(this)" data-filter="ofertas" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Ofertas</button>
+        <button onclick="setChip(this)" data-filter="misCortes" id="chipMisCortes" class="chip hidden px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all items-center gap-1.5">🥩 Mis cortes</button>
       </div>
 
       <!-- Bento Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Featured Card -->
-        <article class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(129,9,0,0.07)] flex flex-col group card-lift">
+        <article class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(129,9,0,0.07)] flex flex-col group card-lift" data-cuts="vacuno-lomo-vetado,vacuno-entrana,vacuno-filete" data-budget="high">
           <div class="relative h-64 overflow-hidden">
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw_qj3xeF4kt4i8R7uaCTuPHkjxED6NXbbia8CyMM_zrvS-uqUCFTubz6126kjz--TNY0EGKNlC6EStlGebGJJEqQusfH25PKOabpyLkKq8_IrYR2BU4JSHKgusPgNJyYkayi-AKeJOvZH9wJBqQqDyX-isDu-rCqfMZhu86acgwK3nLKaDmOfCAcb5LmM2pzzW40jw9pOxE8Y9wMJUZgSTK0Lo4IEvjCd_mwGHlOU2vVIk4yLClZ2gIVO9M-fyEP8QBEFnQdhBBc"
@@ -614,7 +636,7 @@ tailwind.config = {
 
         <!-- Side cards -->
         <div class="flex flex-col gap-5">
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer">
+          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer" data-cuts="vacuno-huachalomo,cerdo-pulpa,cerdo-costillar,pollo-tutos,pollo-pechuga" data-budget="low">
             <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0">
               <img class="w-full h-full object-cover"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7iMYGnQU3dpJn6hqrO6YGrA9Kd_VnNuyY2qw2Gx2aMywspYCIiowKfEPmNsLmDQzQCZwRms6bcLPjePHO-H7191saK48QYQDZW75nlOGhcO7HjYnJ_rz6RVQC6QwOkhCQmxo9KLrpHpwSYQNALXgv51APJq1sC-Sm-YtuGzKUisT35hUL2yPHyE4ZHVRM5EfFOG0c6JfBYOyJ1ExZow1vYRdL94LYj3C_vG8WcOEccpuqn8jAGEYdK0Bn-Q6wYRnRVi3CIlIvtMk"
@@ -640,7 +662,7 @@ tailwind.config = {
             </div>
           </article>
 
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer">
+          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer" data-cuts="embutidos-chorizo,embutidos-longaniza,embutidos-butifarra" data-budget="low">
             <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0">
               <img class="w-full h-full object-cover"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjVzdKGggQzKSNSAVx4tk_qVXd2VuivsLy5iqkqZZrhr7OxeRSMJ-rljcDKBjuYocNk7S6aTO2oIe3w6DwY_jNRIAFdYtI2VcMuEn6p3aiN9lYhUTmfsqa5rM9Eg6xshp4tp7zCU9A1a2l2-nwoBR8Sn_ZIl4r8znHgY6x6k7-6P9Xxo2SU_NYDP4VoJd1XI3U09KaMU3nkGEVXeIGOUZ88ZhrGSh2QQPljtbnrMPOvL7ENFDvAqKPuAUwL9iTZpSzfAWN3z_kJuM"
@@ -666,7 +688,7 @@ tailwind.config = {
             </div>
           </article>
 
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer">
+          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer" data-cuts="vacuno-huachalomo,vacuno-sobrecostilla,vacuno-asado-carnicero,cerdo-malaya" data-budget="low">
             <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0 bg-surface-container-highest flex items-center justify-center">
               <span class="material-symbols-outlined text-4xl text-primary/30">storefront</span>
             </div>
@@ -691,10 +713,11 @@ tailwind.config = {
           </article>
         </div>
       </div>
+      <!-- Firebase registered carniceros (dynamic) -->
+      <div id="firebaseCarnicerosList" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+
     </div>
   </div>
-
-  <!-- ===== SCREEN: RECOMENDACIONES ===== -->
   <div id="screen-recomendaciones" class="screen">
     <div class="max-w-screen-xl mx-auto px-6 pt-8 pb-4 space-y-10">
       <!-- Bento Summary: solo Cálculo del Maestro -->
@@ -924,6 +947,20 @@ tailwind.config = {
 
   <!-- ===== SCREEN: PANEL CARNICERO ===== -->
   <div id="screen-panel" class="screen">
+    <!-- Gate: shown when not logged in as carnicero -->
+    <div id="panelGate" class="max-w-lg mx-auto px-6 py-20 flex flex-col items-center text-center">
+      <div class="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined text-4xl text-secondary">storefront</span>
+      </div>
+      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Panel exclusivo para carnicerías</h2>
+      <p class="text-on-surface-variant mb-8 leading-relaxed">Regístra tu carnicería, gestiona tu stock, publica tus cortes y aparece en las búsquedas de los parrilleros.</p>
+      <button onclick="openAuthModal()" class="bg-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
+        <span class="material-symbols-outlined">add_business</span> Unirme como Carnicería
+      </button>
+      <p class="text-xs text-on-surface-variant mt-4">¿Ya tienes cuenta? <button onclick="openAuthModal()" class="text-primary font-bold underline">Inicia sesión</button></p>
+    </div>
+    <!-- Dashboard: shown when logged in as carnicero -->
+    <div id="panelDashboard" class="hidden">
     <div class="max-w-7xl mx-auto px-6 py-8 pb-4">
       <!-- Header -->
       <div class="mb-10">
@@ -1135,6 +1172,7 @@ tailwind.config = {
         </div>
       </div>
     </div>
+    </div><!-- end panelDashboard -->
   </div>
 
 </main>
@@ -2470,6 +2508,515 @@ tailwind.config = {
   renderProducts();
   renderSalesHistory();
   navigate('inicio', { pushHistory: false });
+</script>
+<!-- ===================== FIREBASE MODALS ===================== -->
+
+<!-- Auth Modal -->
+<div id="fbAuthModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col gap-5">
+    <div class="text-center mb-2">
+      <h3 class="font-headline text-2xl font-extrabold text-on-surface">Bienvenido a AppSados</h3>
+      <p class="text-sm text-on-surface-variant mt-1">Inicia sesión o crea tu cuenta</p>
+    </div>
+    <!-- Google -->
+    <button onclick="fbSignInGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-outline-variant rounded-2xl py-3.5 font-bold text-on-surface shadow-sm hover:shadow-md transition-all active:scale-95">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.4 30.3 0 24 0 14.8 0 7 5.4 3 13.3l7.8 6C12.7 13.5 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17z"/><path fill="#FBBC05" d="M10.8 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7L2.5 13.3A23.9 23.9 0 0 0 0 24c0 3.8.9 7.4 2.5 10.7l8.3-6z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.7l-7.5-5.8c-2.1 1.4-4.8 2.2-7.9 2.2-6.1 0-11.3-4-13.2-9.5l-7.8 6C7 42.6 14.8 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+    <div class="flex items-center gap-3"><div class="flex-1 h-px bg-outline-variant/30"></div><span class="text-xs text-on-surface-variant font-semibold">o con correo</span><div class="flex-1 h-px bg-outline-variant/30"></div></div>
+    <!-- Email form -->
+    <div class="space-y-3">
+      <input id="fbEmail" type="email" placeholder="Correo electrónico" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      <input id="fbPassword" type="password" placeholder="Contraseña" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      <p id="fbAuthError" class="text-xs text-error hidden"></p>
+      <button onclick="fbSignInEmail()" class="w-full bg-primary text-white rounded-xl py-3 font-bold hover:opacity-90 transition-all active:scale-95">Iniciar sesión</button>
+      <button onclick="fbCreateEmail()" class="w-full bg-surface-container text-on-surface rounded-xl py-3 font-bold hover:bg-surface-container-high transition-all active:scale-95">Crear cuenta nueva</button>
+    </div>
+    <button onclick="closeFbModal('fbAuthModal')" class="text-xs text-on-surface-variant text-center hover:text-on-surface transition-colors">Cancelar</button>
+  </div>
+</div>
+
+<!-- Role Modal -->
+<div id="fbRoleModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col gap-5">
+    <div class="text-center mb-2">
+      <p id="fbRoleWelcome" class="text-sm font-bold text-secondary mb-1"></p>
+      <h3 class="font-headline text-2xl font-extrabold text-on-surface">¿Cómo usarás AppSados?</h3>
+    </div>
+    <button onclick="fbSetRole('parrillero')" class="w-full flex items-center gap-4 bg-surface-container hover:bg-surface-container-high border-2 border-transparent hover:border-primary/20 rounded-2xl p-5 transition-all active:scale-95 text-left">
+      <span class="text-3xl">🔥</span>
+      <div><p class="font-bold text-on-surface">Parrillero</p><p class="text-xs text-on-surface-variant">Planifica tu asado, busca carnicerías y reserva cortes</p></div>
+    </button>
+    <button onclick="fbSetRole('carnicero')" class="w-full flex items-center gap-4 bg-surface-container hover:bg-surface-container-high border-2 border-transparent hover:border-secondary/20 rounded-2xl p-5 transition-all active:scale-95 text-left">
+      <span class="text-3xl">🥩</span>
+      <div><p class="font-bold text-on-surface">Carnicería</p><p class="text-xs text-on-surface-variant">Registra tu negocio, publica cortes y aparece en búsquedas</p></div>
+    </button>
+  </div>
+</div>
+
+<!-- Carnicero Register Modal -->
+<div id="fbRegisterModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:90dvh">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <h3 class="font-headline text-xl font-bold">Perfil de Carnicería</h3>
+      <button onclick="closeFbModal('fbRegisterModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1 space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Nombre de la carnicería *</span>
+          <input id="reg_nombre" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: Carnicería El Maestro"/></label>
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">RUT empresa *</span>
+          <input id="reg_rut" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="76.123.456-7"/></label>
+      </div>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Descripción</span>
+        <textarea id="reg_descripcion" rows="2" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Especialidad, años de experiencia..."></textarea></label>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Dirección</span>
+          <input id="reg_direccion" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Av. Principal 123"/></label>
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Barrio / Comuna</span>
+          <input id="reg_barrio" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Las Condes, Providencia..."/></label>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Teléfono</span>
+          <input id="reg_telefono" type="tel" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="+56 9 1234 5678"/></label>
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Horario</span>
+          <input id="reg_horario" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Lun–Sáb 9:00–20:00"/></label>
+      </div>
+      <!-- Nivel de precios -->
+      <div><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-2">Nivel de precios</span>
+        <div class="flex gap-3">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="reg_presupuesto" value="low" class="accent-primary" checked/><span class="text-sm font-semibold">Económico ($)</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="reg_presupuesto" value="high" class="accent-primary"/><span class="text-sm font-semibold">Premium ($$$)</span></label>
+        </div>
+      </div>
+      <!-- Delivery -->
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" id="reg_delivery" class="accent-primary w-4 h-4"/>
+        <span class="text-sm font-semibold">Ofrezco delivery</span>
+      </label>
+      <!-- Cortes disponibles -->
+      <div>
+        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-3">Cortes disponibles</span>
+        <div class="space-y-3">
+          <p class="text-xs font-bold text-on-surface">🐄 Vacuno</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-huachalomo"/> Huachalomo</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-sobrecostilla"/> Sobrecostilla</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-asado-carnicero"/> Asado Carnicero</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-asiento"/> Asiento</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-lomo-vetado"/> Lomo Vetado</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-entrana"/> Entraña</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-filete"/> Filete</label>
+          </div>
+          <p class="text-xs font-bold text-on-surface mt-2">🐷 Cerdo</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="cerdo-pulpa"/> Pulpa de Cerdo</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="cerdo-costillar"/> Costillar de Cerdo</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="cerdo-malaya"/> Malaya de Cerdo</label>
+          </div>
+          <p class="text-xs font-bold text-on-surface mt-2">🌭 Embutidos</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="embutidos-chorizo"/> Chorizo</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="embutidos-longaniza"/> Longaniza</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="embutidos-butifarra"/> Butifarra</label>
+          </div>
+          <p class="text-xs font-bold text-on-surface mt-2">🍗 Pollo</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="pollo-tutos"/> Tutos</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="pollo-alitas"/> Alitas</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="pollo-pechuga"/> Pechuga Entera</label>
+          </div>
+        </div>
+      </div>
+      <p id="fbRegError" class="text-xs text-error hidden"></p>
+    </div>
+    <div class="p-6 border-t border-outline-variant/15">
+      <button onclick="fbSaveCarniceroProfile()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold text-base hover:opacity-90 transition-all active:scale-95">Guardar perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== FIREBASE JS ===================== -->
+<script>
+  // ---- Init ----
+  const firebaseConfig = {
+    apiKey: "AIzaSyDOm5fi_fZtLxLMlZUH1LUqIOTl6yqoTKE",
+    authDomain: "appsados.firebaseapp.com",
+    projectId: "appsados",
+    storageBucket: "appsados.firebasestorage.app",
+    messagingSenderId: "867122636110",
+    appId: "1:867122636110:web:c6a9f24c1b9c44fcbeea1f"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  let fbUser     = null; // Firebase User
+  let fbRole     = null; // 'parrillero' | 'carnicero'
+  let fbProfile  = null; // carnicero profile from Firestore
+
+  // ---- Auth state listener ----
+  auth.onAuthStateChanged(async user => {
+    fbUser = user;
+    if (!user) {
+      fbRole = null; fbProfile = null;
+      updateAuthUI();
+      return;
+    }
+    // Load role from Firestore
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      if (snap.exists) {
+        fbRole = snap.data().role;
+        if (fbRole === 'carnicero') {
+          const pSnap = await db.collection('carniceros').doc(user.uid).get();
+          fbProfile = pSnap.exists ? pSnap.data() : null;
+        }
+        updateAuthUI();
+        renderFirebaseCarniceros();
+      } else {
+        // New user — pick role
+        updateAuthUI();
+        showRoleModal();
+      }
+    } catch(e) {
+      console.error('Firestore load error:', e);
+      updateAuthUI();
+    }
+  });
+
+  // ---- UI updates ----
+  function updateAuthUI() {
+    const btn     = document.getElementById('authBtn');
+    const avatar  = document.getElementById('userAvatarBtn');
+    const initial = document.getElementById('userInitialCircle');
+    const badge   = document.getElementById('userRoleBadge');
+    const panelBtn   = document.getElementById('userMenuPanelBtn');
+    const registerBtn = document.getElementById('userMenuRegisterBtn');
+
+    if (!fbUser) {
+      btn.classList.remove('hidden'); btn.classList.add('flex');
+      avatar.classList.add('hidden'); avatar.classList.remove('flex');
+      showPanelGate(true);
+      return;
+    }
+    btn.classList.add('hidden');
+    avatar.classList.remove('hidden'); avatar.classList.add('flex');
+    const name = fbUser.displayName || fbUser.email || '?';
+    initial.textContent = name[0].toUpperCase();
+    document.getElementById('userMenuName').textContent  = name;
+    document.getElementById('userMenuEmail').textContent = fbUser.email || '';
+
+    if (fbRole === 'carnicero') {
+      badge.textContent = '🥩 Carnicero';
+      badge.classList.remove('hidden');
+      panelBtn.classList.remove('hidden');
+      registerBtn.classList.toggle('hidden', !!fbProfile);
+      showPanelGate(false);
+    } else {
+      badge.textContent = '🔥 Parrillero';
+      badge.classList.remove('hidden');
+      panelBtn.classList.add('hidden');
+      registerBtn.classList.add('hidden');
+      showPanelGate(true);
+    }
+    // Show "Mis cortes" chip if user has cuts selected
+    updateMisCortesChip();
+    renderFirebaseCarniceros();
+  }
+
+  function showPanelGate(show) {
+    const gate      = document.getElementById('panelGate');
+    const dashboard = document.getElementById('panelDashboard');
+    if (!gate || !dashboard) return;
+    gate.classList.toggle('hidden', !show);
+    dashboard.classList.toggle('hidden', show);
+  }
+
+  function updateMisCortesChip() {
+    const chip = document.getElementById('chipMisCortes');
+    if (!chip) return;
+    const hasCuts = typeof selectedCutIds !== 'undefined' && selectedCutIds.size > 0;
+    chip.classList.toggle('hidden', !hasCuts);
+    if (!hasCuts) chip.classList.remove('flex');
+    else chip.classList.add('flex');
+  }
+
+  // ---- Auth modal ----
+  function openAuthModal() {
+    document.getElementById('fbAuthModal').classList.remove('hidden');
+    document.getElementById('fbAuthError').classList.add('hidden');
+    document.getElementById('fbEmail').value = '';
+    document.getElementById('fbPassword').value = '';
+    closeUserMenu();
+  }
+
+  function closeFbModal(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  function showRoleModal() {
+    document.getElementById('fbRoleModal').classList.remove('hidden');
+    const name = fbUser?.displayName || fbUser?.email?.split('@')[0] || 'amigo';
+    document.getElementById('fbRoleWelcome').textContent = `Hola, ${name} 👋`;
+  }
+
+  function openCarniceroRegister() {
+    closeUserMenu();
+    document.getElementById('fbRegisterModal').classList.remove('hidden');
+    // Pre-fill if profile exists
+    if (fbProfile) {
+      document.getElementById('reg_nombre').value      = fbProfile.nombre || '';
+      document.getElementById('reg_rut').value         = fbProfile.rut || '';
+      document.getElementById('reg_descripcion').value = fbProfile.descripcion || '';
+      document.getElementById('reg_direccion').value   = fbProfile.direccion || '';
+      document.getElementById('reg_barrio').value      = fbProfile.barrio || '';
+      document.getElementById('reg_telefono').value    = fbProfile.telefono || '';
+      document.getElementById('reg_horario').value     = fbProfile.horario || '';
+      document.getElementById('reg_delivery').checked  = fbProfile.delivery || false;
+      const presupuesto = fbProfile.presupuesto || 'low';
+      document.querySelector(`input[name="reg_presupuesto"][value="${presupuesto}"]`).checked = true;
+      document.querySelectorAll('.reg-cut').forEach(cb => {
+        cb.checked = (fbProfile.cortes || []).includes(cb.value);
+      });
+    }
+  }
+
+  // ---- Sign-in flows ----
+  async function fbSignInGoogle() {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+      closeFbModal('fbAuthModal');
+    } catch(e) {
+      showAuthError(e.message);
+    }
+  }
+
+  async function fbSignInEmail() {
+    const email = document.getElementById('fbEmail').value.trim();
+    const pass  = document.getElementById('fbPassword').value;
+    if (!email || !pass) { showAuthError('Ingresa correo y contraseña.'); return; }
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+      closeFbModal('fbAuthModal');
+    } catch(e) {
+      showAuthError(e.code === 'auth/user-not-found' ? 'Usuario no encontrado.' :
+                   e.code === 'auth/wrong-password'  ? 'Contraseña incorrecta.' : e.message);
+    }
+  }
+
+  async function fbCreateEmail() {
+    const email = document.getElementById('fbEmail').value.trim();
+    const pass  = document.getElementById('fbPassword').value;
+    if (!email || !pass) { showAuthError('Ingresa correo y contraseña.'); return; }
+    if (pass.length < 6)  { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
+    try {
+      await auth.createUserWithEmailAndPassword(email, pass);
+      closeFbModal('fbAuthModal');
+    } catch(e) {
+      showAuthError(e.code === 'auth/email-already-in-use' ? 'Este correo ya tiene una cuenta.' : e.message);
+    }
+  }
+
+  async function fbSignOut() {
+    await auth.signOut();
+    closeUserMenu();
+    showToast('Sesión cerrada.');
+  }
+
+  function showAuthError(msg) {
+    const el = document.getElementById('fbAuthError');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+
+  // ---- Role selection ----
+  async function fbSetRole(role) {
+    if (!fbUser) return;
+    fbRole = role;
+    try {
+      await db.collection('users').doc(fbUser.uid).set({
+        role, email: fbUser.email || '',
+        displayName: fbUser.displayName || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      closeFbModal('fbRoleModal');
+      updateAuthUI();
+      if (role === 'carnicero') {
+        setTimeout(() => openCarniceroRegister(), 300);
+      } else {
+        showToast('¡Bienvenido, parrillero! 🔥');
+      }
+    } catch(e) {
+      console.error(e);
+      showToast('Error al guardar el rol. Intenta de nuevo.');
+    }
+  }
+
+  // ---- Save carnicero profile ----
+  async function fbSaveCarniceroProfile() {
+    if (!fbUser) return;
+    const nombre = document.getElementById('reg_nombre').value.trim();
+    const rut    = document.getElementById('reg_rut').value.trim();
+    if (!nombre) { document.getElementById('fbRegError').textContent = 'El nombre es obligatorio.'; document.getElementById('fbRegError').classList.remove('hidden'); return; }
+    if (!rut)    { document.getElementById('fbRegError').textContent = 'El RUT es obligatorio.';    document.getElementById('fbRegError').classList.remove('hidden'); return; }
+    document.getElementById('fbRegError').classList.add('hidden');
+
+    const cortes = Array.from(document.querySelectorAll('.reg-cut:checked')).map(cb => cb.value);
+    const presupuesto = document.querySelector('input[name="reg_presupuesto"]:checked').value;
+
+    const profile = {
+      uid: fbUser.uid,
+      email: fbUser.email || '',
+      nombre,
+      rut,
+      descripcion: document.getElementById('reg_descripcion').value.trim(),
+      direccion:   document.getElementById('reg_direccion').value.trim(),
+      barrio:      document.getElementById('reg_barrio').value.trim(),
+      telefono:    document.getElementById('reg_telefono').value.trim(),
+      horario:     document.getElementById('reg_horario').value.trim(),
+      delivery:    document.getElementById('reg_delivery').checked,
+      presupuesto,
+      cortes,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+      await db.collection('carniceros').doc(fbUser.uid).set(profile, { merge: true });
+      fbProfile = profile;
+      closeFbModal('fbRegisterModal');
+      updateAuthUI();
+      renderFirebaseCarniceros();
+      showToast(`¡Perfil de ${nombre} guardado! 🥩`);
+      navigate('panel');
+    } catch(e) {
+      document.getElementById('fbRegError').textContent = 'Error al guardar. Intenta de nuevo.';
+      document.getElementById('fbRegError').classList.remove('hidden');
+    }
+  }
+
+  // ---- Render Firebase carniceros in the listing ----
+  async function renderFirebaseCarniceros() {
+    const container = document.getElementById('firebaseCarnicerosList');
+    if (!container) return;
+    try {
+      const snap = await db.collection('carniceros').get();
+      if (snap.empty) { container.innerHTML = ''; return; }
+      container.innerHTML = snap.docs.map(doc => {
+        const c = doc.data();
+        const cuts = (c.cortes || []).slice(0, 4).map(id => {
+          const labels = {
+            'vacuno-huachalomo':'Huachalomo','vacuno-sobrecostilla':'Sobrecostilla',
+            'vacuno-asado-carnicero':'Asado Carnicero','vacuno-asiento':'Asiento',
+            'vacuno-lomo-vetado':'Lomo Vetado','vacuno-entrana':'Entraña',
+            'vacuno-filete':'Filete','cerdo-pulpa':'Pulpa Cerdo',
+            'cerdo-costillar':'Costillar','cerdo-malaya':'Malaya',
+            'embutidos-chorizo':'Chorizo','embutidos-longaniza':'Longaniza',
+            'embutidos-butifarra':'Butifarra','pollo-tutos':'Tutos',
+            'pollo-alitas':'Alitas','pollo-pechuga':'Pechuga'
+          };
+          return labels[id] || id;
+        }).join(', ');
+        const priceSymbol = c.presupuesto === 'high' ? '$$$' : '$';
+        return `
+          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 card-lift"
+            data-cuts="${(c.cortes||[]).join(',')}" data-budget="${c.presupuesto||'low'}">
+            <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-3xl text-primary">storefront</span>
+            </div>
+            <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <h4 class="font-headline text-xl font-bold truncate">${c.nombre}</h4>
+                  <span class="text-primary text-sm font-bold ml-2 shrink-0">${priceSymbol}</span>
+                </div>
+                <p class="text-xs text-on-surface-variant">${c.barrio || ''}${c.delivery ? ' · Delivery' : ''}</p>
+                ${cuts ? `<p class="text-xs text-on-surface-variant mt-1 truncate">🥩 ${cuts}${(c.cortes||[]).length > 4 ? '...' : ''}</p>` : ''}
+              </div>
+              <div class="flex gap-2 mt-3">
+                <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-secondary/10 text-secondary">
+                  <span class="material-symbols-outlined text-xs">verified</span> Registrada en AppSados
+                </span>
+                ${c.horario ? `<span class="text-[10px] font-semibold text-on-surface-variant">${c.horario}</span>` : ''}
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+    } catch(e) {
+      console.error('Error loading carniceros:', e);
+    }
+  }
+
+  // ---- User menu toggle ----
+  function toggleUserMenu() {
+    const menu = document.getElementById('userMenu');
+    menu.classList.toggle('hidden');
+  }
+  function closeUserMenu() {
+    document.getElementById('userMenu')?.classList.add('hidden');
+  }
+  document.addEventListener('click', e => {
+    const avatar = document.getElementById('userAvatarBtn');
+    const menu   = document.getElementById('userMenu');
+    if (menu && !menu.classList.contains('hidden') && !avatar?.contains(e.target) && !menu.contains(e.target)) {
+      closeUserMenu();
+    }
+  });
+
+  // ---- Extend filterButchers to support "Mis cortes" ----
+  const _origFilterButchers = filterButchers;
+  filterButchers = function() {
+    const term = (document.getElementById('butcherSearch')?.value || '').trim().toLowerCase();
+    const cards = Array.from(document.querySelectorAll('#screen-carnicerias article'));
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const matchesSearch = !term || text.includes(term);
+      let matchesFilter = true;
+      if (activeButcherFilter === 'misCortes') {
+        const cardCuts    = (card.dataset.cuts || '').split(',').filter(Boolean);
+        const cardBudget  = card.dataset.budget || '';
+        const userCuts    = typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [];
+        const userBudget  = typeof selectedBudget !== 'undefined' ? selectedBudget : '';
+        const cutsMatch   = userCuts.length === 0 || userCuts.some(c => cardCuts.includes(c));
+        const budgetMatch = !userBudget || cardBudget === userBudget || cardBudget === '';
+        matchesFilter = cutsMatch && budgetMatch;
+      } else {
+        matchesFilter =
+          activeButcherFilter === 'todas' ||
+          (activeButcherFilter === 'premium'  && text.includes('$$$')) ||
+          (activeButcherFilter === 'cerca'    && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
+          (activeButcherFilter === 'delivery' && text.includes('delivery')) ||
+          (activeButcherFilter === 'ofertas'  && (text.includes('oferta') || text.includes('económica') || (text.includes('$') && !text.includes('$$$'))));
+      }
+      const isVisible = matchesSearch && matchesFilter;
+      card.classList.toggle('is-hidden', !isVisible);
+      if (isVisible) visibleCount++;
+    });
+    let empty = document.getElementById('butcherEmptyState');
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'butcherEmptyState';
+      empty.className = 'is-hidden md:col-span-2 bg-surface-container-low rounded-3xl p-10 text-center';
+      empty.innerHTML = `<span class="material-symbols-outlined text-4xl text-primary mb-3">search_off</span>
+        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerías</h3>
+        <p class="text-on-surface-variant text-sm">Prueba con otro barrio, nombre o filtro.</p>`;
+      document.querySelector('#screen-carnicerias .grid.grid-cols-1.md\\:grid-cols-2')?.appendChild(empty);
+    }
+    empty.classList.toggle('is-hidden', visibleCount > 0);
+  };
+
+  // Show chip when cuts are selected (hook into existing toggleCutSelection)
+  const _origToggle = typeof toggleCutSelection === 'function' ? toggleCutSelection : null;
+  if (_origToggle) {
+    toggleCutSelection = function(cutId) {
+      _origToggle(cutId);
+      updateMisCortesChip();
+    };
+  }
 </script>
 </body>
 </html>
