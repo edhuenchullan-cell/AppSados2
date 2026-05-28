@@ -88,9 +88,9 @@ tailwind.config = {
   /* Guest heat indicator */
   .heat-orb {
     width: clamp(4.5rem, 18vw, 6.8rem);
-    height: clamp(4.5rem, 18vw, 6.8rem);
+    height: clamp(5.4rem, 21.6vw, 8.16rem);
     position: relative;
-    filter: drop-shadow(0 18px 28px rgba(129, 9, 0, 0.16));
+    filter: drop-shadow(0 12px 24px rgba(129, 9, 0, 0.22));
   }
   .heat-panel {
     background:
@@ -387,9 +387,63 @@ tailwind.config = {
           <!-- Guest heat -->
           <div id="guestHeat" class="heat-panel mt-6 rounded-2xl p-5 flex items-center gap-5" style="--heat-scale:.82; --core-scale:.72; --heat-opacity:.82; --ember-opacity:.58; --ember-size:.54rem; --heat-width:62%; --glow-opacity:.52; --glow-scale:.92;">
             <div class="heat-orb shrink-0" aria-hidden="true">
-              <div class="heat-flame"></div>
-              <div class="heat-core"></div>
-              <div class="coal-bed"></div>
+              <svg id="flameSvg" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+                <defs>
+                  <radialGradient id="flameGradOuter" cx="50%" cy="80%" r="55%">
+                    <stop offset="0%" stop-color="#ffdfa0"/>
+                    <stop offset="30%" stop-color="#fc6018"/>
+                    <stop offset="70%" stop-color="#a42312"/>
+                    <stop offset="100%" stop-color="#810900"/>
+                  </radialGradient>
+                  <radialGradient id="flameGradInner" cx="50%" cy="75%" r="50%">
+                    <stop offset="0%" stop-color="#fff9e6"/>
+                    <stop offset="50%" stop-color="#ffdfa0"/>
+                    <stop offset="100%" stop-color="#fc6018"/>
+                  </radialGradient>
+                  <radialGradient id="coalGradHot" cx="50%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#fc6018" stop-opacity="0.95"/>
+                    <stop offset="45%" stop-color="#810900" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#1a0a00" stop-opacity="0.98"/>
+                  </radialGradient>
+                  <radialGradient id="coalGradCold" cx="50%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#5a5a5a" stop-opacity="0.7"/>
+                    <stop offset="100%" stop-color="#1a1a1a" stop-opacity="0.9"/>
+                  </radialGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+
+                <!-- Coal bed — always visible, changes color via JS -->
+                <g id="coalBed">
+                  <rect x="8" y="88" width="64" height="8" rx="4" id="coalRect" fill="url(#coalGradCold)"/>
+                  <ellipse cx="22" cy="88" rx="5" ry="3" id="ember1" fill="#3a3a3a" opacity="0.6"/>
+                  <ellipse cx="40" cy="89" rx="4" ry="2.5" id="ember2" fill="#2a2a2a" opacity="0.5"/>
+                  <ellipse cx="58" cy="88" rx="4.5" ry="3" id="ember3" fill="#3a3a3a" opacity="0.6"/>
+                </g>
+
+                <!-- Flame group — scaled from base (40,92), starts hidden -->
+                <g id="flameGroup" style="transform-origin:40px 92px; transform:scaleY(0) scaleX(0); opacity:0; transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1), opacity 0.25s ease;">
+                  <!-- Outer flame -->
+                  <path fill="url(#flameGradOuter)" filter="url(#glow)"
+                    d="M40 6 C40 6, 54 20, 58 32 C62 44, 60 50, 66 56 C70 60, 72 68, 68 76 C63 84, 53 90, 40 90 C27 90, 17 84, 12 76 C8 68, 10 60, 14 56 C20 50, 18 44, 22 32 C26 20, 40 6, 40 6 Z">
+                    <animate attributeName="d" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+                      values="M40 6 C40 6, 54 20, 58 32 C62 44, 60 50, 66 56 C70 60, 72 68, 68 76 C63 84, 53 90, 40 90 C27 90, 17 84, 12 76 C8 68, 10 60, 14 56 C20 50, 18 44, 22 32 C26 20, 40 6, 40 6 Z;M40 4 C40 4, 56 18, 60 30 C63 42, 58 52, 65 58 C69 62, 71 70, 67 78 C62 86, 52 91, 40 91 C28 91, 18 86, 13 78 C9 70, 11 62, 15 58 C22 52, 17 42, 20 30 C24 18, 40 4, 40 4 Z;M40 6 C40 6, 54 20, 58 32 C62 44, 60 50, 66 56 C70 60, 72 68, 68 76 C63 84, 53 90, 40 90 C27 90, 17 84, 12 76 C8 68, 10 60, 14 56 C20 50, 18 44, 22 32 C26 20, 40 6, 40 6 Z"/>
+                  </path>
+                  <!-- Inner brighter flame -->
+                  <path fill="url(#flameGradInner)"
+                    d="M40 22 C40 22, 50 32, 53 42 C56 51, 54 57, 59 62 C62 66, 63 73, 59 79 C55 85, 48 88, 40 88 C32 88, 25 85, 21 79 C17 73, 18 66, 21 62 C26 57, 24 51, 27 42 C30 32, 40 22, 40 22 Z">
+                    <animate attributeName="d" dur="1.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+                      values="M40 22 C40 22, 50 32, 53 42 C56 51, 54 57, 59 62 C62 66, 63 73, 59 79 C55 85, 48 88, 40 88 C32 88, 25 85, 21 79 C17 73, 18 66, 21 62 C26 57, 24 51, 27 42 C30 32, 40 22, 40 22 Z;M40 20 C40 20, 51 30, 55 40 C58 50, 55 58, 61 63 C64 67, 64 74, 60 80 C56 86, 49 89, 40 89 C31 89, 24 86, 20 80 C16 74, 16 67, 19 63 C25 58, 22 50, 25 40 C29 30, 40 20, 40 20 Z;M40 22 C40 22, 50 32, 53 42 C56 51, 54 57, 59 62 C62 66, 63 73, 59 79 C55 85, 48 88, 40 88 C32 88, 25 85, 21 79 C17 73, 18 66, 21 62 C26 57, 24 51, 27 42 C30 32, 40 22, 40 22 Z"/>
+                  </path>
+                  <!-- Hot core glow -->
+                  <ellipse cx="40" cy="68" rx="12" ry="10" fill="#fff9e6" opacity="0.7">
+                    <animate attributeName="ry" values="10;12;10" dur="1.2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.7;0.9;0.7" dur="1.2s" repeatCount="indefinite"/>
+                  </ellipse>
+                </g>
+              </svg>
             </div>
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-3 mb-3">
@@ -397,13 +451,6 @@ tailwind.config = {
                 <p class="text-xs text-on-surface-variant font-bold whitespace-nowrap"><span id="totalGuests">10</span> invitados</p>
               </div>
               <div class="heat-waves mb-3" aria-hidden="true"></div>
-              <div class="ember-row flex items-end gap-2" aria-label="Intensidad del asado">
-                <span class="rounded-full bg-primary" style="--delay:0s"></span>
-                <span class="rounded-full bg-secondary" style="--delay:.16s"></span>
-                <span class="rounded-full bg-tertiary-fixed-dim" style="--delay:.32s"></span>
-                <span class="rounded-full bg-primary-container" style="--delay:.48s"></span>
-                <span class="rounded-full bg-secondary" style="--delay:.64s"></span>
-              </div>
               <p id="heatHint" class="mt-3 text-xs text-on-surface-variant font-semibold">Un asado equilibrado, sin exceso ni apuro.</p>
             </div>
           </div>
@@ -1492,27 +1539,57 @@ tailwind.config = {
     document.getElementById('totalGuests').textContent = total;
     const badge = document.getElementById('totalGuestsBadge');
     if (badge) badge.textContent = total;
-    const intensity = Math.min(1, total / 16);
-    const heat = document.getElementById('guestHeat');
+
     const label = document.getElementById('heatLabel');
-    const hint = document.getElementById('heatHint');
+    const hint  = document.getElementById('heatHint');
+    const heat  = document.getElementById('guestHeat');
     if (!heat || !label || !hint) return;
-    heat.style.setProperty('--heat-scale', (0.58 + intensity * 0.48).toFixed(2));
-    heat.style.setProperty('--core-scale', (0.46 + intensity * 0.42).toFixed(2));
-    heat.style.setProperty('--heat-opacity', (0.58 + intensity * 0.36).toFixed(2));
-    heat.style.setProperty('--ember-opacity', (0.34 + intensity * 0.5).toFixed(2));
-    heat.style.setProperty('--ember-size', (0.36 + intensity * 0.34).toFixed(2) + 'rem');
-    heat.style.setProperty('--heat-width', Math.round(28 + intensity * 72) + '%');
-    heat.style.setProperty('--glow-opacity', (0.32 + intensity * 0.46).toFixed(2));
-    heat.style.setProperty('--glow-scale', (0.72 + intensity * 0.48).toFixed(2));
-    label.textContent = total === 0 ? 'Brasas apagadas' : total <= 5 ? 'Fuego íntimo' : total <= 10 ? 'Brasas listas' : 'Parrilla intensa';
-    hint.textContent = total === 0
+
+    // Flame group: scale from 0 (apagado) to 1 (lleno)
+    const flameGroup = document.getElementById('flameGroup');
+    const coalRect   = document.getElementById('coalRect');
+    const ember1     = document.getElementById('ember1');
+    const ember2     = document.getElementById('ember2');
+    const ember3     = document.getElementById('ember3');
+
+    if (total === 0) {
+      // Apagado: sin llama, brasas frías grises
+      if (flameGroup) {
+        flameGroup.style.transform = 'scaleX(0) scaleY(0)';
+        flameGroup.style.opacity   = '0';
+      }
+      if (coalRect) coalRect.setAttribute('fill', 'url(#coalGradCold)');
+      if (ember1)   { ember1.setAttribute('fill', '#3a3a3a'); ember1.setAttribute('opacity', '0.6'); }
+      if (ember2)   { ember2.setAttribute('fill', '#2a2a2a'); ember2.setAttribute('opacity', '0.5'); }
+      if (ember3)   { ember3.setAttribute('fill', '#3a3a3a'); ember3.setAttribute('opacity', '0.6'); }
+      heat.style.setProperty('--heat-width', '0%');
+    } else {
+      // Intensidad: 1 invitado → llamita pequeña; 16+ → fuego completo
+      const intensity = Math.min(1, total / 16);
+      // Escala mínima 0.22 (llamita), máxima 1.0
+      const sc = (0.22 + intensity * 0.78).toFixed(3);
+      if (flameGroup) {
+        flameGroup.style.transform = `scaleX(${sc}) scaleY(${sc})`;
+        flameGroup.style.opacity   = (0.65 + intensity * 0.35).toFixed(2);
+      }
+      // Brasas calientes
+      if (coalRect) coalRect.setAttribute('fill', 'url(#coalGradHot)');
+      if (ember1)   { ember1.setAttribute('fill', '#fc6018'); ember1.setAttribute('opacity', (0.5 + intensity * 0.35).toFixed(2)); }
+      if (ember2)   { ember2.setAttribute('fill', '#ffdfa0'); ember2.setAttribute('opacity', (0.45 + intensity * 0.35).toFixed(2)); }
+      if (ember3)   { ember3.setAttribute('fill', '#a42312'); ember3.setAttribute('opacity', (0.55 + intensity * 0.3).toFixed(2)); }
+      heat.style.setProperty('--heat-width', Math.round(10 + intensity * 90) + '%');
+    }
+
+    label.textContent = total === 0 ? 'Brasas apagadas' : total <= 3 ? 'Chispa inicial' : total <= 7 ? 'Fuego íntimo' : total <= 12 ? 'Brasas listas' : 'Parrilla intensa';
+    hint.textContent  = total === 0
       ? 'Agrega invitados para encender la planificación.'
-      : total <= 5
-        ? 'Pocas personas, porciones medidas y fuego suave.'
-        : total <= 10
-          ? 'Un asado equilibrado, sin exceso ni apuro.'
-          : 'Grupo grande: conviene asegurar variedad y margen.';
+      : total <= 3
+        ? 'Una llamita tímida, perfecta para una picada pequeña.'
+        : total <= 7
+          ? 'Pocas personas, porciones medidas y fuego suave.'
+          : total <= 12
+            ? 'Un asado equilibrado, sin exceso ni apuro.'
+            : 'Grupo grande: conviene asegurar variedad y margen.';
   }
 
   function buildCutCard(cut) {
@@ -1594,6 +1671,14 @@ tailwind.config = {
     const g = parseInt(grams, 10);
     if (isNaN(g) || g < 0) return;
     cutKg[cutId] = Math.min(Math.round(g / 100) * 0.1, CUT_MAX); // redondear a 100g, máx 8kg
+    syncSliderTracks();
+    updateRecomendaciones();
+  }
+
+  function stepKg(cutId, delta) {
+    const current = cutKg[cutId] ?? 0;
+    const next = Math.min(CUT_MAX, Math.max(0, Math.round((current + delta) * 10) / 10));
+    cutKg[cutId] = next;
     syncSliderTracks();
     updateRecomendaciones();
   }
@@ -1740,12 +1825,12 @@ tailwind.config = {
       if (masterKgRef === 0) return '';
       const diff = totalKgSoFar - masterKgRef;
       const absDiff = Math.abs(diff).toFixed(1);
-      if (Math.abs(diff) <= 0.25) {
-        return `<p class="text-xs font-bold text-green-600 mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> ¡Justo! Estás en el total recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
+      if (Math.abs(diff) < 0.05) {
+        return `<p class="text-sm font-bold text-green-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">check_circle</span> ¡Justo! Estás en el total recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
       } else if (diff < 0) {
-        return `<p class="text-xs font-semibold text-amber-600 mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-sm">arrow_downward</span> Te faltan ${absDiff} kg para llegar al recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
+        return `<p class="text-sm font-semibold text-amber-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">arrow_downward</span> Te faltan <strong>${absDiff} kg</strong> para llegar al recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
       } else {
-        return `<p class="text-xs font-semibold text-red-600 mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-sm">arrow_upward</span> Superaste el recomendado por ${absDiff} kg (${masterKgRef.toFixed(1)} kg sugeridos)</p>`;
+        return `<p class="text-sm font-semibold text-red-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">arrow_upward</span> Superaste el recomendado por <strong>${absDiff} kg</strong> (${masterKgRef.toFixed(1)} kg sugeridos)</p>`;
       }
     }
     const slidersHtml = activeCuts.length === 0
@@ -1772,13 +1857,21 @@ tailwind.config = {
                   <p class="text-xs font-bold text-secondary">${money(kg * cut.pricePerKg)}</p>
                 </div>
               </div>
-              <!-- Slider 100g step -->
-              <input class="cut-slider w-full" type="range"
-                min="0" max="${CUT_MAX}" step="${CUT_STEP}"
-                value="${kg}" style="--pct:${pct}%"
-                oninput="onKgSlider('${cut.id}', this.value)"
-                aria-label="Cantidad de ${cut.name}">
-              <div class="flex justify-between text-[10px] text-on-surface-variant px-0.5 -mt-1">
+              <!-- Slider 100g step con botones +/- -->
+              <div class="flex items-center gap-2">
+                <button onclick="stepKg('${cut.id}', -0.1)"
+                  class="shrink-0 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-lg leading-none hover:bg-outline-variant active:scale-90 transition-transform"
+                  aria-label="Restar 100g a ${cut.name}">−</button>
+                <input class="cut-slider flex-1" type="range"
+                  min="0" max="${CUT_MAX}" step="${CUT_STEP}"
+                  value="${kg}" style="--pct:${pct}%"
+                  oninput="onKgSlider('${cut.id}', this.value)"
+                  aria-label="Cantidad de ${cut.name}">
+                <button onclick="stepKg('${cut.id}', 0.1)"
+                  class="shrink-0 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-lg leading-none hover:bg-outline-variant active:scale-90 transition-transform"
+                  aria-label="Sumar 100g a ${cut.name}">+</button>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-variant px-9 -mt-1">
                 <span>0 g</span><span>8 kg</span>
               </div>
               <!-- Input manual en gramos -->
@@ -1791,7 +1884,6 @@ tailwind.config = {
                   onchange="onKgManualInput('${cut.id}', this.value)">
                 <span class="text-xs text-on-surface-variant">g</span>
               </div>
-              ${buildSliderHint(kgSoFar)}
             </div>`;
         }).join('');
 
@@ -1819,6 +1911,7 @@ tailwind.config = {
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             ${slidersHtml}
           </div>
+          ${buildSliderHint(totalKg)}
         </div>` : slidersHtml}
 
         ${categoryRows ? `
