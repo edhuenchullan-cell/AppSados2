@@ -956,7 +956,7 @@ tailwind.config = {
       <button onclick="fbUser ? fbSetRole('carnicero') : openAuthModal()" class="bg-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
         <span class="material-symbols-outlined">add_business</span> Solicitar registro como Carnicería
       </button>
-      <p class="text-xs text-on-surface-variant mt-4">¿Ya tienes cuenta? <button onclick="openAuthModal()" class="text-primary font-bold underline">Inicia sesión</button></p>
+      <p id="panelGateLoginHint" class="text-xs text-on-surface-variant mt-4">¿Ya tienes cuenta? <button onclick="openAuthModal()" class="text-primary font-bold underline">Inicia sesión</button></p>
     </div>
     <!-- Pending approval -->
     <div id="panelPending" class="hidden max-w-lg mx-auto px-6 py-20 flex flex-col items-center text-center">
@@ -2696,7 +2696,7 @@ tailwind.config = {
   const db   = firebase.firestore();
 
   // ⬇ Cambia esto a tu correo real de Google
-  const ADMIN_EMAIL = 'edgard.huenchullan.96@gmail.com';
+  const ADMIN_EMAIL = 'elias.arteaga.r@gmail.com';
 
   let fbUser     = null;
   let fbRole     = null; // 'parrillero' | 'carnicero' | 'admin'
@@ -2763,14 +2763,19 @@ tailwind.config = {
   }
 
   function showPanelState() {
-    const state = getPanelState();
+    const state     = getPanelState();
     const gate      = document.getElementById('panelGate');
     const pending   = document.getElementById('panelPending');
     const rejected  = document.getElementById('panelRejected');
     const dashboard = document.getElementById('panelDashboard');
     const admin     = document.getElementById('panelAdmin');
+    const loginHint = document.getElementById('panelGateLoginHint');
     [gate, pending, rejected, dashboard, admin].forEach(el => el?.classList.add('hidden'));
-    if (state === 'guest' || state === 'parrillero') gate?.classList.remove('hidden');
+    if (state === 'guest' || state === 'parrillero') {
+      gate?.classList.remove('hidden');
+      // Hide "ya tienes cuenta" if already logged in as parrillero
+      if (loginHint) loginHint.classList.toggle('hidden', state === 'parrillero');
+    }
     else if (state === 'pending')  pending?.classList.remove('hidden');
     else if (state === 'rejected') rejected?.classList.remove('hidden');
     else if (state === 'approved') dashboard?.classList.remove('hidden');
