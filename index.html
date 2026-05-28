@@ -1639,8 +1639,8 @@ tailwind.config = {
     // ── Cálculo del Maestro: ESTÁTICO — basado solo en invitados ────────────
     // Solo se actualiza si cambia el número de invitados (masterKgFixed)
     if (masterKgFixed === null) {
-      // 450g por hombre, 350g por mujer, 250g por niño
-      masterKgFixed = (counts.men * 0.45) + (counts.women * 0.35) + (counts.kids * 0.25);
+      // 500g por hombre, 400g por mujer, 250g por niño
+      masterKgFixed = (counts.men * 0.5) + (counts.women * 0.5) + (counts.kids * 0.25);
       masterGuestsFixed = total;
     }
 
