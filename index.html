@@ -982,11 +982,16 @@ tailwind.config = {
     </div>
 
     <!-- Admin panel -->
-    <div id="panelAdmin" class="hidden max-w-4xl mx-auto px-6 py-8">
-      <div class="mb-8">
-        <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Administrador</span>
-        <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-2">Solicitudes de Carnicerías</h2>
-        <p class="text-on-surface-variant">Revisa y aprueba las solicitudes de registro.</p>
+    <div id="panelAdmin" class="hidden max-w-5xl mx-auto px-6 py-8">
+      <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Superadmin</span>
+          <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-1">Gestión de Carnicerías</h2>
+          <p class="text-on-surface-variant text-sm">Aprueba, edita o elimina carnicerías registradas.</p>
+        </div>
+        <button onclick="renderAdminPanel()" class="flex items-center gap-2 bg-surface-container px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all">
+          <span class="material-symbols-outlined text-base">refresh</span> Actualizar
+        </button>
       </div>
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-4 mb-8">
@@ -1003,220 +1008,68 @@ tailwind.config = {
           <p class="text-xs font-bold text-red-600 mt-1">Rechazadas</p>
         </div>
       </div>
-      <!-- List -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="adminPendingList">
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-6 border-b border-outline-variant/20 pb-0">
+        <button onclick="setAdminTab('pending')"   id="adminTab-pending"   class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-primary text-primary -mb-px">⏳ Pendientes</button>
+        <button onclick="setAdminTab('approved')"  id="adminTab-approved"  class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">✅ Aprobadas</button>
+        <button onclick="setAdminTab('rejected')"  id="adminTab-rejected"  class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">❌ Rechazadas</button>
+        <button onclick="setAdminTab('all')"       id="adminTab-all"       class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">📋 Todas</button>
+      </div>
+      <div id="adminPendingList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Cargando...</p>
       </div>
     </div>
-    <div id="panelDashboard" class="hidden max-w-7xl mx-auto px-6 py-8 pb-4">
+    <div id="panelDashboard" class="hidden max-w-5xl mx-auto px-6 py-8 pb-4">
       <!-- Header -->
-      <div class="mb-10">
-        <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-3 block">Dashboard</span>
-        <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-2">Panel del Carnicero</h2>
-        <p class="text-on-surface-variant font-medium">Gestiona tu stock, promociones y el crecimiento de tu carnicería.</p>
-        <button onclick="openVerificationForm()" id="verificationBadge" class="mt-4 inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-bold">
-          <span class="material-symbols-outlined text-base">verified</span>
-          Carnicería verificada
+      <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Mi Carnicería</span>
+          <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-1" id="dashNombre">Cargando...</h2>
+          <p class="text-on-surface-variant text-sm" id="dashBarrio"></p>
+        </div>
+        <button onclick="openCarniceroRegister()" class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all">
+          <span class="material-symbols-outlined text-base">edit</span> Editar perfil
         </button>
       </div>
 
-      <!-- Bento Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <!-- Sales chart -->
-        <div class="md:col-span-8 bg-surface-container-lowest rounded-3xl p-8 shadow-[0_4px_24px_rgba(129,9,0,0.04)] relative overflow-hidden">
-          <div class="flex justify-between items-end mb-8">
-            <div>
-              <h3 class="font-headline text-xl font-bold mb-1">Estadísticas de Ventas</h3>
-              <p class="text-tertiary font-semibold text-sm">Rendimiento semanal</p>
-            </div>
-            <div class="text-right">
-              <span class="text-3xl font-extrabold text-primary">$1.420.000</span>
-              <p class="text-xs font-bold text-secondary uppercase tracking-widest mt-1">+12.5% vs ayer</p>
-            </div>
-          </div>
-          <!-- Bar chart -->
-          <div class="h-56 w-full flex items-end justify-between gap-2">
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-surface-container-low rounded-t-lg hover:bg-primary-container transition-colors cursor-pointer" style="height:40%"></div>
-              <span class="text-[10px] font-bold text-on-surface-variant">Lun</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-surface-container-low rounded-t-lg hover:bg-primary-container transition-colors cursor-pointer" style="height:65%"></div>
-              <span class="text-[10px] font-bold text-on-surface-variant">Mar</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-surface-container-low rounded-t-lg hover:bg-primary-container transition-colors cursor-pointer" style="height:50%"></div>
-              <span class="text-[10px] font-bold text-on-surface-variant">Mié</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-surface-container-low rounded-t-lg hover:bg-primary-container transition-colors cursor-pointer" style="height:85%"></div>
-              <span class="text-[10px] font-bold text-on-surface-variant">Jue</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-primary rounded-t-lg relative" style="height:95%">
-                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-0.5 rounded font-bold whitespace-nowrap">Hoy</div>
-              </div>
-              <span class="text-[10px] font-bold text-primary">Vie</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-surface-container-low rounded-t-lg hover:bg-primary-container transition-colors cursor-pointer" style="height:30%"></div>
-              <span class="text-[10px] font-bold text-on-surface-variant">Sáb</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-              <div class="w-full bg-surface-container-low rounded-t-lg hover:bg-primary-container transition-colors cursor-pointer" style="height:45%"></div>
-              <span class="text-[10px] font-bold text-on-surface-variant">Dom</span>
-            </div>
-          </div>
-          <div class="mt-6 pt-5 border-t border-outline-variant/15 flex gap-6">
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-primary"></span>
-              <span class="text-xs font-bold uppercase tracking-tight">Ventas Reales</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-surface-container-high"></span>
-              <span class="text-xs font-bold uppercase tracking-tight">Proyectado</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Promotions -->
-        <div class="md:col-span-4 bg-surface-container-low rounded-3xl p-6 flex flex-col">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="font-headline text-lg font-bold">Promociones Activas</h3>
-            <span class="material-symbols-outlined text-secondary">campaign</span>
-          </div>
-          <div id="promoList" class="space-y-4 flex-1">
-            <div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm border-l-4 border-primary">
-              <p class="text-xs font-bold text-primary uppercase mb-1">Pack Parrillero</p>
-              <p class="text-sm font-semibold mb-2">2kg Lomo Vetado + Carbón</p>
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-on-surface-variant italic">Vence en 2h</span>
-                <span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">-15% OFF</span>
-              </div>
-            </div>
-            <div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm border-l-4 border-secondary">
-              <p class="text-xs font-bold text-secondary uppercase mb-1">Oferta Flash</p>
-              <p class="text-sm font-semibold mb-2">Costillar de Cerdo Premium</p>
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-on-surface-variant italic">Activa</span>
-                <span class="bg-secondary/10 text-secondary text-xs font-bold px-2 py-1 rounded-full">-20% OFF</span>
-              </div>
-            </div>
-            <div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm border-l-4 border-tertiary">
-              <p class="text-xs font-bold text-tertiary uppercase mb-1">Fin de Semana</p>
-              <p class="text-sm font-semibold mb-2">Entraña seleccionada</p>
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-on-surface-variant italic">Activa</span>
-                <span class="bg-tertiary/10 text-tertiary text-xs font-bold px-2 py-1 rounded-full">-10% OFF</span>
-              </div>
-            </div>
-          </div>
-          <button onclick="openPromoForm()" class="mt-5 w-full py-3 bg-surface-container-high text-on-surface font-bold rounded-xl hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-sm">add</span>
-            Nueva Promo
+      <!-- Cortes disponibles -->
+      <div class="bg-surface-container-lowest rounded-3xl p-6 mb-6 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-headline text-xl font-bold">Mis Cortes</h3>
+          <button onclick="openEditCortesModal()" class="flex items-center gap-1.5 text-primary text-sm font-bold hover:opacity-80 transition-opacity">
+            <span class="material-symbols-outlined text-base">tune</span> Editar cortes
           </button>
         </div>
-
-        <!-- Products -->
-        <div class="md:col-span-12">
-          <div class="flex items-center justify-between mb-6 mt-2">
-            <h3 class="font-headline text-2xl font-bold">Mis Productos</h3>
-            <div class="flex gap-3">
-              <div class="bg-surface-container px-4 py-2 rounded-full flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">search</span>
-                <label class="sr-only" for="productSearch">Buscar corte</label>
-                <input id="productSearch" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32 md:w-48" placeholder="Buscar corte..." type="search"/>
-              </div>
-              <button onclick="openProductForm()" class="bg-primary text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
-                <span class="material-symbols-outlined text-sm">restaurant_menu</span>
-                Añadir Corte
-              </button>
-            </div>
-          </div>
-
-          <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <!-- Card 1 -->
-            <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm group card-lift">
-              <div class="h-40 overflow-hidden">
-                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBCg0Y4F5RMZ9KGS8MQF6Eaneztz8k9-ZDaDuuOGVP23Do81u-K3oerahy-BkAtgTJna7KtBBdwOgkBqwLUu0r_ZnSKRdtOYZ0UQFqxM6djGNRr11-GGKGCrTmeuJjSYhArHtTwm_58qSKX2w2yxKsnDcM8FkSYv7v0C3oNDh5enABvkJ4aBK6SBnTCMWqx8ftXf9ysjMOhyvvBHwpesDk5TaOapc8-WOvTZR4qqT5pDuJyTWdY5WGzw35xqVE4Q9mN9-lQYelh8Q"
-                  alt="Lomo Vetado"/>
-              </div>
-              <div class="p-5">
-                <div class="flex justify-between items-start mb-2">
-                  <h4 class="font-bold text-lg">Lomo Vetado</h4>
-                  <span class="text-tertiary material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors">edit</span>
-                </div>
-                <div class="flex justify-between items-end">
-                  <div>
-                    <p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tight">Precio / KG</p>
-                    <p class="text-xl font-extrabold text-primary">$18.990</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-[10px] text-on-surface-variant font-bold uppercase">Stock</p>
-                    <p class="text-sm font-bold text-secondary">24.5 kg</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Card 2 -->
-            <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm group card-lift">
-              <div class="h-40 overflow-hidden">
-                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  src="https://www.marthastewart.com/thmb/GL2chyMKQYGrNCVelNPJoh0J1Ck=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/MS-318389-oven-roasted-ribs-with-barbecue-sauce-hero-3x2-26714-f4b156a93dd44990b38fa7c6e6ef8c78.jpg"
-                  alt="Costillar Cerdo"/>
-              </div>
-              <div class="p-5">
-                <div class="flex justify-between items-start mb-2">
-                  <h4 class="font-bold text-lg">Costillar Cerdo</h4>
-                  <span class="text-tertiary material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors">edit</span>
-                </div>
-                <div class="flex justify-between items-end">
-                  <div>
-                    <p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tight">Precio / KG</p>
-                    <p class="text-xl font-extrabold text-primary">$12.500</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-[10px] text-on-surface-variant font-bold uppercase">Stock</p>
-                    <p class="text-sm font-bold text-secondary">15.0 kg</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Card 3 -->
-            <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm group card-lift">
-              <div class="h-40 overflow-hidden">
-                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZsdKMtXbbZWkU32z9CU1H4aPvfoOR5VP4djcwPd4ZX5-8JTfgpqVOeZKzE6Qs28zDTUOIZaSq6NKmeMuO8qsFQrawp7ZnKEbEn11SxbDVxEQc6RXGVOif1_v6nzG2322XviTB17nHrGsrHsVrtCU-P4w_HEVLxG6ZcUurYGERcMcE6sW4T9LHmwgVmjFV0zBsPt1J1obAtkPnICrqkZ4VU_-2xUzdLXxR4gWHE1OgcBFBxoRcmjn7YwDOqo8Cn5d8MxaI8vt5ZQE"
-                  alt="Punta Paleta"/>
-              </div>
-              <div class="p-5">
-                <div class="flex justify-between items-start mb-2">
-                  <h4 class="font-bold text-lg">Punta Paleta</h4>
-                  <span class="text-tertiary material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors">edit</span>
-                </div>
-                <div class="flex justify-between items-end">
-                  <div>
-                    <p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tight">Precio / KG</p>
-                    <p class="text-xl font-extrabold text-primary">$15.990</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-[10px] text-on-surface-variant font-bold uppercase">Stock</p>
-                    <p class="text-sm font-bold text-error">Bajo: 4 kg</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Add Card -->
-            <div onclick="openProductForm()" role="button" tabindex="0" class="border-2 border-dashed border-outline-variant/40 rounded-3xl flex flex-col items-center justify-center p-8 bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
-              <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-primary">add_circle</span>
-              </div>
-              <p class="font-bold text-on-surface-variant">Agregar más cortes</p>
-              <p class="text-xs text-on-surface-variant/60 mt-1">Actualiza tu vitrina online</p>
-            </div>
-          </div>
+        <div id="dashCortesList" class="flex flex-wrap gap-2">
+          <p class="text-sm text-on-surface-variant">Cargando...</p>
         </div>
+      </div>
+
+      <!-- Mis Promos -->
+      <div class="bg-surface-container-lowest rounded-3xl p-6 mb-6 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-headline text-xl font-bold">Mis Promociones</h3>
+          <button onclick="openDashPromoForm(null)" class="flex items-center gap-1.5 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">add</span> Nueva promo
+          </button>
+        </div>
+        <div id="dashPromoList" class="space-y-3">
+          <p class="text-sm text-on-surface-variant py-4 text-center">Sin promociones activas. ¡Agrega una!</p>
+        </div>
+      </div>
+
+      <!-- Foto de la carnicería -->
+      <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-headline text-xl font-bold">Foto de portada</h3>
+          <button onclick="openPhotoModal()" class="flex items-center gap-1.5 text-primary text-sm font-bold hover:opacity-80 transition-opacity">
+            <span class="material-symbols-outlined text-base">photo_camera</span> Cambiar foto
+          </button>
+        </div>
+        <div id="dashPhotoPreview" class="w-full h-48 rounded-2xl overflow-hidden bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-4xl text-on-surface-variant/30">storefront</span>
+        </div>
+        <p class="text-xs text-on-surface-variant mt-3">Esta foto aparecerá en tu card del listado de carnicerías.</p>
       </div>
     </div><!-- end panelDashboard -->
   </div>
@@ -3079,7 +2932,300 @@ tailwind.config = {
     if (menu && !menu.classList.contains('hidden') && !avatar?.contains(e.target) && !menu.contains(e.target)) closeUserMenu();
   });
 
-  // ---- Extend filterButchers for "Mis cortes" ----
+  // ---- Render carnicero dashboard from Firestore ----
+  async function renderCarniceroDashboard() {
+    if (!fbUser || !fbProfile) return;
+    const p = fbProfile;
+    document.getElementById('dashNombre').textContent = p.nombre || 'Mi Carnicería';
+    document.getElementById('dashBarrio').textContent = [p.barrio, p.horario].filter(Boolean).join(' · ');
+
+    // Cortes chips
+    const cortesEl = document.getElementById('dashCortesList');
+    if (cortesEl) {
+      const cortes = p.cortes || [];
+      cortesEl.innerHTML = cortes.length
+        ? cortes.map(id => `<span class="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold">${CUT_LABELS[id] || id}</span>`).join('')
+        : '<p class="text-sm text-on-surface-variant">Sin cortes seleccionados. <button onclick="openEditCortesModal()" class="text-primary font-bold underline">Agrega ahora</button></p>';
+    }
+
+    // Photo
+    const photo = p.fotoUrl || '';
+    const preview = document.getElementById('dashPhotoPreview');
+    if (preview && photo) {
+      preview.innerHTML = `<img src="${photo}" class="w-full h-full object-cover" alt="Foto carnicería"/>`;
+    }
+
+    // Promos from Firestore subcollection
+    renderDashPromos();
+  }
+
+  async function renderDashPromos() {
+    if (!fbUser) return;
+    const el = document.getElementById('dashPromoList');
+    if (!el) return;
+    try {
+      const snap = await db.collection('carniceros').doc(fbUser.uid).collection('promos').orderBy('createdAt', 'desc').get();
+      if (snap.empty) {
+        el.innerHTML = '<p class="text-sm text-on-surface-variant py-4 text-center">Sin promociones activas. ¡Agrega una!</p>';
+        return;
+      }
+      const colors = ['border-primary text-primary bg-primary/10', 'border-secondary text-secondary bg-secondary/10', 'border-tertiary text-tertiary bg-tertiary/10'];
+      el.innerHTML = snap.docs.map((doc, i) => {
+        const pr = doc.data();
+        const c  = colors[i % colors.length].split(' ');
+        return `
+          <div class="bg-surface-container p-4 rounded-2xl border-l-4 ${c[0]} flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold ${c[1]} uppercase mb-0.5">${pr.titulo}</p>
+              <p class="text-sm font-semibold truncate">${pr.descripcion}</p>
+              <span class="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full ${c[2]} ${c[1]}">${pr.descuento}</span>
+            </div>
+            <div class="flex gap-1 shrink-0">
+              <button onclick="openDashPromoForm('${doc.id}')" class="w-8 h-8 rounded-xl bg-surface-container-high flex items-center justify-center hover:bg-outline-variant/20 transition-colors">
+                <span class="material-symbols-outlined text-sm text-on-surface-variant">edit</span>
+              </button>
+              <button onclick="deleteDashPromo('${doc.id}')" class="w-8 h-8 rounded-xl bg-error/10 flex items-center justify-center hover:bg-error/20 transition-colors">
+                <span class="material-symbols-outlined text-sm text-error">delete</span>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e) { console.error(e); }
+  }
+
+  // ---- Edit cortes ----
+  function openEditCortesModal() {
+    document.getElementById('editCortesModal').classList.remove('hidden');
+    const cortes = fbProfile?.cortes || [];
+    document.querySelectorAll('.edit-cut').forEach(cb => { cb.checked = cortes.includes(cb.value); });
+  }
+
+  async function saveEditedCortes() {
+    if (!fbUser) return;
+    const cortes = Array.from(document.querySelectorAll('.edit-cut:checked')).map(cb => cb.value);
+    try {
+      await db.collection('carniceros').doc(fbUser.uid).update({ cortes, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      fbProfile = { ...fbProfile, cortes };
+      closeFbModal('editCortesModal');
+      renderCarniceroDashboard();
+      renderFirebaseCarniceros();
+      showToast('Cortes actualizados ✅');
+    } catch(e) { showToast('Error al guardar. Intenta de nuevo.'); }
+  }
+
+  // ---- Promos CRUD ----
+  let _editingPromoId = null;
+
+  async function openDashPromoForm(promoId) {
+    _editingPromoId = promoId;
+    document.getElementById('dashPromoModal').classList.remove('hidden');
+    document.getElementById('dashPromoModalTitle').textContent = promoId ? 'Editar Promoción' : 'Nueva Promoción';
+    document.getElementById('dashPromoError').classList.add('hidden');
+    if (promoId) {
+      try {
+        const snap = await db.collection('carniceros').doc(fbUser.uid).collection('promos').doc(promoId).get();
+        const pr = snap.data() || {};
+        document.getElementById('dashPromoTitulo').value = pr.titulo || '';
+        document.getElementById('dashPromoDesc').value   = pr.descripcion || '';
+        document.getElementById('dashPromoDesc2').value  = pr.descuento || '';
+      } catch(e) {}
+    } else {
+      document.getElementById('dashPromoTitulo').value = '';
+      document.getElementById('dashPromoDesc').value   = '';
+      document.getElementById('dashPromoDesc2').value  = '';
+    }
+  }
+
+  async function saveDashPromo() {
+    const titulo      = document.getElementById('dashPromoTitulo').value.trim();
+    const descripcion = document.getElementById('dashPromoDesc').value.trim();
+    const descuento   = document.getElementById('dashPromoDesc2').value.trim();
+    const errEl       = document.getElementById('dashPromoError');
+    if (!titulo) { errEl.textContent = 'El título es obligatorio.'; errEl.classList.remove('hidden'); return; }
+    errEl.classList.add('hidden');
+    try {
+      const ref = db.collection('carniceros').doc(fbUser.uid).collection('promos');
+      if (_editingPromoId) {
+        await ref.doc(_editingPromoId).update({ titulo, descripcion, descuento, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      } else {
+        await ref.add({ titulo, descripcion, descuento, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      }
+      closeFbModal('dashPromoModal');
+      renderDashPromos();
+      showToast(_editingPromoId ? 'Promo actualizada ✅' : 'Promo agregada ✅');
+    } catch(e) { errEl.textContent = 'Error al guardar.'; errEl.classList.remove('hidden'); }
+  }
+
+  async function deleteDashPromo(promoId) {
+    if (!confirm('¿Eliminar esta promoción?')) return;
+    try {
+      await db.collection('carniceros').doc(fbUser.uid).collection('promos').doc(promoId).delete();
+      renderDashPromos();
+      showToast('Promo eliminada.');
+    } catch(e) { showToast('Error al eliminar.'); }
+  }
+
+  // ---- Photo ----
+  function openPhotoModal() {
+    document.getElementById('photoModal').classList.remove('hidden');
+    document.getElementById('photoUrlInput').value = fbProfile?.fotoUrl || '';
+    document.getElementById('photoPreviewSmall').classList.add('hidden');
+    document.getElementById('photoError').classList.add('hidden');
+  }
+
+  function handlePhotoFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      document.getElementById('photoError').textContent = 'La imagen es muy grande (máx 5MB).';
+      document.getElementById('photoError').classList.remove('hidden');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('photoUrlInput').value = e.target.result;
+      document.getElementById('photoPreviewImg').src = e.target.result;
+      document.getElementById('photoPreviewSmall').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function savePhoto() {
+    const url = document.getElementById('photoUrlInput').value.trim();
+    const errEl = document.getElementById('photoError');
+    if (!url) { errEl.textContent = 'Ingresa una URL o sube una imagen.'; errEl.classList.remove('hidden'); return; }
+    errEl.classList.add('hidden');
+    try {
+      await db.collection('carniceros').doc(fbUser.uid).update({ fotoUrl: url, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      fbProfile = { ...fbProfile, fotoUrl: url };
+      closeFbModal('photoModal');
+      renderCarniceroDashboard();
+      renderFirebaseCarniceros();
+      showToast('Foto guardada ✅');
+    } catch(e) { errEl.textContent = 'Error al guardar.'; errEl.classList.remove('hidden'); }
+  }
+
+  // ---- Admin tabs ----
+  let _adminTab = 'pending';
+  function setAdminTab(tab) {
+    _adminTab = tab;
+    document.querySelectorAll('.admin-tab').forEach(btn => {
+      const active = btn.id === `adminTab-${tab}`;
+      btn.classList.toggle('border-primary', active);
+      btn.classList.toggle('text-primary', active);
+      btn.classList.toggle('border-transparent', !active);
+      btn.classList.toggle('text-on-surface-variant', !active);
+    });
+    renderAdminPanel();
+  }
+
+  // ---- Admin panel (full) ----
+  async function renderAdminPanel() {
+    const container = document.getElementById('adminPendingList');
+    if (!container) return;
+    container.innerHTML = '<p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Cargando...</p>';
+    try {
+      const snap = await db.collection('carniceros').get();
+      const all  = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      document.getElementById('adminCountPending').textContent  = all.filter(c => c.status === 'pending').length;
+      document.getElementById('adminCountApproved').textContent = all.filter(c => c.status === 'approved').length;
+      document.getElementById('adminCountRejected').textContent = all.filter(c => c.status === 'rejected').length;
+
+      const filtered = _adminTab === 'all' ? all : all.filter(c => (c.status || 'pending') === _adminTab);
+      if (filtered.length === 0) {
+        container.innerHTML = '<p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Sin registros en esta categoría.</p>';
+        return;
+      }
+
+      const statusColors = { pending:'bg-amber-100 text-amber-700', approved:'bg-green-100 text-green-700', rejected:'bg-red-100 text-red-700' };
+      const statusLabels = { pending:'⏳ Pendiente', approved:'✅ Aprobada', rejected:'❌ Rechazada' };
+
+      container.innerHTML = filtered.map(c => {
+        const cuts = (c.cortes || []).map(id => CUT_LABELS[id] || id).join(', ') || '—';
+        const st   = c.status || 'pending';
+        return `
+          <div class="bg-surface-container-low rounded-2xl p-5 flex flex-col gap-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                ${c.fotoUrl ? `<img src="${c.fotoUrl}" class="w-full h-24 object-cover rounded-xl mb-3" alt="foto"/>` : ''}
+                <p class="font-bold text-on-surface">${c.nombre || '—'}</p>
+                <p class="text-xs text-on-surface-variant">RUT: ${c.rut || '—'} · ${c.email || ''}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">${c.barrio || ''} ${c.horario ? '· ' + c.horario : ''}</p>
+                <p class="text-xs text-on-surface-variant mt-1">🥩 ${cuts}</p>
+              </div>
+              <span class="shrink-0 text-xs font-bold px-3 py-1 rounded-full ${statusColors[st]}">${statusLabels[st]}</span>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+              ${st !== 'approved' ? `<button onclick="adminApprove('${c.id}')" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">✅ Aprobar</button>` : ''}
+              ${st !== 'rejected' ? `<button onclick="adminReject('${c.id}')" class="flex-1 bg-surface-container text-error py-2 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">❌ Rechazar</button>` : ''}
+              <button onclick="adminOpenEdit('${c.id}')" class="px-4 py-2 rounded-xl bg-surface-container font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">✏️ Editar</button>
+              <button onclick="adminDeleteCarnicero('${c.id}')" class="px-4 py-2 rounded-xl bg-error/10 text-error font-bold text-sm hover:bg-error/20 transition-all active:scale-95">🗑️</button>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<p class="text-sm text-error col-span-2 text-center">Error cargando datos.</p>';
+      console.error(e);
+    }
+  }
+
+  async function adminApprove(uid) {
+    await db.collection('carniceros').doc(uid).update({ status: 'approved' });
+    showToast('Carnicería aprobada ✅'); renderAdminPanel(); renderFirebaseCarniceros();
+  }
+  async function adminReject(uid) {
+    await db.collection('carniceros').doc(uid).update({ status: 'rejected' });
+    showToast('Solicitud rechazada.'); renderAdminPanel(); renderFirebaseCarniceros();
+  }
+  async function adminDeleteCarnicero(uid) {
+    if (!confirm('¿Eliminar esta carnicería permanentemente? Esta acción no se puede deshacer.')) return;
+    try {
+      await db.collection('carniceros').doc(uid).delete();
+      showToast('Carnicería eliminada.'); renderAdminPanel(); renderFirebaseCarniceros();
+    } catch(e) { showToast('Error al eliminar.'); }
+  }
+
+  async function adminOpenEdit(uid) {
+    const snap = await db.collection('carniceros').doc(uid).get();
+    const c = snap.data() || {};
+    document.getElementById('adminEditUid').value     = uid;
+    document.getElementById('adminEditNombre').value  = c.nombre || '';
+    document.getElementById('adminEditBarrio').value  = c.barrio || '';
+    document.getElementById('adminEditHorario').value = c.horario || '';
+    const st = c.status || 'pending';
+    document.querySelector(`input[name="adminEditStatus"][value="${st}"]`).checked = true;
+    document.getElementById('adminEditError').classList.add('hidden');
+    document.getElementById('adminEditModal').classList.remove('hidden');
+  }
+
+  async function adminSaveEdit() {
+    const uid     = document.getElementById('adminEditUid').value;
+    const nombre  = document.getElementById('adminEditNombre').value.trim();
+    const barrio  = document.getElementById('adminEditBarrio').value.trim();
+    const horario = document.getElementById('adminEditHorario').value.trim();
+    const status  = document.querySelector('input[name="adminEditStatus"]:checked').value;
+    const errEl   = document.getElementById('adminEditError');
+    if (!nombre) { errEl.textContent = 'El nombre es obligatorio.'; errEl.classList.remove('hidden'); return; }
+    try {
+      await db.collection('carniceros').doc(uid).update({ nombre, barrio, horario, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      closeFbModal('adminEditModal');
+      renderAdminPanel(); renderFirebaseCarniceros();
+      showToast('Carnicería actualizada ✅');
+    } catch(e) { errEl.textContent = 'Error al guardar.'; errEl.classList.remove('hidden'); }
+  }
+
+  function adminDeleteConfirm() {
+    const uid = document.getElementById('adminEditUid').value;
+    closeFbModal('adminEditModal');
+    adminDeleteCarnicero(uid);
+  }
+
+  // ---- Hook: render dashboard when panel state changes to approved ----
+  const _origShowPanelState = showPanelState;
+  showPanelState = function() {
+    _origShowPanelState();
+    if (getPanelState() === 'approved') renderCarniceroDashboard();
+  };
   const _origFilterButchers = filterButchers;
   filterButchers = function() {
     const term = (document.getElementById('butcherSearch')?.value || '').trim().toLowerCase();
@@ -3126,5 +3272,146 @@ tailwind.config = {
   }
 </script>
 
+<!-- Edit Cortes Modal -->
+<div id="editCortesModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:88dvh">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <h3 class="font-headline text-xl font-bold">Editar mis cortes</h3>
+      <button onclick="closeFbModal('editCortesModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1 space-y-4">
+      <p class="text-sm text-on-surface-variant">Selecciona los cortes que tienes disponibles en tu carnicería.</p>
+      <div class="space-y-3">
+        <p class="text-xs font-bold text-on-surface">🐄 Vacuno</p>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-huachalomo"/> Huachalomo</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-sobrecostilla"/> Sobrecostilla</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-asado-carnicero"/> Asado Carnicero</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-asiento"/> Asiento</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-lomo-vetado"/> Lomo Vetado</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-entrana"/> Entraña</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-filete"/> Filete</label>
+        </div>
+        <p class="text-xs font-bold text-on-surface mt-2">🐷 Cerdo</p>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="cerdo-pulpa"/> Pulpa de Cerdo</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="cerdo-costillar"/> Costillar de Cerdo</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="cerdo-malaya"/> Malaya de Cerdo</label>
+        </div>
+        <p class="text-xs font-bold text-on-surface mt-2">🌭 Embutidos</p>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="embutidos-chorizo"/> Chorizo</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="embutidos-longaniza"/> Longaniza</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="embutidos-butifarra"/> Butifarra</label>
+        </div>
+        <p class="text-xs font-bold text-on-surface mt-2">🍗 Pollo</p>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="pollo-tutos"/> Tutos</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="pollo-alitas"/> Alitas</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="pollo-pechuga"/> Pechuga Entera</label>
+        </div>
+      </div>
+    </div>
+    <div class="p-6 border-t border-outline-variant/15">
+      <button onclick="saveEditedCortes()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold text-base hover:opacity-90 transition-all active:scale-95">Guardar cortes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Promo Form Modal -->
+<div id="dashPromoModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm flex flex-col">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <h3 class="font-headline text-xl font-bold" id="dashPromoModalTitle">Nueva Promoción</h3>
+      <button onclick="closeFbModal('dashPromoModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <input type="hidden" id="dashPromoEditId"/>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Título</span>
+        <input id="dashPromoTitulo" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: Pack Parrillero"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Descripción</span>
+        <input id="dashPromoDesc" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: 2kg Lomo Vetado"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Descuento (ej: 15%)</span>
+        <input id="dashPromoDesc2" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="15% OFF"/></label>
+      <p id="dashPromoError" class="text-xs text-error hidden"></p>
+    </div>
+    <div class="p-6 pt-0">
+      <button onclick="saveDashPromo()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold hover:opacity-90 transition-all active:scale-95">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Photo Modal -->
+<div id="photoModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm flex flex-col">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <h3 class="font-headline text-xl font-bold">Foto de portada</h3>
+      <button onclick="closeFbModal('photoModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <!-- File upload -->
+      <label class="block cursor-pointer">
+        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Subir desde tu dispositivo</span>
+        <div class="mt-2 border-2 border-dashed border-outline-variant/40 rounded-2xl p-6 flex flex-col items-center gap-2 hover:border-primary/40 transition-colors">
+          <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">upload</span>
+          <span class="text-sm font-semibold text-on-surface-variant">Seleccionar imagen</span>
+          <span class="text-xs text-on-surface-variant/60">JPG, PNG, WEBP · máx 5MB</span>
+        </div>
+        <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handlePhotoFile(this)"/>
+      </label>
+      <div class="flex items-center gap-3"><div class="flex-1 h-px bg-outline-variant/30"></div><span class="text-xs text-on-surface-variant">o</span><div class="flex-1 h-px bg-outline-variant/30"></div></div>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">URL de imagen</span>
+        <input id="photoUrlInput" type="url" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="https://..."/></label>
+      <div id="photoPreviewSmall" class="hidden w-full h-32 rounded-xl overflow-hidden bg-surface-container">
+        <img id="photoPreviewImg" class="w-full h-full object-cover" src="" alt="preview"/>
+      </div>
+      <p id="photoError" class="text-xs text-error hidden"></p>
+    </div>
+    <div class="p-6 pt-0">
+      <button onclick="savePhoto()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold hover:opacity-90 transition-all active:scale-95">Guardar foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Edit Modal -->
+<div id="adminEditModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:88dvh">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <h3 class="font-headline text-xl font-bold">Editar Carnicería</h3>
+      <button onclick="closeFbModal('adminEditModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1 space-y-3">
+      <input type="hidden" id="adminEditUid"/>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Nombre</span>
+        <input id="adminEditNombre" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Barrio / Comuna</span>
+        <input id="adminEditBarrio" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Horario</span>
+        <input id="adminEditHorario" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+      <div><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-2">Estado</span>
+        <div class="flex gap-3">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="adminEditStatus" value="pending"  class="accent-primary"/> Pendiente</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="adminEditStatus" value="approved" class="accent-primary"/> Aprobada</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="adminEditStatus" value="rejected" class="accent-primary"/> Rechazada</label>
+        </div>
+      </div>
+      <p id="adminEditError" class="text-xs text-error hidden"></p>
+    </div>
+    <div class="p-6 border-t border-outline-variant/15 flex gap-3">
+      <button onclick="adminSaveEdit()" class="flex-1 bg-primary text-white rounded-2xl py-3.5 font-bold hover:opacity-90 transition-all active:scale-95">Guardar</button>
+      <button onclick="adminDeleteConfirm()" class="bg-error/10 text-error px-5 py-3.5 rounded-2xl font-bold hover:bg-error/20 transition-all active:scale-95 flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">delete</span>
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
