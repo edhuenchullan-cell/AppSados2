@@ -2317,37 +2317,6 @@ tailwind.config = {
     showToast(index === null ? 'Promoción creada.' : 'Promoción actualizada.');
   }
 
-  function renderSalesHistory() {
-    if (document.getElementById('salesHistory')) return;
-    const panelGrid = document.getElementById('screen-panel')?.querySelector('.grid');
-    const section = document.createElement('section');
-    section.id = 'salesHistory';
-    section.className = 'md:col-span-12 bg-surface-container-low rounded-3xl p-6';
-    section.innerHTML = `
-      <div class="flex items-center justify-between mb-5">
-        <h3 class="font-headline text-2xl font-bold">Historial reciente</h3>
-        <button onclick="editSalesHistory()" class="text-primary font-bold text-sm flex items-center gap-1">
-          <span class="material-symbols-outlined text-base">edit_note</span> Editar
-        </button>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        ${salesHistory.map(sale => `
-          <div class="bg-surface-container-lowest rounded-2xl p-4">
-            <p class="font-bold">${sale.customer}</p>
-            <p class="text-sm text-on-surface-variant mt-1">${sale.item}</p>
-            <div class="flex justify-between items-center mt-4">
-              <span class="font-extrabold text-primary">${money(sale.total)}</span>
-              <span class="text-xs font-bold ${sale.state === 'Pagado' ? 'text-secondary' : 'text-tertiary'}">${sale.state}</span>
-            </div>
-          </div>`).join('')}
-      </div>`;
-    panelGrid.appendChild(section);
-  }
-
-  function editSalesHistory() {
-    showToast('Historial listo para edición; en producción se conectaría al backend de ventas.');
-  }
-
   function openVerificationForm() {
     openModal('Verificación carnicero', `
       <form onsubmit="saveVerification(event)" class="space-y-4">
@@ -2885,37 +2854,80 @@ tailwind.config = {
     renderFirebaseCarniceros();
   }
 
-  // ---- Render Firebase carniceros in listing (approved only) ----
+  // ---- Render Firebase carniceros in listing (approved only, sorted by relevance) ----
   async function renderFirebaseCarniceros() {
     const container = document.getElementById('firebaseCarnicerosList');
     if (!container) return;
     try {
       const snap = await db.collection('carniceros').where('status', '==', 'approved').get();
       if (snap.empty) { container.innerHTML = ''; return; }
-      container.innerHTML = snap.docs.map(doc => {
+
+      // Get user's selected cuts and budget
+      const userCuts   = typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [];
+      const userBudget = typeof selectedBudget !== 'undefined' ? selectedBudget : '';
+
+      // Score each carnicero by how many of the user's cuts they have
+      const carniceros = snap.docs.map(doc => {
         const c = doc.data();
-        const cuts = (c.cortes || []).slice(0, 4).map(id => CUT_LABELS[id] || id).join(', ');
-        const priceSymbol = c.presupuesto === 'high' ? '$$$' : '$';
+        const cardCuts = c.cortes || [];
+        const matchingCuts = userCuts.filter(id => cardCuts.includes(id));
+        const budgetMatch = !userBudget || c.presupuesto === userBudget;
+        const score = matchingCuts.length * 2 + (budgetMatch ? 1 : 0);
+        return { id: doc.id, ...c, matchingCuts, score };
+      }).sort((a, b) => b.score - a.score);
+
+      const priceSymbol = p => p === 'high' ? '$$$' : '$';
+
+      container.innerHTML = carniceros.map(c => {
+        const allCuts     = c.cortes || [];
+        const matching    = c.matchingCuts || [];
+        const notMatching = allCuts.filter(id => !matching.includes(id));
+        const hasMatch    = matching.length > 0 && userCuts.length > 0;
+        const noMatch     = userCuts.length > 0 && matching.length === 0;
+
+        const cutChips = allCuts.slice(0, 5).map(id => {
+          const isMatch = matching.includes(id);
+          return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isMatch
+            ? 'bg-secondary/15 text-secondary'
+            : 'bg-surface-container text-on-surface-variant'}">${CUT_LABELS[id] || id}</span>`;
+        }).join('') + (allCuts.length > 5 ? `<span class="text-[10px] text-on-surface-variant">+${allCuts.length - 5} más</span>` : '');
+
+        const matchBadge = hasMatch
+          ? `<div class="flex items-center gap-1 text-[10px] font-bold text-secondary bg-secondary/10 px-2.5 py-1 rounded-full w-fit">
+               <span class="material-symbols-outlined text-xs">check_circle</span>
+               Tiene ${matching.length} de tus cortes
+             </div>`
+          : noMatch
+          ? `<div class="flex items-center gap-1 text-[10px] font-bold text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full w-fit">
+               <span class="material-symbols-outlined text-xs">info</span>
+               No tiene tus cortes seleccionados
+             </div>`
+          : '';
+
+        const photo = c.fotoUrl
+          ? `<img src="${c.fotoUrl}" class="w-20 h-20 object-cover rounded-2xl shrink-0" alt="${c.nombre}"/>`
+          : `<div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+               <span class="material-symbols-outlined text-3xl text-primary">storefront</span>
+             </div>`;
+
         return `
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 card-lift"
-            data-cuts="${(c.cortes||[]).join(',')}" data-budget="${c.presupuesto||'low'}">
-            <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-3xl text-primary">storefront</span>
-            </div>
-            <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
+          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 card-lift ${noMatch ? 'opacity-70' : ''}"
+            data-cuts="${allCuts.join(',')}" data-budget="${c.presupuesto || 'low'}">
+            ${photo}
+            <div class="flex flex-col justify-between py-0.5 flex-grow min-w-0">
               <div>
-                <div class="flex justify-between items-center mb-1">
-                  <h4 class="font-headline text-xl font-bold truncate">${c.nombre}</h4>
-                  <span class="text-primary text-sm font-bold ml-2 shrink-0">${priceSymbol}</span>
+                <div class="flex justify-between items-start mb-1 gap-2">
+                  <h4 class="font-headline text-lg font-bold leading-tight">${c.nombre}</h4>
+                  <span class="text-primary text-sm font-bold shrink-0">${priceSymbol(c.presupuesto)}</span>
                 </div>
-                <p class="text-xs text-on-surface-variant">${c.barrio || ''}</p>
-                ${cuts ? `<p class="text-xs text-on-surface-variant mt-1 truncate">🥩 ${cuts}${(c.cortes||[]).length > 4 ? '...' : ''}</p>` : ''}
+                <p class="text-xs text-on-surface-variant mb-2">${[c.barrio, c.horario].filter(Boolean).join(' · ')}</p>
+                ${matchBadge}
+                ${allCuts.length ? `<div class="flex flex-wrap gap-1 mt-2">${cutChips}</div>` : ''}
               </div>
-              <div class="flex gap-2 mt-3 flex-wrap">
+              <div class="flex items-center gap-2 mt-3">
                 <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-secondary/10 text-secondary">
-                  <span class="material-symbols-outlined text-xs">verified</span> Verificada en AppSados
+                  <span class="material-symbols-outlined text-xs">verified</span> Verificada
                 </span>
-                ${c.horario ? `<span class="text-[10px] font-semibold text-on-surface-variant">${c.horario}</span>` : ''}
               </div>
             </div>
           </article>`;
@@ -3268,7 +3280,11 @@ tailwind.config = {
 
   const _origToggle = typeof toggleCutSelection === 'function' ? toggleCutSelection : null;
   if (_origToggle) {
-    toggleCutSelection = function(cutId) { _origToggle(cutId); updateMisCortesChip(); };
+    toggleCutSelection = function(cutId) {
+      _origToggle(cutId);
+      updateMisCortesChip();
+      renderFirebaseCarniceros(); // re-sort by relevance
+    };
   }
 </script>
 
