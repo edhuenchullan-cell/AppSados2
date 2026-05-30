@@ -2824,10 +2824,6 @@ tailwind.config = {
   async function renderFirebaseCarniceros() {
     const container = document.getElementById('firebaseCarnicerosList');
     if (!container) return;
-
-    // Try to get user location silently (uses cached coords if already obtained)
-    if (!_userCoords) await getUserLocation();
-
     try {
       const snap = await db.collection('carniceros').where('status', '==', 'approved').get();
       if (snap.empty) {
