@@ -7,6 +7,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,700;0,800;1,700;1,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -2400,8 +2401,46 @@ tailwind.config = {
     appId: "1:867122636110:web:c6a9f24c1b9c44fcbeea1f"
   };
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db   = firebase.firestore();
+  const auth      = firebase.auth();
+  const db        = firebase.firestore();
+  const messaging = firebase.messaging();
+
+  const VAPID_KEY = 'BISCQRKSJvkH0VU_b5LSXzYFv0LQrLFezQ6Sbnki2S1W5z81H1T3oeq50s95TX28kl5jOG27tV8CXa65kOhp-CU';
+
+  // Register service worker and get FCM token
+  async function initFCM() {
+    if (!('serviceWorker' in navigator) || !('Notification' in window)) return;
+    try {
+      const reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
+      const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+      if (token && fbUser) {
+        await db.collection('users').doc(fbUser.uid).set({ fcmToken: token }, { merge: true });
+      }
+    } catch(e) { console.warn('FCM init error:', e.message); }
+  }
+
+  // Get FCM token of another user
+  async function getFcmToken(uid) {
+    try {
+      const snap = await db.collection('users').doc(uid).get();
+      return snap.data()?.fcmToken || null;
+    } catch(e) { return null; }
+  }
+
+  // Send push notification via Vercel API
+  async function sendPush(toUid, title, body) {
+    const token = await getFcmToken(toUid);
+    if (!token) return; // user hasn't enabled notifications
+    try {
+      await fetch('/api/notify', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ token, title, body }),
+      });
+    } catch(e) { console.warn('Push error:', e.message); }
+  }
 
   // ⬇ Cambia esto a tu correo real de Google
   const ADMIN_EMAIL = 'edgard.huenchullan.96@gmail.com';
@@ -2445,6 +2484,7 @@ tailwind.config = {
         }
         updateAuthUI();
         renderFirebaseCarniceros();
+        initFCM();
       } else {
         updateAuthUI();
         showRoleModal();
@@ -3218,6 +3258,10 @@ tailwind.config = {
         lastMsg: text, updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         unreadCarnicero: firebase.firestore.FieldValue.increment(1)
       });
+      // Push notification to recipient
+      const recipientUid = _chatCarniceroUid;
+      const senderName   = fbUser.displayName || fbUser.email?.split('@')[0] || 'Alguien';
+      sendPush(recipientUid, `💬 Mensaje de ${senderName}`, text.length > 60 ? text.slice(0,60)+'…' : text);
     } catch(e) { showToast('Error al enviar. Revisa tu conexión.'); input.value = text; }
   }
 
@@ -3279,6 +3323,9 @@ tailwind.config = {
       });
       closeReservaModal();
       showToast(`¡Reserva #${ticket} enviada! La carnicería confirmará pronto. 📅`);
+      // Push to carnicero
+      const senderName = fbUser.displayName || fbUser.email?.split('@')[0] || 'Un parrillero';
+      sendPush(_reservaCarniceroUid, `📅 Nueva reserva de ${senderName}`, `#${ticket} · ${cortes || 'Sin especificar cortes'}`);
       // Auto-open chat to notify
       setTimeout(() => openChat(_reservaCarniceroUid, carniceroNombre, null), 500);
     } catch(e) { errEl.textContent = 'Error al enviar. Intenta de nuevo.'; errEl.classList.remove('hidden'); }
@@ -3370,6 +3417,15 @@ tailwind.config = {
   async function updateReserva(reservaId, status) {
     try {
       await db.collection('reservas').doc(reservaId).update({ status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      // Notify parrillero
+      const snap = await db.collection('reservas').doc(reservaId).get();
+      const r    = snap.data();
+      if (r?.parrilleroUid) {
+        const msg = status === 'confirmed'
+          ? `✅ Tu reserva #${r.ticket || reservaId.slice(-6)} fue confirmada por ${r.carniceroNombre}`
+          : `❌ Tu reserva #${r.ticket || reservaId.slice(-6)} fue rechazada`;
+        sendPush(r.parrilleroUid, 'AppSados · Reserva actualizada', msg);
+      }
       showToast(status === 'confirmed' ? 'Reserva confirmada ✅' : 'Reserva rechazada.');
       renderInbox();
     } catch(e) { showToast('Error al actualizar.'); }
