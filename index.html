@@ -3297,9 +3297,10 @@ tailwind.config = {
 
     if (_inboxTab === 'chats') {
       try {
-        const snap = await db.collection('chats').where('carniceroUid', '==', fbUser.uid).orderBy('updatedAt', 'desc').get();
+        const snap = await db.collection('chats').where('carniceroUid', '==', fbUser.uid).get();
+        const docs = snap.docs.sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
         if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aún.</p>'; return; }
-        el.innerHTML = snap.docs.map(doc => {
+        el.innerHTML = docs.map(doc => {
           const c = doc.data();
           const unread = c.unreadCarnicero || 0;
           return `
@@ -3318,11 +3319,12 @@ tailwind.config = {
       } catch(e) { el.innerHTML = '<p class="text-sm text-error text-center py-4">Error cargando chats.</p>'; }
     } else {
       try {
-        const snap = await db.collection('reservas').where('carniceroUid', '==', fbUser.uid).orderBy('createdAt', 'desc').get();
+        const snap = await db.collection('reservas').where('carniceroUid', '==', fbUser.uid).get();
+        const docs = snap.docs.sort((a,b) => (b.data().createdAt?.seconds||0) - (a.data().createdAt?.seconds||0));
         if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin reservas aún.</p>'; return; }
         const statusColor = { pending:'bg-amber-100 text-amber-700', confirmed:'bg-green-100 text-green-700', cancelled:'bg-red-100 text-red-700' };
         const statusLabel = { pending:'⏳ Pendiente', confirmed:'✅ Confirmada', cancelled:'❌ Cancelada' };
-        el.innerHTML = snap.docs.map(doc => {
+        el.innerHTML = docs.map(doc => {
           const r  = doc.data();
           const st = r.status || 'pending';
           return `
