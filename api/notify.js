@@ -7,7 +7,12 @@ function base64url(str) {
 
 async function getAccessToken() {
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey  = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+  let privateKey    = process.env.FIREBASE_PRIVATE_KEY || '';
+  // Vercel sometimes wraps the key in quotes — strip them
+  if (privateKey.startsWith('"')) privateKey = privateKey.slice(1);
+  if (privateKey.endsWith('"'))   privateKey = privateKey.slice(0,-1);
+  // Replace literal \n with real newlines
+  privateKey = privateKey.replace(/\\n/g, '\n');
   const now = Math.floor(Date.now() / 1000);
 
   const header  = base64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
