@@ -66,8 +66,7 @@ module.exports = async (req, res) => {
               notification: {
                 title,
                 body:  body || '',
-                icon:  'https://app-sados2.vercel.app/favicon.ico',
-                badge: 'https://app-sados2.vercel.app/favicon.ico',
+                icon:  'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
                 vibrate: [200, 100, 200],
               },
               fcm_options: { link: link || 'https://app-sados2.vercel.app' },
