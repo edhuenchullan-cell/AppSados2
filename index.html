@@ -1281,12 +1281,13 @@ tailwind.config = {
   let currentPage = 'inicio';
   let history = ['inicio'];
   let toastTimer = null;
-  let selectedCutIds = new Set();   // cuts the user has checked
-  let deselectedByUser = new Set(); // explicitly unchecked IDs (survive re-renders)
-  let userSelectedByUser = new Set(); // explicitly checked by user
-  let cutKg = {};                   // cutId → kg chosen by user
+  let selectedCutIds = new Set();
+  let deselectedByUser = new Set();
+  let userSelectedByUser = new Set();
+  let cutKg = {};
   let lastCutSignature = '';
   let lastPlanResults = [];
+  let _userCoords = null; // geolocation cache — shared across scripts
   const CUT_STEP = 0.1;   // 100 g por paso
   const CUT_MAX  = 8.0;
   // Cálculo Maestro: se fija al entrar a recomendaciones, solo se resetea si cambian los invitados
@@ -2937,12 +2938,6 @@ tailwind.config = {
       }).join('');
     } catch(e) { console.error('Error loading carniceros:', e); }
   }
-    const container = document.getElementById('firebaseCarnicerosList');
-    if (!container) return;
-    try {
-      const snap = await db.collection('carniceros').where('status', '==', 'approved').get();
-      if (snap.empty) {
-        container.innerHTML = `
 
   // ---- User menu ----
   function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('hidden'); }
@@ -3255,8 +3250,6 @@ tailwind.config = {
   }
 
   // ========== GEOLOCALIZACIÓN ==========
-  let _userCoords = null; // { lat, lng }
-
   function haversineKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
