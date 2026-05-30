@@ -1334,10 +1334,12 @@ tailwind.config = {
     // Fill dynamic data on recomendaciones
     if (page === 'recomendaciones') updateRecomendaciones();
     // Pre-fetch location silently when entering carnicerias
-    if (page === 'carnicerias' && typeof renderFirebaseCarniceros === 'function') {
-      if (!_userCoords && typeof getUserLocation === 'function') {
-        getUserLocation().then(() => renderFirebaseCarniceros());
-      }
+    if (page === 'carnicerias') {
+      setTimeout(() => {
+        if (typeof _userCoords !== 'undefined' && !_userCoords && typeof getUserLocation === 'function') {
+          getUserLocation().then(() => { if (typeof renderFirebaseCarniceros === 'function') renderFirebaseCarniceros(); });
+        }
+      }, 500);
     }
     // Si vuelve a inicio, resetear cálculo maestro para recalcular con nuevos invitados
     if (page === 'inicio') {
