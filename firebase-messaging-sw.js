@@ -11,20 +11,18 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+const ICON = 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
 
-// Handle background messages (app closed or in background)
 messaging.onBackgroundMessage(payload => {
   const { title, body } = payload.notification || {};
   self.registration.showNotification(title || 'AppSados', {
     body:    body || '',
-    icon:    '/favicon.ico',
-    badge:   '/favicon.ico',
+    icon:    ICON,
     vibrate: [200, 100, 200],
     data:    payload.data || {},
   });
 });
 
-// Click on notification → open app
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(

@@ -2262,7 +2262,6 @@ tailwind.config = {
   updateGauge();
   renderPromos();
   renderProducts();
-  renderSalesHistory();
   navigate('inicio', { pushHistory: false });
 </script>
 <!-- ===================== FIREBASE MODALS ===================== -->
@@ -2409,16 +2408,25 @@ tailwind.config = {
 
   // Register service worker and get FCM token
   async function initFCM() {
-    if (!('serviceWorker' in navigator) || !('Notification' in window)) return;
+    if (!('serviceWorker' in navigator) || !('Notification' in window)) {
+      console.warn('FCM: browser not supported');
+      return;
+    }
     try {
       const reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      console.log('FCM: service worker registered', reg.scope);
       const permission = await Notification.requestPermission();
+      console.log('FCM: notification permission:', permission);
       if (permission !== 'granted') return;
       const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+      console.log('FCM: token obtained:', token ? token.slice(0,20)+'...' : 'NULL');
       if (token && fbUser) {
         await db.collection('users').doc(fbUser.uid).set({ fcmToken: token }, { merge: true });
+        console.log('FCM: token saved to Firestore for uid:', fbUser.uid);
       }
-    } catch(e) { console.warn('FCM init error:', e.message); }
+    } catch(e) {
+      console.error('FCM init error:', e.message, e);
+    }
   }
 
   // Get FCM token of another user
