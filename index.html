@@ -311,6 +311,9 @@ tailwind.config = {
     <div id="userMenu" class="hidden absolute right-4 top-16 bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 p-2 z-50 min-w-[200px]">
       <p id="userMenuName" class="px-3 py-2 text-sm font-bold text-on-surface truncate"></p>
       <p id="userMenuEmail" class="px-3 pb-2 text-xs text-on-surface-variant truncate border-b border-outline-variant/20"></p>
+      <button onclick="openMisReservas(); closeUserMenu()" id="userMenuReservasBtn" class="w-full text-left px-3 py-2.5 text-sm font-semibold text-on-surface hover:bg-surface-container rounded-xl flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">event_available</span> Mis Reservas
+      </button>
       <button onclick="navigate('panel'); closeUserMenu()" id="userMenuPanelBtn" class="hidden w-full text-left px-3 py-2.5 text-sm font-semibold text-on-surface hover:bg-surface-container rounded-xl mt-1 flex items-center gap-2">
         <span class="material-symbols-outlined text-base">store</span> Mi Panel Carnicero
       </button>
@@ -2983,32 +2986,45 @@ tailwind.config = {
   // ---- Photo ----
   function openPhotoModal() {
     document.getElementById('photoModal').classList.remove('hidden');
-    document.getElementById('photoUrlInput').value = fbProfile?.fotoUrl || '';
+    document.getElementById('photoUrlInput').value = '';
     document.getElementById('photoPreviewSmall').classList.add('hidden');
     document.getElementById('photoError').classList.add('hidden');
+    // Show current photo if exists
+    if (fbProfile?.fotoUrl) {
+      document.getElementById('photoPreviewImg').src = fbProfile.fotoUrl;
+      document.getElementById('photoPreviewSmall').classList.remove('hidden');
+    }
   }
 
   function handlePhotoFile(input) {
     const file = input.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      document.getElementById('photoError').textContent = 'La imagen es muy grande (máx 5MB).';
-      document.getElementById('photoError').classList.remove('hidden');
+    const errEl = document.getElementById('photoError');
+    if (file.size > 800 * 1024) {
+      errEl.textContent = 'La imagen es muy grande. Máximo 800KB para guardar en Firestore. Comprime la imagen primero en squoosh.app';
+      errEl.classList.remove('hidden');
       return;
     }
+    errEl.classList.add('hidden');
     const reader = new FileReader();
     reader.onload = e => {
       document.getElementById('photoUrlInput').value = e.target.result;
-      document.getElementById('photoPreviewImg').src = e.target.result;
+      document.getElementById('photoPreviewImg').src  = e.target.result;
       document.getElementById('photoPreviewSmall').classList.remove('hidden');
     };
     reader.readAsDataURL(file);
   }
 
+  function previewPhotoUrl(url) {
+    if (!url || url.length < 10) return;
+    document.getElementById('photoPreviewImg').src = url;
+    document.getElementById('photoPreviewSmall').classList.remove('hidden');
+  }
+
   async function savePhoto() {
-    const url = document.getElementById('photoUrlInput').value.trim();
+    const url   = document.getElementById('photoUrlInput').value.trim();
     const errEl = document.getElementById('photoError');
-    if (!url) { errEl.textContent = 'Ingresa una URL o sube una imagen.'; errEl.classList.remove('hidden'); return; }
+    if (!url) { errEl.textContent = 'Sube una imagen o ingresa una URL.'; errEl.classList.remove('hidden'); return; }
     errEl.classList.add('hidden');
     try {
       await db.collection('carniceros').doc(fbUser.uid).update({ fotoUrl: url, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -3248,8 +3264,10 @@ tailwind.config = {
       carniceroNombre = snap.data()?.nombre || '';
     } catch(e) {}
 
+    const ticket = 'ASA-' + Date.now().toString(36).toUpperCase().slice(-6);
     try {
       await db.collection('reservas').add({
+        ticket,
         parrilleroUid:    fbUser.uid,
         parrilleroNombre: fbUser.displayName || fbUser.email || 'Parrillero',
         parrilleroEmail:  fbUser.email || '',
@@ -3260,7 +3278,7 @@ tailwind.config = {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       closeReservaModal();
-      showToast('¡Reserva enviada! La carnicería te confirmará pronto. 📅');
+      showToast(`¡Reserva #${ticket} enviada! La carnicería confirmará pronto. 📅`);
       // Auto-open chat to notify
       setTimeout(() => openChat(_reservaCarniceroUid, carniceroNombre, null), 500);
     } catch(e) { errEl.textContent = 'Error al enviar. Intenta de nuevo.'; errEl.classList.remove('hidden'); }
@@ -3391,6 +3409,56 @@ tailwind.config = {
         el.scrollTop = el.scrollHeight;
       });
   }
+
+  // ========== MIS RESERVAS (parrillero) ==========
+  async function openMisReservas() {
+    if (!fbUser) { openAuthModal(); return; }
+    document.getElementById('misReservasModal').classList.remove('hidden');
+    const el = document.getElementById('misReservasContent');
+    el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Cargando...</p>';
+    try {
+      const snap = await db.collection('reservas').where('parrilleroUid', '==', fbUser.uid).get();
+      const docs = snap.docs.sort((a,b) => (b.data().createdAt?.seconds||0) - (a.data().createdAt?.seconds||0));
+      if (docs.length === 0) {
+        el.innerHTML = '<div class="flex flex-col items-center py-10 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">event_busy</span><p class="text-sm text-on-surface-variant text-center">No tienes reservas aún.<br/>¡Busca una carnicería y reserva tus cortes!</p></div>';
+        return;
+      }
+      const statusColor = { pending:'bg-amber-100 text-amber-700 border-amber-200', confirmed:'bg-green-100 text-green-700 border-green-200', cancelled:'bg-red-100 text-red-700 border-red-200' };
+      const statusLabel = { pending:'⏳ Pendiente', confirmed:'✅ Confirmada', cancelled:'❌ Cancelada' };
+      const statusDesc  = { pending:'La carnicería revisará tu solicitud pronto.', confirmed:'¡Tu reserva fue aceptada! Preséntate en la fecha indicada.', cancelled:'Esta reserva fue rechazada. Puedes hacer una nueva.' };
+      el.innerHTML = docs.map(doc => {
+        const r  = doc.data();
+        const st = r.status || 'pending';
+        const fechaStr = r.fecha ? new Date(r.fecha).toLocaleString('es-CL', { dateStyle:'full', timeStyle:'short' }) : '—';
+        const [bg, text, border] = (statusColor[st] || '').split(' ');
+        return `
+          <div class="border ${border || 'border-outline-variant/20'} rounded-2xl p-4 space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2 mb-0.5">
+                  <p class="font-bold text-sm">${r.carniceroNombre || 'Carnicería'}</p>
+                  ${r.ticket ? `<span class="text-[10px] font-bold text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">#${r.ticket}</span>` : ''}
+                </div>
+                <p class="text-xs text-on-surface-variant">${fechaStr}</p>
+              </div>
+              <span class="text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${bg} ${text}">${statusLabel[st]}</span>
+            </div>
+            ${r.cortes ? `<p class="text-xs text-on-surface-variant">🥩 ${r.cortes}</p>` : ''}
+            ${r.notas  ? `<p class="text-xs text-on-surface-variant italic">"${r.notas}"</p>` : ''}
+            <p class="text-xs font-medium ${text}">${statusDesc[st]}</p>
+            ${st === 'confirmed' ? `
+            <button onclick="abrirChatReserva('${r.carniceroUid}','${(r.carniceroNombre||'').replace(/'/g,"\\'")}'); closeFbModal('misReservasModal')"
+              class="w-full bg-primary text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+              <span class="material-symbols-outlined text-base">chat</span> Ir al chat con la carnicería
+            </button>` : ''}
+          </div>`;
+      }).join('');
+    } catch(e) {
+      el.innerHTML = '<p class="text-sm text-error text-center py-4">Error al cargar reservas.</p>';
+    }
+  }
+
+  function abrirChatReserva(uid, nombre) { openChat(uid, nombre, null); }
 
   // Hook: inject inbox when dashboard renders
   const _origRenderDash = renderCarniceroDashboard;
@@ -3537,21 +3605,24 @@ tailwind.config = {
       </button>
     </div>
     <div class="p-6 space-y-4">
-      <!-- File upload -->
+      <!-- File upload first -->
       <label class="block cursor-pointer">
-        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Subir desde tu dispositivo</span>
+        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Subir desde tu dispositivo <span class="text-secondary normal-case font-normal">(recomendado · máx 800KB)</span></span>
         <div class="mt-2 border-2 border-dashed border-outline-variant/40 rounded-2xl p-6 flex flex-col items-center gap-2 hover:border-primary/40 transition-colors">
           <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">upload</span>
           <span class="text-sm font-semibold text-on-surface-variant">Seleccionar imagen</span>
-          <span class="text-xs text-on-surface-variant/60">JPG, PNG, WEBP · máx 5MB</span>
+          <span class="text-xs text-on-surface-variant/60">JPG o PNG · máx 800KB</span>
         </div>
-        <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handlePhotoFile(this)"/>
+        <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handlePhotoFile(this)"/>
       </label>
-      <div class="flex items-center gap-3"><div class="flex-1 h-px bg-outline-variant/30"></div><span class="text-xs text-on-surface-variant">o</span><div class="flex-1 h-px bg-outline-variant/30"></div></div>
-      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">URL de imagen</span>
-        <input id="photoUrlInput" type="url" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="https://..."/></label>
-      <div id="photoPreviewSmall" class="hidden w-full h-32 rounded-xl overflow-hidden bg-surface-container">
-        <img id="photoPreviewImg" class="w-full h-full object-cover" src="" alt="preview"/>
+      <div class="flex items-center gap-3"><div class="flex-1 h-px bg-outline-variant/30"></div><span class="text-xs text-on-surface-variant">o pega una URL directa</span><div class="flex-1 h-px bg-outline-variant/30"></div></div>
+      <div>
+        <input id="photoUrlInput" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="https://i.imgur.com/xxxxxx.jpg"
+          oninput="previewPhotoUrl(this.value)"/>
+        <p class="text-xs text-on-surface-variant/70 mt-1">Si usas Imgur: abre la imagen, clic derecho → "Copiar dirección de imagen" (debe terminar en .jpg o .png)</p>
+      </div>
+      <div id="photoPreviewSmall" class="hidden w-full h-36 rounded-xl overflow-hidden bg-surface-container">
+        <img id="photoPreviewImg" class="w-full h-full object-cover" src="" alt="preview" onerror="this.parentElement.innerHTML='<p class=\'text-xs text-error p-4\'>No se pudo cargar la imagen. Verifica que la URL sea directa (termina en .jpg o .png)</p>'"/>
       </div>
       <p id="photoError" class="text-xs text-error hidden"></p>
     </div>
@@ -3671,5 +3742,19 @@ tailwind.config = {
     </div>
   </div>
 </template>
+<!-- Mis Reservas Modal (parrillero) -->
+<div id="misReservasModal" class="hidden fixed inset-0 z-[95] flex items-end sm:items-center justify-center bg-black/50 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-md flex flex-col" style="max-height:88dvh">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15 shrink-0">
+      <h3 class="font-headline text-xl font-bold">Mis Reservas</h3>
+      <button onclick="closeFbModal('misReservasModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div id="misReservasContent" class="flex-1 overflow-y-auto p-6 space-y-3">
+      <p class="text-sm text-on-surface-variant text-center py-6">Cargando...</p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
