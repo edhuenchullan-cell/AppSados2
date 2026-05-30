@@ -2433,21 +2433,33 @@ tailwind.config = {
   async function getFcmToken(uid) {
     try {
       const snap = await db.collection('users').doc(uid).get();
-      return snap.data()?.fcmToken || null;
-    } catch(e) { return null; }
+      const token = snap.data()?.fcmToken || null;
+      console.log('FCM: getFcmToken for uid', uid, '→', token ? token.slice(0,20)+'...' : 'NO TOKEN FOUND');
+      return token;
+    } catch(e) {
+      console.error('FCM: getFcmToken error', e);
+      return null;
+    }
   }
 
-  // Send push notification via Vercel API
   async function sendPush(toUid, title, body) {
+    console.log('FCM: sendPush called → toUid:', toUid, '| title:', title);
     const token = await getFcmToken(toUid);
-    if (!token) return; // user hasn't enabled notifications
+    if (!token) {
+      console.warn('FCM: no token for uid', toUid, '— skipping push');
+      return;
+    }
     try {
-      await fetch('/api/notify', {
+      const res = await fetch('/api/notify', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ token, title, body }),
       });
-    } catch(e) { console.warn('Push error:', e.message); }
+      const data = await res.json();
+      console.log('FCM: /api/notify response:', data);
+    } catch(e) {
+      console.error('FCM: sendPush fetch error', e.message);
+    }
   }
 
   // ⬇ Cambia esto a tu correo real de Google
