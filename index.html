@@ -592,129 +592,13 @@ tailwind.config = {
         <button onclick="setChip(this)" data-filter="misCortes" id="chipMisCortes" class="chip hidden px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all items-center gap-1.5">🥩 Mis cortes</button>
       </div>
 
-      <!-- Bento Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Featured Card -->
-        <article class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(129,9,0,0.07)] flex flex-col group card-lift" data-cuts="vacuno-lomo-vetado,vacuno-entrana,vacuno-filete" data-budget="high">
-          <div class="relative h-64 overflow-hidden">
-            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw_qj3xeF4kt4i8R7uaCTuPHkjxED6NXbbia8CyMM_zrvS-uqUCFTubz6126kjz--TNY0EGKNlC6EStlGebGJJEqQusfH25PKOabpyLkKq8_IrYR2BU4JSHKgusPgNJyYkayi-AKeJOvZH9wJBqQqDyX-isDu-rCqfMZhu86acgwK3nLKaDmOfCAcb5LmM2pzzW40jw9pOxE8Y9wMJUZgSTK0Lo4IEvjCd_mwGHlOU2vVIk4yLClZ2gIVO9M-fyEP8QBEFnQdhBBc"
-              alt="Carnicería El Rincón del Novillo"/>
-            <div class="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">⭐ Destacado</div>
-            <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1">
-              <span class="material-symbols-outlined fill-icon text-tertiary-fixed-dim text-sm">star</span>
-              <span class="font-bold text-sm">4.9 (120 reseñas)</span>
-            </div>
-          </div>
-          <div class="p-8 flex flex-col flex-grow">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-headline text-3xl font-bold tracking-tight">El Rincón del Novillo</h3>
-              <div class="text-primary font-bold">$$$</div>
-            </div>
-            <p class="text-on-surface-variant mb-5 leading-relaxed">Expertos en cortes premium y madurados. Especialidad en Lomo Vetado y Entraña.</p>
-            <div class="flex items-center gap-4 mb-6 text-sm font-semibold">
-              <div class="flex items-center gap-1 text-secondary">
-                <span class="material-symbols-outlined text-lg">schedule</span>
-                <span>Abierto hasta 20:00</span>
-              </div>
-              <div class="flex items-center gap-1 text-on-surface-variant">
-                <span class="material-symbols-outlined text-lg">location_on</span>
-                <span>Las Condes</span>
-              </div>
-            </div>
-            <div class="mt-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button onclick="contactButcher('chat','El Rincón del Novillo')" class="w-full bg-surface-container-high text-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all active:scale-95">
-                <span class="material-symbols-outlined text-lg">chat</span> Chat
-              </button>
-              <button onclick="openReservation('El Rincón del Novillo')" class="w-full bg-primary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
-                <span class="material-symbols-outlined text-lg">event_available</span> Reservar
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Side cards -->
-        <div class="flex flex-col gap-5">
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer" data-cuts="vacuno-huachalomo,cerdo-pulpa,cerdo-costillar,pollo-tutos,pollo-pechuga" data-budget="low">
-            <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0">
-              <img class="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7iMYGnQU3dpJn6hqrO6YGrA9Kd_VnNuyY2qw2Gx2aMywspYCIiowKfEPmNsLmDQzQCZwRms6bcLPjePHO-H7191saK48QYQDZW75nlOGhcO7HjYnJ_rz6RVQC6QwOkhCQmxo9KLrpHpwSYQNALXgv51APJq1sC-Sm-YtuGzKUisT35hUL2yPHyE4ZHVRM5EfFOG0c6JfBYOyJ1ExZow1vYRdL94LYj3C_vG8WcOEccpuqn8jAGEYdK0Bn-Q6wYRnRVi3CIlIvtMk"
-                alt="Carnes La Pampa"/>
-            </div>
-            <div class="flex flex-col justify-between py-1 flex-grow">
-              <div>
-                <div class="flex justify-between items-center mb-1">
-                  <h4 class="font-headline text-xl font-bold">Carnes La Pampa</h4>
-                  <span class="text-primary text-sm font-bold">$$</span>
-                </div>
-                <div class="flex items-center gap-1 mb-1">
-                  <span class="material-symbols-outlined fill-icon text-tertiary-fixed-dim text-xs">star</span>
-                  <span class="text-xs font-bold">4.7</span>
-                  <span class="text-xs text-on-surface-variant">(84 reseñas)</span>
-                </div>
-                <p class="text-xs text-on-surface-variant">Providencia · Delivery disponible</p>
-              </div>
-              <div class="grid grid-cols-2 gap-2 mt-3">
-                <button onclick="contactButcher('chat','Carnes La Pampa')" class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
-                <button onclick="openReservation('Carnes La Pampa')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer" data-cuts="embutidos-chorizo,embutidos-longaniza,embutidos-butifarra" data-budget="low">
-            <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0">
-              <img class="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjVzdKGggQzKSNSAVx4tk_qVXd2VuivsLy5iqkqZZrhr7OxeRSMJ-rljcDKBjuYocNk7S6aTO2oIe3w6DwY_jNRIAFdYtI2VcMuEn6p3aiN9lYhUTmfsqa5rM9Eg6xshp4tp7zCU9A1a2l2-nwoBR8Sn_ZIl4r8znHgY6x6k7-6P9Xxo2SU_NYDP4VoJd1XI3U09KaMU3nkGEVXeIGOUZ88ZhrGSh2QQPljtbnrMPOvL7ENFDvAqKPuAUwL9iTZpSzfAWN3z_kJuM"
-                alt="Charcutería Don Víctor"/>
-            </div>
-            <div class="flex flex-col justify-between py-1 flex-grow">
-              <div>
-                <div class="flex justify-between items-center mb-1">
-                  <h4 class="font-headline text-xl font-bold">Charcutería Don Víctor</h4>
-                  <span class="text-primary text-sm font-bold">$$</span>
-                </div>
-                <div class="flex items-center gap-1 mb-1">
-                  <span class="material-symbols-outlined fill-icon text-tertiary-fixed-dim text-xs">star</span>
-                  <span class="text-xs font-bold">4.5</span>
-                  <span class="text-xs text-on-surface-variant">(61 reseñas)</span>
-                </div>
-                <p class="text-xs text-on-surface-variant">Ñuñoa · Embutidos y cecinas</p>
-              </div>
-              <div class="grid grid-cols-2 gap-2 mt-3">
-                <button onclick="contactButcher('chat','Charcutería Don Víctor')" class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
-                <button onclick="openReservation('Charcutería Don Víctor')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 hover:bg-surface-container transition-colors group card-lift cursor-pointer" data-cuts="vacuno-huachalomo,vacuno-sobrecostilla,vacuno-asado-carnicero,cerdo-malaya" data-budget="low">
-            <div class="w-28 h-28 rounded-2xl overflow-hidden shrink-0 bg-surface-container-highest flex items-center justify-center">
-              <span class="material-symbols-outlined text-4xl text-primary/30">storefront</span>
-            </div>
-            <div class="flex flex-col justify-between py-1 flex-grow">
-              <div>
-                <div class="flex justify-between items-center mb-1">
-                  <h4 class="font-headline text-xl font-bold">Carnicería El Gaucho</h4>
-                  <span class="text-primary text-sm font-bold">$</span>
-                </div>
-                <div class="flex items-center gap-1 mb-1">
-                  <span class="material-symbols-outlined fill-icon text-tertiary-fixed-dim text-xs">star</span>
-                  <span class="text-xs font-bold">4.3</span>
-                  <span class="text-xs text-on-surface-variant">(42 reseñas)</span>
-                </div>
-                <p class="text-xs text-on-surface-variant">Maipú · Gran variedad económica</p>
-              </div>
-              <div class="grid grid-cols-2 gap-2 mt-3">
-                <button onclick="contactButcher('chat','Carnicería El Gaucho')" class="bg-surface-container-lowest text-primary py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Chat</button>
-                <button onclick="openReservation('Carnicería El Gaucho')" class="bg-primary text-white py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Reservar</button>
-              </div>
-            </div>
-          </article>
+      <!-- Carnicerías reales (Firebase) -->
+      <div id="firebaseCarnicerosList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="col-span-2 flex flex-col items-center py-16 text-on-surface-variant gap-3">
+          <span class="material-symbols-outlined text-4xl animate-spin" style="animation-duration:1.2s">progress_activity</span>
+          <p class="text-sm font-medium">Cargando carnicerías...</p>
         </div>
       </div>
-      <!-- Firebase registered carniceros (dynamic) -->
-      <div id="firebaseCarnicerosList" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8"></div>
-
     </div>
   </div>
   <div id="screen-recomendaciones" class="screen">
@@ -2860,7 +2744,15 @@ tailwind.config = {
     if (!container) return;
     try {
       const snap = await db.collection('carniceros').where('status', '==', 'approved').get();
-      if (snap.empty) { container.innerHTML = ''; return; }
+      if (snap.empty) {
+        container.innerHTML = `
+          <div class="col-span-2 flex flex-col items-center py-20 text-on-surface-variant gap-4">
+            <span class="material-symbols-outlined text-5xl opacity-30">storefront</span>
+            <p class="font-bold text-lg text-on-surface">Aún no hay carnicerías registradas</p>
+            <p class="text-sm text-center">Las carnicerías verificadas aparecerán aquí. ¡Sé el primero en registrar la tuya!</p>
+          </div>`;
+        return;
+      }
 
       // Get user's selected cuts and budget
       const userCuts   = typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [];
@@ -2911,24 +2803,35 @@ tailwind.config = {
              </div>`;
 
         return `
-          <article class="bg-surface-container-low rounded-3xl p-6 flex gap-5 card-lift ${noMatch ? 'opacity-70' : ''}"
+          <article class="bg-surface-container-low rounded-3xl p-6 flex flex-col gap-4 card-lift ${noMatch ? 'opacity-70' : ''}"
             data-cuts="${allCuts.join(',')}" data-budget="${c.presupuesto || 'low'}">
-            ${photo}
-            <div class="flex flex-col justify-between py-0.5 flex-grow min-w-0">
-              <div>
-                <div class="flex justify-between items-start mb-1 gap-2">
-                  <h4 class="font-headline text-lg font-bold leading-tight">${c.nombre}</h4>
-                  <span class="text-primary text-sm font-bold shrink-0">${priceSymbol(c.presupuesto)}</span>
+            <div class="flex gap-4">
+              ${photo}
+              <div class="flex flex-col justify-between py-0.5 flex-grow min-w-0">
+                <div>
+                  <div class="flex justify-between items-start mb-1 gap-2">
+                    <h4 class="font-headline text-lg font-bold leading-tight">${c.nombre}</h4>
+                    <span class="text-primary text-sm font-bold shrink-0">${priceSymbol(c.presupuesto)}</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mb-2">${[c.barrio, c.horario].filter(Boolean).join(' · ')}</p>
+                  ${matchBadge}
+                  ${allCuts.length ? `<div class="flex flex-wrap gap-1 mt-2">${cutChips}</div>` : ''}
                 </div>
-                <p class="text-xs text-on-surface-variant mb-2">${[c.barrio, c.horario].filter(Boolean).join(' · ')}</p>
-                ${matchBadge}
-                ${allCuts.length ? `<div class="flex flex-wrap gap-1 mt-2">${cutChips}</div>` : ''}
+                <div class="flex items-center gap-2 mt-2">
+                  <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-secondary/10 text-secondary">
+                    <span class="material-symbols-outlined text-xs">verified</span> Verificada
+                  </span>
+                </div>
               </div>
-              <div class="flex items-center gap-2 mt-3">
-                <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-secondary/10 text-secondary">
-                  <span class="material-symbols-outlined text-xs">verified</span> Verificada
-                </span>
-              </div>
+            </div>
+            <!-- Actions -->
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-outline-variant/15">
+              <button onclick="openChat('${c.uid}','${c.nombre.replace(/'/g,"\\'")}', this)" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-surface-container text-primary font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">
+                <span class="material-symbols-outlined text-base">chat</span> Chat
+              </button>
+              <button onclick="openReservaModal('${c.uid}','${c.nombre.replace(/'/g,"\\'")}', this)" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
+                <span class="material-symbols-outlined text-base">event_available</span> Reservar
+              </button>
             </div>
           </article>`;
       }).join('');
@@ -3232,7 +3135,268 @@ tailwind.config = {
     adminDeleteCarnicero(uid);
   }
 
-  // ---- Hook: render dashboard when panel state changes to approved ----
+  // ========== CHAT ==========
+  let _chatUnsub = null;
+  let _chatCarniceroUid = null;
+
+  function _convId(uid1, uid2) { return [uid1, uid2].sort().join('_'); }
+
+  async function openChat(carniceroUid, carniceroNombre, btn) {
+    if (!fbUser) { openAuthModal(); showToast('Inicia sesión para chatear.'); return; }
+    _chatCarniceroUid = carniceroUid;
+    document.getElementById('chatModalName').textContent = carniceroNombre;
+    document.getElementById('chatInput').value = '';
+    document.getElementById('chatMessages').innerHTML = `
+      <div class="flex justify-center py-4">
+        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">Inicio de conversación con ${carniceroNombre}</span>
+      </div>`;
+    document.getElementById('chatModal').classList.remove('hidden');
+    document.getElementById('chatInput').focus();
+
+    // Real-time listener
+    const convId = _convId(fbUser.uid, carniceroUid);
+    if (_chatUnsub) _chatUnsub();
+    _chatUnsub = db.collection('chats').doc(convId).collection('messages')
+      .orderBy('createdAt').onSnapshot(snap => {
+        const el = document.getElementById('chatMessages');
+        if (!el) return;
+        const divs = snap.docs.map(doc => {
+          const m = doc.data();
+          const isMe = m.senderUid === fbUser.uid;
+          return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[75%] px-4 py-2.5 rounded-2xl text-sm font-medium ${isMe
+              ? 'bg-primary text-white rounded-br-sm'
+              : 'bg-surface-container text-on-surface rounded-bl-sm'}">
+              ${m.text}
+              <p class="text-[10px] opacity-60 mt-1 ${isMe ? 'text-right' : ''}">${m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) : ''}</p>
+            </div>
+          </div>`;
+        });
+        el.innerHTML = el.querySelector('.flex.justify-center').outerHTML + divs.join('');
+        el.scrollTop = el.scrollHeight;
+      });
+
+    // Mark conversation metadata for carnicero to see
+    await db.collection('chats').doc(convId).set({
+      parrilleroUid:    fbUser.uid,
+      parrilleroNombre: fbUser.displayName || fbUser.email || 'Parrillero',
+      carniceroUid,
+      carniceroNombre,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
+
+  async function sendChatMsg() {
+    const input = document.getElementById('chatInput');
+    const text  = input.value.trim();
+    if (!text || !fbUser || !_chatCarniceroUid) return;
+    input.value = '';
+    const convId = _convId(fbUser.uid, _chatCarniceroUid);
+    try {
+      await db.collection('chats').doc(convId).collection('messages').add({
+        text, senderUid: fbUser.uid,
+        senderNombre: fbUser.displayName || fbUser.email || 'Usuario',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await db.collection('chats').doc(convId).update({
+        lastMsg: text, updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        unreadCarnicero: firebase.firestore.FieldValue.increment(1)
+      });
+    } catch(e) { showToast('Error al enviar. Revisa tu conexión.'); input.value = text; }
+  }
+
+  function closeChat() {
+    if (_chatUnsub) { _chatUnsub(); _chatUnsub = null; }
+    document.getElementById('chatModal').classList.add('hidden');
+  }
+
+  // ========== RESERVA ==========
+  let _reservaCarniceroUid = null;
+
+  function openReservaModal(carniceroUid, carniceroNombre) {
+    if (!fbUser) { openAuthModal(); showToast('Inicia sesión para reservar.'); return; }
+    _reservaCarniceroUid = carniceroUid;
+    document.getElementById('reservaModalName').textContent = carniceroNombre;
+    document.getElementById('reservaFecha').value  = '';
+    document.getElementById('reservaCortes').value = '';
+    document.getElementById('reservaNotas').value  = '';
+    document.getElementById('reservaError').classList.add('hidden');
+    // Pre-fill cortes from user selection
+    if (typeof selectedCutIds !== 'undefined' && selectedCutIds.size > 0) {
+      const names = Array.from(selectedCutIds).map(id => CUT_LABELS[id] || id).join(', ');
+      document.getElementById('reservaCortes').value = names;
+    }
+    document.getElementById('reservaModal').classList.remove('hidden');
+  }
+
+  function closeReservaModal() {
+    document.getElementById('reservaModal').classList.add('hidden');
+  }
+
+  async function enviarReserva() {
+    const fecha  = document.getElementById('reservaFecha').value;
+    const cortes = document.getElementById('reservaCortes').value.trim();
+    const notas  = document.getElementById('reservaNotas').value.trim();
+    const errEl  = document.getElementById('reservaError');
+    if (!fecha) { errEl.textContent = 'Elige una fecha y hora.'; errEl.classList.remove('hidden'); return; }
+    errEl.classList.add('hidden');
+
+    // Get carnicero name from Firestore
+    let carniceroNombre = '';
+    try {
+      const snap = await db.collection('carniceros').doc(_reservaCarniceroUid).get();
+      carniceroNombre = snap.data()?.nombre || '';
+    } catch(e) {}
+
+    try {
+      await db.collection('reservas').add({
+        parrilleroUid:    fbUser.uid,
+        parrilleroNombre: fbUser.displayName || fbUser.email || 'Parrillero',
+        parrilleroEmail:  fbUser.email || '',
+        carniceroUid:     _reservaCarniceroUid,
+        carniceroNombre,
+        fecha, cortes, notas,
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      closeReservaModal();
+      showToast('¡Reserva enviada! La carnicería te confirmará pronto. 📅');
+      // Auto-open chat to notify
+      setTimeout(() => openChat(_reservaCarniceroUid, carniceroNombre, null), 500);
+    } catch(e) { errEl.textContent = 'Error al enviar. Intenta de nuevo.'; errEl.classList.remove('hidden'); }
+  }
+
+  // ========== CARNICERO INBOX ==========
+  let _inboxTab = 'chats';
+  let _inboxUnsub = null;
+
+  function injectInbox() {
+    const dashboard = document.getElementById('panelDashboard');
+    if (!dashboard || dashboard.querySelector('#inboxContent')) return;
+    const tmpl = document.getElementById('tmplInbox');
+    dashboard.appendChild(tmpl.content.cloneNode(true));
+  }
+
+  function setInboxTab(tab) {
+    _inboxTab = tab;
+    document.getElementById('inboxTabChats')?.classList.toggle('bg-primary', tab === 'chats');
+    document.getElementById('inboxTabChats')?.classList.toggle('text-white', tab === 'chats');
+    document.getElementById('inboxTabChats')?.classList.toggle('bg-surface-container', tab !== 'chats');
+    document.getElementById('inboxTabChats')?.classList.toggle('text-on-surface-variant', tab !== 'chats');
+    document.getElementById('inboxTabReservas')?.classList.toggle('bg-primary', tab === 'reservas');
+    document.getElementById('inboxTabReservas')?.classList.toggle('text-white', tab === 'reservas');
+    document.getElementById('inboxTabReservas')?.classList.toggle('bg-surface-container', tab !== 'reservas');
+    document.getElementById('inboxTabReservas')?.classList.toggle('text-on-surface-variant', tab !== 'reservas');
+    renderInbox();
+  }
+
+  async function renderInbox() {
+    const el = document.getElementById('inboxContent');
+    if (!el || !fbUser) return;
+    el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Cargando...</p>';
+
+    if (_inboxTab === 'chats') {
+      try {
+        const snap = await db.collection('chats').where('carniceroUid', '==', fbUser.uid).orderBy('updatedAt', 'desc').get();
+        if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aún.</p>'; return; }
+        el.innerHTML = snap.docs.map(doc => {
+          const c = doc.data();
+          const unread = c.unreadCarnicero || 0;
+          return `
+            <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3 cursor-pointer hover:bg-surface-container-high transition-colors"
+              onclick="openInboxChat('${doc.id}','${(c.parrilleroNombre||'').replace(/'/g,"\\'")}','${c.parrilleroUid}')">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary text-xl">person</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-sm">${c.parrilleroNombre || 'Parrillero'}</p>
+                <p class="text-xs text-on-surface-variant truncate">${c.lastMsg || 'Sin mensajes aún'}</p>
+              </div>
+              ${unread > 0 ? `<span class="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full">${unread}</span>` : ''}
+            </div>`;
+        }).join('');
+      } catch(e) { el.innerHTML = '<p class="text-sm text-error text-center py-4">Error cargando chats.</p>'; }
+    } else {
+      try {
+        const snap = await db.collection('reservas').where('carniceroUid', '==', fbUser.uid).orderBy('createdAt', 'desc').get();
+        if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin reservas aún.</p>'; return; }
+        const statusColor = { pending:'bg-amber-100 text-amber-700', confirmed:'bg-green-100 text-green-700', cancelled:'bg-red-100 text-red-700' };
+        const statusLabel = { pending:'⏳ Pendiente', confirmed:'✅ Confirmada', cancelled:'❌ Cancelada' };
+        el.innerHTML = snap.docs.map(doc => {
+          const r  = doc.data();
+          const st = r.status || 'pending';
+          return `
+            <div class="bg-surface-container rounded-2xl p-4 space-y-2">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="font-bold text-sm">${r.parrilleroNombre}</p>
+                  <p class="text-xs text-on-surface-variant">${r.fecha ? new Date(r.fecha).toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'}) : '—'}</p>
+                  ${r.cortes ? `<p class="text-xs text-on-surface-variant mt-1">🥩 ${r.cortes}</p>` : ''}
+                  ${r.notas  ? `<p class="text-xs text-on-surface-variant italic">"${r.notas}"</p>` : ''}
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full shrink-0 ${statusColor[st]}">${statusLabel[st]}</span>
+              </div>
+              ${st === 'pending' ? `
+              <div class="flex gap-2 pt-1">
+                <button onclick="updateReserva('${doc.id}','confirmed')" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition-all">✅ Confirmar</button>
+                <button onclick="updateReserva('${doc.id}','cancelled')" class="flex-1 bg-error/10 text-error py-2 rounded-xl font-bold text-xs hover:bg-error/20 active:scale-95 transition-all">❌ Rechazar</button>
+              </div>` : ''}
+            </div>`;
+        }).join('');
+      } catch(e) { el.innerHTML = '<p class="text-sm text-error text-center py-4">Error cargando reservas.</p>'; }
+    }
+  }
+
+  async function updateReserva(reservaId, status) {
+    try {
+      await db.collection('reservas').doc(reservaId).update({ status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      showToast(status === 'confirmed' ? 'Reserva confirmada ✅' : 'Reserva rechazada.');
+      renderInbox();
+    } catch(e) { showToast('Error al actualizar.'); }
+  }
+
+  async function openInboxChat(convId, parrilleroNombre, parrilleroUid) {
+    // Reset unread count
+    await db.collection('chats').doc(convId).update({ unreadCarnicero: 0 }).catch(()=>{});
+    // Open chat from carnicero POV
+    _chatCarniceroUid = parrilleroUid; // we're replying TO the parrillero's uid
+    document.getElementById('chatModalName').textContent = parrilleroNombre;
+    document.getElementById('chatInput').value = '';
+    document.getElementById('chatMessages').innerHTML = `
+      <div class="flex justify-center py-4">
+        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">Conversación con ${parrilleroNombre}</span>
+      </div>`;
+    document.getElementById('chatModal').classList.remove('hidden');
+    if (_chatUnsub) _chatUnsub();
+    _chatUnsub = db.collection('chats').doc(convId).collection('messages')
+      .orderBy('createdAt').onSnapshot(snap => {
+        const el = document.getElementById('chatMessages');
+        if (!el) return;
+        const header = el.querySelector('.flex.justify-center');
+        const divs = snap.docs.map(doc => {
+          const m = doc.data();
+          const isMe = m.senderUid === fbUser.uid;
+          return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[75%] px-4 py-2.5 rounded-2xl text-sm font-medium ${isMe
+              ? 'bg-primary text-white rounded-br-sm'
+              : 'bg-surface-container text-on-surface rounded-bl-sm'}">
+              ${m.text}
+              <p class="text-[10px] opacity-60 mt-1 ${isMe ? 'text-right' : ''}">${m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) : ''}</p>
+            </div>
+          </div>`;
+        });
+        el.innerHTML = (header?.outerHTML || '') + divs.join('');
+        el.scrollTop = el.scrollHeight;
+      });
+  }
+
+  // Hook: inject inbox when dashboard renders
+  const _origRenderDash = renderCarniceroDashboard;
+  renderCarniceroDashboard = async function() {
+    await _origRenderDash();
+    injectInbox();
+    renderInbox();
+  };
   const _origShowPanelState = showPanelState;
   showPanelState = function() {
     _origShowPanelState();
@@ -3429,5 +3593,81 @@ tailwind.config = {
     </div>
   </div>
 </div>
+<!-- ===================== CHAT MODAL ===================== -->
+<div id="chatModal" class="hidden fixed inset-0 z-[95] flex items-end sm:items-center justify-center bg-black/50 px-0 sm:px-4 py-0 sm:py-6">
+  <div class="bg-surface-container-lowest w-full sm:max-w-md flex flex-col rounded-t-3xl sm:rounded-3xl shadow-2xl" style="height:88dvh; max-height:600px">
+    <!-- Header -->
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-outline-variant/15 shrink-0">
+      <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary text-xl">storefront</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm truncate" id="chatModalName">Carnicería</p>
+        <p class="text-xs text-secondary font-semibold">En línea</p>
+      </div>
+      <button onclick="closeChat()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
+        <span class="material-symbols-outlined text-on-surface-variant">close</span>
+      </button>
+    </div>
+    <!-- Messages -->
+    <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"></div>
+    <!-- Input -->
+    <div class="px-4 py-3 border-t border-outline-variant/15 flex gap-2 shrink-0">
+      <input id="chatInput" type="text" placeholder="Escribe un mensaje..." maxlength="500"
+        class="flex-1 bg-surface-container rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 border-none"
+        onkeydown="if(event.key==='Enter')sendChatMsg()"/>
+      <button onclick="sendChatMsg()" class="w-11 h-11 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-all active:scale-90 shrink-0">
+        <span class="material-symbols-outlined text-white text-xl">send</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== RESERVA MODAL ===================== -->
+<div id="reservaModal" class="hidden fixed inset-0 z-[95] flex items-end sm:items-center justify-center bg-black/50 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm flex flex-col" style="max-height:90dvh">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15 shrink-0">
+      <div>
+        <h3 class="font-headline text-xl font-bold">Hacer reserva</h3>
+        <p class="text-xs text-on-surface-variant mt-0.5" id="reservaModalName"></p>
+      </div>
+      <button onclick="closeReservaModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto space-y-4 flex-1">
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Fecha y hora *</span>
+        <input id="reservaFecha" type="datetime-local" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">¿Qué cortes necesitas?</span>
+        <input id="reservaCortes" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: 2kg Entraña, 1kg Lomo Vetado"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Notas adicionales</span>
+        <textarea id="reservaNotas" rows="2" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Maduración especial, sin grasa, etc."></textarea></label>
+      <p id="reservaError" class="text-xs text-error hidden"></p>
+    </div>
+    <div class="p-6 pt-0 border-t border-outline-variant/15">
+      <button onclick="enviarReserva()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold hover:opacity-90 transition-all active:scale-95">Enviar solicitud de reserva</button>
+      <p class="text-[10px] text-on-surface-variant text-center mt-2">La carnicería confirmará tu reserva por chat</p>
+    </div>
+  </div>
+</div>
+
+<!-- Carnicero inbox section (goes into dashboard) -->
+<template id="tmplInbox">
+  <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm mt-6">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-headline text-xl font-bold flex items-center gap-2">
+        Mensajes y Reservas
+        <span id="inboxBadge" class="hidden text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full">0</span>
+      </h3>
+    </div>
+    <div class="flex gap-2 mb-4">
+      <button onclick="setInboxTab('chats')"   id="inboxTabChats"   class="inbox-tab px-4 py-2 rounded-xl text-sm font-bold bg-primary text-white transition-all">💬 Chats</button>
+      <button onclick="setInboxTab('reservas')" id="inboxTabReservas" class="inbox-tab px-4 py-2 rounded-xl text-sm font-bold bg-surface-container text-on-surface-variant transition-all">📅 Reservas</button>
+    </div>
+    <div id="inboxContent" class="space-y-3">
+      <p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aún.</p>
+    </div>
+  </div>
+</template>
 </body>
 </html>
