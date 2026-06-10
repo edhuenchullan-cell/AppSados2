@@ -1557,6 +1557,18 @@ tailwind.config = {
       const pct = (((val - min) / (max - min)) * 100).toFixed(1);
       slider.style.setProperty('--pct', pct + '%');
     });
+    // Update sticky bar in real time
+    const totalKgNow = Object.values(cutKg).reduce((s, v) => s + (v || 0), 0);
+    const stickyKg  = document.getElementById('stickyTotalKg');
+    const stickyHint = document.getElementById('stickyHintInline');
+    if (stickyKg) stickyKg.textContent = totalKgNow.toFixed(1) + ' kg';
+    if (stickyHint && masterKgFixed) {
+      const diff    = totalKgNow - masterKgFixed;
+      const absDiff = Math.abs(diff).toFixed(1);
+      if (Math.abs(diff) < 0.05)    stickyHint.innerHTML = `<span class="text-green-600">✓ En el total recomendado</span>`;
+      else if (diff < 0)            stickyHint.innerHTML = `<span class="text-amber-600">↓ Faltan ${absDiff} kg (rec. ${masterKgFixed.toFixed(1)} kg)</span>`;
+      else                          stickyHint.innerHTML = `<span class="text-orange-500">↑ Pasaste por ${absDiff} kg (rec. ${masterKgFixed.toFixed(1)} kg)</span>`;
+    }
   }
 
   function updateRecomendaciones() {
@@ -1696,7 +1708,7 @@ tailwind.config = {
       } else if (diff < 0) {
         return `<p class="text-sm font-semibold text-amber-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">arrow_downward</span> Te faltan <strong>${absDiff} kg</strong> para llegar al recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
       } else {
-        return `<p class="text-sm font-semibold text-red-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">arrow_upward</span> Superaste el recomendado por <strong>${absDiff} kg</strong> (${masterKgRef.toFixed(1)} kg sugeridos)</p>`;
+        return `<p class="text-sm font-semibold text-orange-500 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">arrow_upward</span> Superaste el recomendado por <strong>${absDiff} kg</strong> (${masterKgRef.toFixed(1)} kg sugeridos)</p>`;
       }
     }
     const slidersHtml = activeCuts.length === 0
@@ -1773,7 +1785,29 @@ tailwind.config = {
 
         ${activeCuts.length > 0 ? `
         <div>
-          <p class="text-xs font-bold uppercase text-on-surface-variant mb-3 tracking-wider">Ajusta las cantidades</p>
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-bold uppercase text-on-surface-variant tracking-wider">Ajusta las cantidades</p>
+            <button onclick="openShareAsado()" class="flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors active:scale-95">
+              <span class="material-symbols-outlined text-sm">share</span> Compartir asado
+            </button>
+          </div>
+          <!-- Sticky mini-summary — always visible while scrolling sliders -->
+          <div id="stickyKgBar" class="sticky top-[64px] z-30 bg-surface-container-lowest/95 backdrop-blur-sm border border-outline-variant/20 rounded-2xl px-4 py-3 flex items-center justify-between gap-3 mb-4 shadow-sm">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-base text-on-surface-variant">grocery</span>
+              <span class="text-sm text-on-surface-variant">Total:</span>
+              <span class="font-extrabold text-primary text-base" id="stickyTotalKg">${totalKg.toFixed(1)} kg</span>
+            </div>
+            <div id="stickyHintInline" class="text-xs font-semibold truncate max-w-[55%]">
+              ${masterKgRef > 0
+                ? Math.abs(totalKg - masterKgRef) < 0.05
+                  ? `<span class="text-green-600">✓ En el total recomendado</span>`
+                  : totalKg < masterKgRef
+                    ? `<span class="text-amber-600">↓ Faltan ${(masterKgRef - totalKg).toFixed(1)} kg (rec. ${masterKgRef.toFixed(1)} kg)</span>`
+                    : `<span class="text-orange-500">↑ Pasaste por ${(totalKg - masterKgRef).toFixed(1)} kg (rec. ${masterKgRef.toFixed(1)} kg)</span>`
+                : ''}
+            </div>
+          </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             ${slidersHtml}
           </div>
@@ -2526,7 +2560,9 @@ tailwind.config = {
     fbUser = user;
     if (!user) {
       fbRole = null; fbProfile = null;
-      updateAuthUI(); return;
+      updateAuthUI();
+      loadSharedAsadoIfNeeded();
+      return;
     }
     // Admin bypass
     if (user.email === ADMIN_EMAIL) {
@@ -2546,6 +2582,7 @@ tailwind.config = {
         updateAuthUI();
         renderFirebaseCarniceros();
         initFCM();
+        loadSharedAsadoIfNeeded();
       } else {
         updateAuthUI();
         showRoleModal();
@@ -2968,6 +3005,96 @@ tailwind.config = {
           </article>`;
       }).join('');
     } catch(e) { console.error('Error loading carniceros:', e); }
+  }
+
+  // ========== COMPARTIR ASADO ==========
+  let _currentAsadoId = null;
+
+  function getAsadoSnapshot() {
+    return {
+      invitados: { ...counts },
+      cortes: { ...cutKg },
+      presupuesto: typeof selectedBudget !== 'undefined' ? selectedBudget : 'low',
+      masterKg: masterKgFixed || 0,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+  }
+
+  function applyAsadoSnapshot(data) {
+    if (data.invitados) {
+      counts.men   = data.invitados.men   || 0;
+      counts.women = data.invitados.women || 0;
+      counts.kids  = data.invitados.kids  || 0;
+      document.getElementById('countMen').textContent   = counts.men;
+      document.getElementById('countWomen').textContent = counts.women;
+      document.getElementById('countKids').textContent  = counts.kids;
+      updateGauge();
+    }
+    if (data.cortes) {
+      cutKg = { ...data.cortes };
+      syncSliderTracks();
+      updateRecomendaciones();
+    }
+  }
+
+  async function openShareAsado() {
+    document.getElementById('shareAsadoModal').classList.remove('hidden');
+    const el = document.getElementById('shareAsadoContent');
+
+    try {
+      // Create or update asado document
+      if (!_currentAsadoId) {
+        _currentAsadoId = 'ASA' + Date.now().toString(36).toUpperCase();
+      }
+      const snapshot = getAsadoSnapshot();
+      await db.collection('asados').doc(_currentAsadoId).set({
+        ...snapshot,
+        creadorUid:    fbUser?.uid || 'anonimo',
+        creadorNombre: fbUser?.displayName || fbUser?.email || 'Parrillero',
+        createdAt:     firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      const link = `${window.location.origin}${window.location.pathname}?asado=${_currentAsadoId}`;
+
+      el.innerHTML = `
+        <div class="space-y-4">
+          <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary shrink-0">link</span>
+            <p class="text-xs font-mono text-on-surface-variant truncate flex-1">${link}</p>
+          </div>
+          <button onclick="navigator.clipboard.writeText('${link}').then(()=>showToast('¡Link copiado! 🔥'))"
+            class="w-full bg-primary text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-base">content_copy</span> Copiar link
+          </button>
+          <button onclick="if(navigator.share)navigator.share({title:'Mi asado en AppSados',text:'Ayúdame a planificar el asado 🔥',url:'${link}'})"
+            class="w-full bg-surface-container py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high active:scale-95 transition-all text-on-surface">
+            <span class="material-symbols-outlined text-base">ios_share</span> Compartir
+          </button>
+          <p class="text-xs text-on-surface-variant text-center">Quienes tengan el link podrán ver y editar el plan en tiempo real</p>
+        </div>`;
+    } catch(e) {
+      el.innerHTML = `<p class="text-sm text-error text-center py-4">Error al generar el link. Intenta de nuevo.</p>`;
+      console.error(e);
+    }
+  }
+
+  // Load shared asado from URL param on page load
+  async function loadSharedAsadoIfNeeded() {
+    const params  = new URLSearchParams(window.location.search);
+    const asadoId = params.get('asado');
+    if (!asadoId) return;
+    _currentAsadoId = asadoId;
+    try {
+      const snap = await db.collection('asados').doc(asadoId).get();
+      if (!snap.exists) { showToast('El link del asado no existe o expiró.'); return; }
+      applyAsadoSnapshot(snap.data());
+      showToast('🔥 Asado compartido cargado. ¡Puedes editarlo!');
+      navigate('recomendaciones');
+      // Listen for real-time updates from other collaborators
+      db.collection('asados').doc(asadoId).onSnapshot(doc => {
+        if (doc.exists) applyAsadoSnapshot(doc.data());
+      });
+    } catch(e) { console.error('Error loading shared asado:', e); }
   }
 
   // ---- User menu ----
@@ -4208,6 +4335,28 @@ tailwind.config = {
     </div>
     <div id="chatInboxList" class="flex-1 overflow-y-auto p-4 space-y-2">
       <p class="text-sm text-on-surface-variant text-center py-8">Cargando chats...</p>
+    </div>
+  </div>
+</div>
+<!-- ===================== COMPARTIR ASADO ===================== -->
+<div id="shareAsadoModal" class="hidden fixed inset-0 z-[96] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm flex flex-col">
+    <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
+      <div>
+        <h3 class="font-headline text-xl font-bold">Compartir asado</h3>
+        <p class="text-xs text-on-surface-variant mt-0.5">Las personas con este link pueden ver y editar el plan</p>
+      </div>
+      <button onclick="closeFbModal('shareAsadoModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div id="shareAsadoContent">
+        <div class="flex flex-col items-center py-6 gap-3">
+          <span class="material-symbols-outlined text-4xl text-primary/30 animate-pulse">link</span>
+          <p class="text-sm text-on-surface-variant">Generando link...</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
