@@ -178,9 +178,10 @@ tailwind.config = {
     border-radius: 999px;
     outline: none;
     cursor: pointer;
-    padding: 10px 0;
+    padding: 14px 0;
     box-sizing: content-box;
     margin: 4px 0;
+    touch-action: pan-x;
   }
   .cut-slider::-webkit-slider-runnable-track {
     height: 6px;
@@ -191,23 +192,23 @@ tailwind.config = {
   .cut-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: #ffffff;
-    border: 2.5px solid #810900;
-    box-shadow: 0 2px 8px rgba(129,9,0,0.22);
-    margin-top: -10px;
+    border: 3px solid #810900;
+    box-shadow: 0 2px 10px rgba(129,9,0,0.25);
+    margin-top: -14px;
     cursor: grab;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
   }
   .cut-slider::-webkit-slider-thumb:active {
     cursor: grabbing;
-    transform: scale(1.18);
-    box-shadow: 0 4px 16px rgba(129,9,0,0.32);
+    transform: scale(1.2);
+    box-shadow: 0 4px 18px rgba(129,9,0,0.35);
   }
   .cut-slider:hover::-webkit-slider-thumb {
-    box-shadow: 0 2px 12px rgba(129,9,0,0.30);
+    box-shadow: 0 3px 14px rgba(129,9,0,0.32);
   }
   .cut-slider::-moz-range-track {
     height: 6px;
@@ -220,18 +221,18 @@ tailwind.config = {
     background: #810900;
   }
   .cut-slider::-moz-range-thumb {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: #ffffff;
-    border: 2.5px solid #810900;
-    box-shadow: 0 2px 8px rgba(129,9,0,0.22);
+    border: 3px solid #810900;
+    box-shadow: 0 2px 10px rgba(129,9,0,0.25);
     cursor: grab;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
   }
   .cut-slider::-moz-range-thumb:active {
     cursor: grabbing;
-    transform: scale(1.18);
+    transform: scale(1.2);
   }
 
   .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
@@ -611,6 +612,20 @@ tailwind.config = {
           <span class="material-symbols-outlined text-4xl animate-spin" style="animation-duration:1.2s">progress_activity</span>
           <p class="text-sm font-medium">Cargando carnicerías...</p>
         </div>
+      </div>
+
+      <!-- Banner enrolarse -->
+      <div id="enrollBanner" class="hidden mt-8 bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/15 rounded-3xl p-6 flex-col sm:flex-row items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-3xl text-primary">add_business</span>
+        </div>
+        <div class="flex-1 text-center sm:text-left">
+          <p class="font-bold text-on-surface">¿Tienes una carnicería?</p>
+          <p class="text-sm text-on-surface-variant mt-0.5">Regístrala en AppSados y llega a miles de parrilleros cerca de ti.</p>
+        </div>
+        <button onclick="fbUser ? fbSetRole('carnicero') : openAuthModal()" class="shrink-0 bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm hover:opacity-90 transition-all active:scale-95 whitespace-nowrap">
+          Registrar mi carnicería
+        </button>
       </div>
     </div>
   </div>
@@ -1001,9 +1016,14 @@ tailwind.config = {
     <span class="material-symbols-outlined" id="nav-icon-tips">lightbulb</span>
     <span class="text-xs font-semibold mt-0.5">Tips</span>
   </button>
-  <button onclick="navigate('panel')" data-nav="panel" class="nav-pill flex flex-col items-center justify-center px-4 py-2">
-    <span class="material-symbols-outlined" id="nav-icon-panel">store</span>
+  <!-- Panel: solo carniceros | Perfil: parrilleros y sin sesión -->
+  <button id="navBtnPanel" onclick="navigate('panel')" data-nav="panel" class="nav-pill hidden flex-col items-center justify-center px-4 py-2">
+    <span class="material-symbols-outlined">store</span>
     <span class="text-xs font-semibold mt-0.5">Mi Panel</span>
+  </button>
+  <button id="navBtnPerfil" onclick="toggleUserMenu()" class="nav-pill flex flex-col items-center justify-center px-4 py-2">
+    <span class="material-symbols-outlined">account_circle</span>
+    <span class="text-xs font-semibold mt-0.5">Perfil</span>
   </button>
 </nav>
 
@@ -2610,6 +2630,7 @@ tailwind.config = {
     updateMisCortesChip();
     renderFirebaseCarniceros();
     showPanelState();
+    updateNavForRole();
   }
 
   function updateMisCortesChip() {
@@ -3343,6 +3364,8 @@ tailwind.config = {
       parrilleroNombre: fbUser.displayName || fbUser.email || 'Parrillero',
       carniceroUid,
       carniceroNombre,
+      unreadCarnicero:   0,
+      unreadParrillero:  0,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   }
@@ -3359,9 +3382,12 @@ tailwind.config = {
         senderNombre: fbUser.displayName || fbUser.email || 'Usuario',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+      const isCarniceroSending = fbRole === 'carnicero';
       await db.collection('chats').doc(convId).update({
-        lastMsg: text, updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        unreadCarnicero: firebase.firestore.FieldValue.increment(1)
+        lastMsg: text,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        unreadCarnicero:  isCarniceroSending ? 0 : firebase.firestore.FieldValue.increment(1),
+        unreadParrillero: isCarniceroSending ? firebase.firestore.FieldValue.increment(1) : 0,
       });
       // Push notification to recipient
       const recipientUid = _chatCarniceroUid;
@@ -3573,7 +3599,29 @@ tailwind.config = {
       });
   }
 
-  // ========== MIS RESERVAS (parrillero) ==========
+  function updateNavForRole() {
+    const panelBtn  = document.getElementById('navBtnPanel');
+    const perfilBtn = document.getElementById('navBtnPerfil');
+    const banner    = document.getElementById('enrollBanner');
+    const isCarnicero = fbRole === 'carnicero' && fbProfile?.status === 'approved';
+    const isAdmin     = fbRole === 'admin';
+
+    if (panelBtn && perfilBtn) {
+      if (isCarnicero || isAdmin) {
+        panelBtn.classList.remove('hidden'); panelBtn.classList.add('flex');
+        perfilBtn.classList.add('hidden');   perfilBtn.classList.remove('flex');
+      } else {
+        panelBtn.classList.add('hidden');    panelBtn.classList.remove('flex');
+        perfilBtn.classList.remove('hidden'); perfilBtn.classList.add('flex');
+      }
+    }
+    // Show enrollment banner only for parrilleros (not carniceros or admins)
+    if (banner) {
+      const showBanner = !fbUser || fbRole === 'parrillero';
+      banner.classList.toggle('hidden', !showBanner);
+      banner.classList.toggle('flex', showBanner);
+    }
+  }
   async function openMisReservas() {
     if (!fbUser) { openAuthModal(); return; }
     document.getElementById('misReservasModal').classList.remove('hidden');
