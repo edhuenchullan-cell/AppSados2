@@ -304,6 +304,13 @@ tailwind.config = {
     <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity" id="authBtn" onclick="openAuthModal()">
       <span class="material-symbols-outlined text-primary text-xl">account_circle</span>
     </div>
+    <!-- Chat inbox button — visible when logged in -->
+    <div id="chatInboxBtn" class="hidden relative cursor-pointer" onclick="openChatInbox()">
+      <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-surface-container-high transition-colors">
+        <span class="material-symbols-outlined text-primary text-xl">chat</span>
+      </div>
+      <span id="chatInboxBadge" class="hidden absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
+    </div>
     <div id="userAvatarBtn" class="hidden items-center gap-2 cursor-pointer" onclick="toggleUserMenu()">
       <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm" id="userInitialCircle">?</div>
       <div id="userRoleBadge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary/10 text-secondary"></div>
@@ -591,7 +598,9 @@ tailwind.config = {
       <div class="flex gap-3 overflow-x-auto no-scrollbar pb-6">
         <button onclick="setChip(this)" data-filter="todas" class="chip active px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Todas</button>
         <button onclick="setChip(this)" data-filter="premium" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Premium</button>
-        <button onclick="setChip(this)" data-filter="cerca" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Cerca de mí</button>
+        <button onclick="setChipCerca(this)" data-filter="cerca" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">near_me</span> Cerca de mí
+        </button>
         <button onclick="setChip(this)" data-filter="ofertas" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Ofertas</button>
         <button onclick="setChip(this)" data-filter="misCortes" id="chipMisCortes" class="chip hidden px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all items-center gap-1.5">🥩 Mis cortes</button>
       </div>
@@ -1279,12 +1288,13 @@ tailwind.config = {
   let currentPage = 'inicio';
   let history = ['inicio'];
   let toastTimer = null;
-  let selectedCutIds = new Set();   // cuts the user has checked
-  let deselectedByUser = new Set(); // explicitly unchecked IDs (survive re-renders)
-  let userSelectedByUser = new Set(); // explicitly checked by user
-  let cutKg = {};                   // cutId → kg chosen by user
+  let selectedCutIds = new Set();
+  let deselectedByUser = new Set();
+  let userSelectedByUser = new Set();
+  let cutKg = {};
   let lastCutSignature = '';
   let lastPlanResults = [];
+  let _userCoords = null; // geolocation cache — shared across scripts
   const CUT_STEP = 0.1;   // 100 g por paso
   const CUT_MAX  = 8.0;
   // Cálculo Maestro: se fija al entrar a recomendaciones, solo se resetea si cambian los invitados
@@ -1331,6 +1341,14 @@ tailwind.config = {
 
     // Fill dynamic data on recomendaciones
     if (page === 'recomendaciones') updateRecomendaciones();
+    // Pre-fetch location silently when entering carnicerias
+    if (page === 'carnicerias') {
+      setTimeout(() => {
+        if (typeof _userCoords !== 'undefined' && !_userCoords && typeof getUserLocation === 'function') {
+          getUserLocation().then(() => { if (typeof renderFirebaseCarniceros === 'function') renderFirebaseCarniceros(); });
+        }
+      }, 500);
+    }
     // Si vuelve a inicio, resetear cálculo maestro para recalcular con nuevos invitados
     if (page === 'inicio') {
       masterKgFixed = null;
@@ -2720,9 +2738,19 @@ tailwind.config = {
       telefono:    document.getElementById('reg_telefono').value.trim(),
       horario:     document.getElementById('reg_horario').value.trim(),
       presupuesto, cortes,
-      status: fbProfile?.status === 'approved' ? 'approved' : 'pending', // keep approved if re-editing
+      status: fbProfile?.status === 'approved' ? 'approved' : 'pending',
       requestedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
+
+    // Geocode address → save lat/lng for distance sorting
+    const addrForGeo = profile.direccion
+      ? `${profile.direccion}, ${profile.barrio}`
+      : profile.barrio;
+    if (addrForGeo) {
+      showToast('Geocodificando dirección...');
+      const coords = await geocodeAddress(addrForGeo);
+      if (coords) { profile.lat = coords.lat; profile.lng = coords.lng; }
+    }
 
     try {
       await db.collection('carniceros').doc(fbUser.uid).set(profile, { merge: true });
@@ -2801,7 +2829,6 @@ tailwind.config = {
     renderFirebaseCarniceros();
   }
 
-  // ---- Render Firebase carniceros in listing (approved only, sorted by relevance) ----
   async function renderFirebaseCarniceros() {
     const container = document.getElementById('firebaseCarnicerosList');
     if (!container) return;
@@ -2817,18 +2844,21 @@ tailwind.config = {
         return;
       }
 
-      // Get user's selected cuts and budget
       const userCuts   = typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [];
       const userBudget = typeof selectedBudget !== 'undefined' ? selectedBudget : '';
 
-      // Score each carnicero by how many of the user's cuts they have
       const carniceros = snap.docs.map(doc => {
         const c = doc.data();
-        const cardCuts = c.cortes || [];
+        const cardCuts     = c.cortes || [];
         const matchingCuts = userCuts.filter(id => cardCuts.includes(id));
-        const budgetMatch = !userBudget || c.presupuesto === userBudget;
-        const score = matchingCuts.length * 2 + (budgetMatch ? 1 : 0);
-        return { id: doc.id, ...c, matchingCuts, score };
+        const budgetMatch  = !userBudget || c.presupuesto === userBudget;
+        const distKm       = (_userCoords && c.lat && c.lng)
+          ? haversineKm(_userCoords.lat, _userCoords.lng, c.lat, c.lng)
+          : null;
+        // Score: cuts match weighs most, then budget, then proximity
+        const distScore = distKm !== null ? Math.max(0, 50 - distKm) : 0;
+        const score     = matchingCuts.length * 20 + (budgetMatch ? 5 : 0) + distScore;
+        return { id: doc.id, ...c, matchingCuts, distKm, score };
       }).sort((a, b) => b.score - a.score);
 
       const priceSymbol = p => p === 'high' ? '$$$' : '$';
@@ -2836,7 +2866,6 @@ tailwind.config = {
       container.innerHTML = carniceros.map(c => {
         const allCuts     = c.cortes || [];
         const matching    = c.matchingCuts || [];
-        const notMatching = allCuts.filter(id => !matching.includes(id));
         const hasMatch    = matching.length > 0 && userCuts.length > 0;
         const noMatch     = userCuts.length > 0 && matching.length === 0;
 
@@ -2859,15 +2888,26 @@ tailwind.config = {
              </div>`
           : '';
 
+        const distBadge = c.distKm !== null
+          ? `<div class="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full w-fit">
+               <span class="material-symbols-outlined text-xs">near_me</span>
+               ${formatDist(c.distKm)}
+             </div>`
+          : '';
+
         const photo = c.fotoUrl
           ? `<img src="${c.fotoUrl}" class="w-20 h-20 object-cover rounded-2xl shrink-0" alt="${c.nombre}"/>`
           : `<div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
                <span class="material-symbols-outlined text-3xl text-primary">storefront</span>
              </div>`;
 
+        const mapsUrl = c.direccion
+          ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((c.direccion||'') + ' ' + (c.barrio||'') + ' Chile')}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((c.barrio||c.nombre) + ' Chile')}`;
+
         return `
           <article class="bg-surface-container-low rounded-3xl p-6 flex flex-col gap-4 card-lift ${noMatch ? 'opacity-70' : ''}"
-            data-cuts="${allCuts.join(',')}" data-budget="${c.presupuesto || 'low'}">
+            data-cuts="${allCuts.join(',')}" data-budget="${c.presupuesto || 'low'}" data-dist="${c.distKm !== null ? c.distKm.toFixed(2) : '9999'}">
             <div class="flex gap-4">
               ${photo}
               <div class="flex flex-col justify-between py-0.5 flex-grow min-w-0">
@@ -2877,17 +2917,22 @@ tailwind.config = {
                     <span class="text-primary text-sm font-bold shrink-0">${priceSymbol(c.presupuesto)}</span>
                   </div>
                   <p class="text-xs text-on-surface-variant mb-2">${[c.barrio, c.horario].filter(Boolean).join(' · ')}</p>
-                  ${matchBadge}
+                  <div class="flex flex-wrap gap-1.5">
+                    ${distBadge}
+                    ${matchBadge}
+                  </div>
                   ${allCuts.length ? `<div class="flex flex-wrap gap-1 mt-2">${cutChips}</div>` : ''}
                 </div>
-                <div class="flex items-center gap-2 mt-2">
+                <div class="flex items-center gap-2 mt-2 flex-wrap">
                   <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-secondary/10 text-secondary">
                     <span class="material-symbols-outlined text-xs">verified</span> Verificada
                   </span>
+                  <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-outline-variant/20 transition-colors">
+                    <span class="material-symbols-outlined text-xs">map</span> Cómo llegar
+                  </a>
                 </div>
               </div>
             </div>
-            <!-- Actions -->
             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-outline-variant/15">
               <button onclick="openChat('${c.uid}','${c.nombre.replace(/'/g,"\\'")}', this)" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-surface-container text-primary font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">
                 <span class="material-symbols-outlined text-base">chat</span> Chat
@@ -3211,7 +3256,47 @@ tailwind.config = {
     adminDeleteCarnicero(uid);
   }
 
-  // ========== CHAT ==========
+  // ========== GEOLOCALIZACIÓN ==========
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+              Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function formatDist(km) {
+    return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+  }
+
+  async function getUserLocation() {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) { resolve(null); return; }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          _userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          resolve(_userCoords);
+        },
+        () => resolve(null),
+        { timeout: 8000, maximumAge: 300000 }
+      );
+    });
+  }
+
+  async function geocodeAddress(address) {
+    if (!address) return null;
+    try {
+      const q   = encodeURIComponent(address + ', Chile');
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+        headers: { 'Accept-Language': 'es', 'User-Agent': 'AppSados/1.0' }
+      });
+      const data = await res.json();
+      if (data.length === 0) return null;
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    } catch(e) { return null; }
+  }
   let _chatUnsub = null;
   let _chatCarniceroUid = null;
 
@@ -3536,7 +3621,114 @@ tailwind.config = {
 
   function abrirChatReserva(uid, nombre) { openChat(uid, nombre, null); }
 
-  // Hook: inject inbox when dashboard renders
+  // ========== CHAT INBOX (header button) ==========
+  let _inboxUnsubHeader = null;
+
+  function updateChatInboxBtn(show) {
+    const btn = document.getElementById('chatInboxBtn');
+    if (!btn) return;
+    btn.classList.toggle('hidden', !show);
+    btn.classList.toggle('flex', show);
+  }
+
+  function startChatInboxListener() {
+    if (!fbUser || _inboxUnsubHeader) return;
+    // Listen for conversations where this user is involved
+    const field = fbRole === 'carnicero' ? 'carniceroUid' : 'parrilleroUid';
+    _inboxUnsubHeader = db.collection('chats')
+      .where(field, '==', fbUser.uid)
+      .onSnapshot(snap => {
+        const unreadField = fbRole === 'carnicero' ? 'unreadCarnicero' : 'unreadParrillero';
+        const total = snap.docs.reduce((sum, doc) => sum + (doc.data()[unreadField] || 0), 0);
+        const badge = document.getElementById('chatInboxBadge');
+        if (!badge) return;
+        if (total > 0) {
+          badge.textContent = total > 9 ? '9+' : total;
+          badge.classList.remove('hidden');
+          badge.classList.add('flex');
+        } else {
+          badge.classList.add('hidden');
+          badge.classList.remove('flex');
+        }
+      }, () => {});
+  }
+
+  function stopChatInboxListener() {
+    if (_inboxUnsubHeader) { _inboxUnsubHeader(); _inboxUnsubHeader = null; }
+  }
+
+  async function openChatInbox() {
+    document.getElementById('chatInboxModal').classList.remove('hidden');
+    const el = document.getElementById('chatInboxList');
+    el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-8">Cargando...</p>';
+    try {
+      const field = fbRole === 'carnicero' ? 'carniceroUid' : 'parrilleroUid';
+      const snap  = await db.collection('chats').where(field, '==', fbUser.uid).get();
+      const docs  = snap.docs.sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
+
+      if (docs.length === 0) {
+        el.innerHTML = '<div class="flex flex-col items-center py-12 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">chat</span><p class="text-sm text-on-surface-variant text-center">No tienes chats aún.<br/>Busca una carnicería y empieza a conversar.</p></div>';
+        return;
+      }
+
+      const unreadField    = fbRole === 'carnicero' ? 'unreadCarnicero' : 'unreadParrillero';
+      const otherNameField = fbRole === 'carnicero' ? 'parrilleroNombre' : 'carniceroNombre';
+      const otherUidField  = fbRole === 'carnicero' ? 'parrilleroUid'   : 'carniceroUid';
+
+      el.innerHTML = docs.map(doc => {
+        const c      = doc.data();
+        const unread = c[unreadField] || 0;
+        const name   = c[otherNameField] || 'Usuario';
+        const last   = c.lastMsg || 'Sin mensajes aún';
+        const initial = name[0].toUpperCase();
+        return `
+          <div class="flex items-center gap-3 p-3 rounded-2xl hover:bg-surface-container cursor-pointer transition-colors ${unread > 0 ? 'bg-primary/5' : ''}"
+            onclick="openInboxChatFromHeader('${doc.id}','${name.replace(/'/g,"\\'")}','${c[otherUidField]}'); closeFbModal('chatInboxModal')">
+            <div class="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0 font-bold text-primary">
+              ${initial}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <p class="font-bold text-sm truncate">${name}</p>
+                ${unread > 0 ? `<span class="shrink-0 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">${unread > 9 ? '9+' : unread}</span>` : ''}
+              </div>
+              <p class="text-xs text-on-surface-variant truncate">${last}</p>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Reset unread count for this user
+      docs.forEach(doc => {
+        if ((doc.data()[unreadField] || 0) > 0) {
+          db.collection('chats').doc(doc.id).update({ [unreadField]: 0 }).catch(()=>{});
+        }
+      });
+    } catch(e) {
+      el.innerHTML = '<p class="text-sm text-error text-center py-4">Error al cargar chats.</p>';
+    }
+  }
+
+  async function openInboxChatFromHeader(convId, otherName, otherUid) {
+    // Open chat modal reusing existing openChat / openInboxChat logic
+    if (fbRole === 'carnicero') {
+      await openInboxChat(convId, otherName, otherUid);
+    } else {
+      await openChat(otherUid, otherName, null);
+    }
+  }
+
+  // Hook into updateAuthUI to show/hide inbox btn and start listener
+  const _origUpdateAuthUI = updateAuthUI;
+  updateAuthUI = function() {
+    _origUpdateAuthUI();
+    if (fbUser) {
+      updateChatInboxBtn(true);
+      startChatInboxListener();
+    } else {
+      updateChatInboxBtn(false);
+      stopChatInboxListener();
+    }
+  };
   const _origRenderDash = renderCarniceroDashboard;
   renderCarniceroDashboard = async function() {
     await _origRenderDash();
@@ -3548,6 +3740,20 @@ tailwind.config = {
     _origShowPanelState();
     if (getPanelState() === 'approved') renderCarniceroDashboard();
   };
+
+  async function setChipCerca(btn) {
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm" style="animation:spin 0.8s linear infinite">progress_activity</span> Cerca de mí';
+    await getUserLocation();
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">near_me</span> Cerca de mí';
+    if (!_userCoords) {
+      showToast('No se pudo obtener tu ubicación. Actívala en el navegador.');
+      return;
+    }
+    setChip(btn);
+    await renderFirebaseCarniceros();
+    filterButchers();
+  }
+
   const _origFilterButchers = filterButchers;
   filterButchers = function() {
     const term = (document.getElementById('butcherSearch')?.value || '').trim().toLowerCase();
@@ -3564,11 +3770,22 @@ tailwind.config = {
         const userBudget = typeof selectedBudget !== 'undefined' ? selectedBudget : '';
         matchesFilter = (userCuts.length === 0 || userCuts.some(c => cardCuts.includes(c))) &&
                         (!userBudget || cardBudget === userBudget || cardBudget === '');
+      } else if (activeButcherFilter === 'cerca') {
+        // Show only carnicerías within 10km if we have user coords
+        // Otherwise show all (user didn't grant location)
+        const distText = card.querySelector('[data-dist]')?.dataset.dist;
+        const distKm   = parseFloat(card.dataset.dist || '9999');
+        matchesFilter = !_userCoords || distKm <= 10;
+        // Fallback: check if distance badge text contains km < 10
+        if (_userCoords && !card.dataset.dist) {
+          const badge = card.querySelector('.near_me')?.closest('div')?.textContent || '';
+          const match = badge.match(/([\d.]+)\s*km/);
+          matchesFilter = match ? parseFloat(match[1]) <= 10 : true;
+        }
       } else {
         matchesFilter =
           activeButcherFilter === 'todas' ||
           (activeButcherFilter === 'premium' && text.includes('$$$')) ||
-          (activeButcherFilter === 'cerca'   && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
           (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('económica') || (text.includes('$') && !text.includes('$$$'))));
       }
       const isVisible = matchesSearch && matchesFilter;
@@ -3829,6 +4046,20 @@ tailwind.config = {
     </div>
     <div id="misReservasContent" class="flex-1 overflow-y-auto p-6 space-y-3">
       <p class="text-sm text-on-surface-variant text-center py-6">Cargando...</p>
+    </div>
+  </div>
+</div>
+<!-- ===================== CHAT INBOX MODAL ===================== -->
+<div id="chatInboxModal" class="hidden fixed inset-0 z-[96] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm flex flex-col" style="max-height:85dvh">
+    <div class="flex items-center justify-between p-5 border-b border-outline-variant/15 shrink-0">
+      <h3 class="font-headline text-xl font-bold">Chats</h3>
+      <button onclick="closeFbModal('chatInboxModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">close</span>
+      </button>
+    </div>
+    <div id="chatInboxList" class="flex-1 overflow-y-auto p-4 space-y-2">
+      <p class="text-sm text-on-surface-variant text-center py-8">Cargando chats...</p>
     </div>
   </div>
 </div>
