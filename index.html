@@ -1394,7 +1394,16 @@ tailwind.config = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Fill dynamic data on recomendaciones
-    if (page === 'recomendaciones') updateRecomendaciones();
+    if (page === 'recomendaciones') {
+      updateRecomendaciones();
+      // Si ya hay un asado guardado, mostrar sección dividir para el creador
+      if (_currentAsadoId) {
+        const divideSection = document.getElementById('divideSection');
+        if (divideSection) divideSection.classList.remove('hidden');
+        const divideBtn = document.getElementById('divideBtnMain');
+        if (divideBtn) divideBtn.classList.remove('hidden');
+      }
+    }
     // Pre-fetch location silently when entering carnicerias
     if (page === 'carnicerias') {
       setTimeout(() => {
@@ -3057,6 +3066,8 @@ tailwind.config = {
   function getMyDisplayName() {
     if (fbUser?.displayName) return fbUser.displayName;
     if (fbUser?.email)       return fbUser.email.split('@')[0];
+    const saved = sessionStorage.getItem('_appsados_display_name');
+    if (saved) return saved;
     return 'Anónimo';
   }
 
@@ -3147,28 +3158,70 @@ tailwind.config = {
   }
 
   async function toggleDivideParticipation() {
-    console.log('[divide] toggleDivideParticipation called');
-    console.log('[divide] _currentAsadoId =', _currentAsadoId);
-    console.log('[divide] fbUser =', fbUser?.uid || 'no user');
     if (!_currentAsadoId) {
       showToast('Primero comparte el asado para usar esta función.');
       return;
     }
-    const myKey  = getMyParticipantKey();
-    const myName = getMyDisplayName();
-    console.log('[divide] myKey =', myKey, '| myName =', myName);
-    const ref = db.collection('asados').doc(_currentAsadoId).collection('participants').doc(myKey);
+    const myKey = getMyParticipantKey();
+    const ref   = db.collection('asados').doc(_currentAsadoId).collection('participants').doc(myKey);
+
+    // If already in, just remove
     try {
       const snap = await ref.get();
-      console.log('[divide] snap.exists =', snap.exists);
       if (snap.exists) {
         await ref.delete();
         showToast('Te retiraste de la vaca. 👋');
-      } else {
-        await ref.set({ name: myName, joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
-        showToast(`¡Apuntado como ${myName}! 🤝`);
+        return;
       }
+    } catch(e) { console.error('[divide] toggle error:', e); showToast('Error al actualizar. Intenta de nuevo.'); return; }
+
+    // Not in yet — if no display name, ask for one
+    let myName = getMyDisplayName();
+    if (myName === 'Anónimo') {
+      const entered = await promptDivideName();
+      if (entered === null) return; // cancelled
+      myName = entered || 'Anónimo';
+      sessionStorage.setItem('_appsados_display_name', myName);
+    }
+
+    try {
+      await ref.set({ name: myName, joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      showToast(`¡Apuntado como ${myName}! 🤝`);
     } catch(e) { console.error('[divide] toggle error:', e); showToast('Error al actualizar. Intenta de nuevo.'); }
+  }
+
+  function promptDivideName() {
+    return new Promise(resolve => {
+      // Small inline modal
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/50 px-6';
+      overlay.innerHTML = `
+        <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-xs p-6 space-y-4">
+          <div>
+            <h3 class="font-headline text-xl font-bold text-on-surface">¿Cómo te llamas?</h3>
+            <p class="text-xs text-on-surface-variant mt-1">Para que tus amigos sepan quién se sumó a la vaca.</p>
+          </div>
+          <input id="divideNameInput" type="text" maxlength="30" placeholder="Tu nombre"
+            class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+          <div class="flex gap-3">
+            <button id="divideNameCancel" class="flex-1 bg-surface-container text-on-surface-variant py-3 rounded-2xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">Cancelar</button>
+            <button id="divideNameConfirm" class="flex-1 bg-primary text-white py-3 rounded-2xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">Listo</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+
+      const input   = overlay.querySelector('#divideNameInput');
+      const confirm = overlay.querySelector('#divideNameConfirm');
+      const cancel  = overlay.querySelector('#divideNameCancel');
+
+      setTimeout(() => input.focus(), 50);
+
+      const done = val => { document.body.removeChild(overlay); resolve(val); };
+      confirm.onclick = () => done(input.value.trim() || 'Anónimo');
+      cancel.onclick  = () => done(null);
+      input.onkeydown = e => { if (e.key === 'Enter') done(input.value.trim() || 'Anónimo'); if (e.key === 'Escape') done(null); };
+      overlay.onclick = e => { if (e.target === overlay) done(null); };
+    });
   }
 
   function scrollToDivide() {
