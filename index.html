@@ -1648,18 +1648,12 @@ tailwind.config = {
     if (totalCost > 0 && activeCuts.length > 0) {
       meatCostEl.textContent = '$' + Math.round(totalCost).toLocaleString('es-CL');
       if (meatCostSubEl) meatCostSubEl.textContent = 'Costo total estimado (promedio mercado nacional)';
-      // Show divide button only when there's a shared asado
+      // Show divide button when there's a shared asado
       const divideBtn = document.getElementById('divideBtnMain');
       if (divideBtn && _currentAsadoId) divideBtn.classList.remove('hidden');
-      // Update per-person split live
+      // Update divide split if cost changed
       _lastTotalCost = totalCost;
-      const participants = document.querySelectorAll('#divideParticipantsList > div').length;
-      if (participants > 0) {
-        const perPerson = document.getElementById('dividePerPerson');
-        const summaryEl = document.getElementById('divideSummaryText');
-        if (perPerson) perPerson.textContent = '$' + Math.ceil(totalCost / participants).toLocaleString('es-CL');
-        if (summaryEl) summaryEl.textContent = `$${Math.round(totalCost).toLocaleString('es-CL')} total ÷ ${participants} persona${participants !== 1 ? 's' : ''}`;
-      }
+      refreshDivideSplit();
     } else {
       meatCostEl.textContent = '';
       if (meatCostSubEl) meatCostSubEl.innerHTML = `<span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span>`;
@@ -3054,8 +3048,10 @@ tailwind.config = {
   // Each participant is stored in Firestore under asados/{id}/participants/{uid}
   // { name, joinedAt } — presence is the vote. Remove doc = retract.
 
+  let _currentAsadoId    = null;
+  let _sharedAsadoLoaded = false;
   let _divideUnsubscribe = null;
-  let _myParticipantId   = null; // Firestore doc id for this session
+  let _myParticipantId   = null;
   let _lastTotalCost     = 0;
 
   function getMyDisplayName() {
@@ -3083,6 +3079,22 @@ tailwind.config = {
         const participants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderDivideUI(participants);
       }, err => console.error('divide listener error:', err));
+  }
+
+  function refreshDivideSplit() {
+    const resultEl  = document.getElementById('divideResult');
+    const perPerson = document.getElementById('dividePerPerson');
+    const summaryEl = document.getElementById('divideSummaryText');
+    if (!resultEl || !perPerson || !summaryEl) return;
+    // Count active participant rows (data-participant attr to avoid counting the empty-state <p>)
+    const count = document.querySelectorAll('#divideParticipantsList [data-participant]').length;
+    if (count > 0 && _lastTotalCost > 0) {
+      resultEl.classList.remove('hidden');
+      perPerson.textContent = '$' + Math.ceil(_lastTotalCost / count).toLocaleString('es-CL');
+      summaryEl.textContent = `$${Math.round(_lastTotalCost).toLocaleString('es-CL')} total ÷ ${count} persona${count !== 1 ? 's' : ''}`;
+    } else {
+      resultEl.classList.add('hidden');
+    }
   }
 
   function renderDivideUI(participants) {
@@ -3117,7 +3129,7 @@ tailwind.config = {
         list.innerHTML = participants.map(p => {
           const isMe = p.id === myKey;
           return `
-            <div class="flex items-center gap-3 bg-surface-container rounded-xl px-4 py-3">
+            <div data-participant="${p.id}" class="flex items-center gap-3 bg-surface-container rounded-xl px-4 py-3">
               <div class="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-sm shrink-0">
                 ${(p.name || 'A').charAt(0).toUpperCase()}
               </div>
@@ -3128,20 +3140,8 @@ tailwind.config = {
       }
     }
 
-    // Per-person split
-    const resultEl  = document.getElementById('divideResult');
-    const perPerson = document.getElementById('dividePerPerson');
-    const summaryEl = document.getElementById('divideSummaryText');
-    if (resultEl && perPerson && summaryEl) {
-      if (count > 0 && _lastTotalCost > 0) {
-        resultEl.classList.remove('hidden');
-        const split = Math.ceil(_lastTotalCost / count);
-        perPerson.textContent = '$' + split.toLocaleString('es-CL');
-        summaryEl.textContent = `$${Math.round(_lastTotalCost).toLocaleString('es-CL')} total ÷ ${count} persona${count !== 1 ? 's' : ''}`;
-      } else {
-        resultEl.classList.add('hidden');
-      }
-    }
+    // Per-person split — delegate to shared helper
+    refreshDivideSplit();
   }
 
   async function toggleDivideParticipation() {
@@ -3172,9 +3172,6 @@ tailwind.config = {
   // ========== END DIVIDIR LA CUENTA ==========
 
   // ========== COMPARTIR ASADO ==========
-  let _currentAsadoId = null;
-
-  let _sharedAsadoLoaded = false; // prevent double-load
 
   function getAsadoSnapshot() {
     return {
@@ -3305,6 +3302,11 @@ tailwind.config = {
       showToast('🔥 Asado compartido cargado. ¡Puedes editarlo!');
       navigate('recomendaciones');
       startDivideListener(asadoId);
+      // Show divide UI immediately for visitor
+      const divideSection = document.getElementById('divideSection');
+      if (divideSection) divideSection.classList.remove('hidden');
+      const divideBtn = document.getElementById('divideBtnMain');
+      if (divideBtn) divideBtn.classList.remove('hidden');
       // Listen for real-time updates from other collaborators
       db.collection('asados').doc(asadoId).onSnapshot(doc => {
         if (doc.exists) applyAsadoSnapshot(doc.data());
