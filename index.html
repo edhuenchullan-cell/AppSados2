@@ -3010,36 +3010,86 @@ tailwind.config = {
   // ========== COMPARTIR ASADO ==========
   let _currentAsadoId = null;
 
+  let _sharedAsadoLoaded = false; // prevent double-load
+
   function getAsadoSnapshot() {
     return {
-      invitados: { ...counts },
-      cortes: { ...cutKg },
-      presupuesto: typeof selectedBudget !== 'undefined' ? selectedBudget : 'low',
-      masterKg: masterKgFixed || 0,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      invitados:     { ...counts },
+      cortes:        { ...cutKg },
+      selectedCuts:  typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [],
+      presupuesto:   typeof selectedBudget !== 'undefined' ? selectedBudget : 'low',
+      masterKg:      masterKgFixed || 0,
+      updatedAt:     firebase.firestore.FieldValue.serverTimestamp()
     };
   }
 
-  function applyAsadoSnapshot(data) {
+  function applyAsadoSnapshot(data, isRealtime = false) {
+    // Restore guest counts
     if (data.invitados) {
       counts.men   = data.invitados.men   || 0;
       counts.women = data.invitados.women || 0;
       counts.kids  = data.invitados.kids  || 0;
-      document.getElementById('countMen').textContent   = counts.men;
-      document.getElementById('countWomen').textContent = counts.women;
-      document.getElementById('countKids').textContent  = counts.kids;
-      updateGauge();
+      const elMen   = document.getElementById('countMen');
+      const elWomen = document.getElementById('countWomen');
+      const elKids  = document.getElementById('countKids');
+      if (elMen)   elMen.textContent   = counts.men;
+      if (elWomen) elWomen.textContent = counts.women;
+      if (elKids)  elKids.textContent  = counts.kids;
+      if (typeof updateGauge === 'function') updateGauge();
     }
+    // Restore selected cuts
+    if (data.selectedCuts?.length && typeof selectedCutIds !== 'undefined') {
+      selectedCutIds = new Set(data.selectedCuts);
+      // Check the checkboxes visually
+      document.querySelectorAll('.cut-checkbox').forEach(cb => {
+        cb.checked = selectedCutIds.has(cb.dataset.cutId || cb.value);
+        cb.closest?.('[data-cut-card]')?.classList.toggle('selected', cb.checked);
+      });
+    }
+    // Restore cut quantities
     if (data.cortes) {
       cutKg = { ...data.cortes };
-      syncSliderTracks();
-      updateRecomendaciones();
     }
+    // Restore budget
+    if (data.presupuesto && typeof selectedBudget !== 'undefined') {
+      selectedBudget = data.presupuesto;
+      document.querySelectorAll('.budget-btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.value === data.presupuesto);
+      });
+    }
+    // Re-render after a tick to let DOM settle
+    setTimeout(() => {
+      if (typeof updateRecomendaciones === 'function') updateRecomendaciones();
+    }, 100);
+  }
+
+  async function loadSharedAsadoIfNeeded() {
+    if (_sharedAsadoLoaded) return;
+    const params  = new URLSearchParams(window.location.search);
+    const asadoId = params.get('asado');
+    if (!asadoId) return;
+    _sharedAsadoLoaded = true;
+    _currentAsadoId = asadoId;
+    try {
+      const snap = await db.collection('asados').doc(asadoId).get();
+      if (!snap.exists) { showToast('El link del asado no existe o expiró.'); return; }
+      applyAsadoSnapshot(snap.data());
+      showToast('🔥 Asado compartido cargado. ¡Puedes editarlo!');
+      navigate('recomendaciones');
+      // Real-time sync
+      db.collection('asados').doc(asadoId).onSnapshot(doc => {
+        if (doc.exists) applyAsadoSnapshot(doc.data(), true);
+      });
+    } catch(e) { console.error('Error loading shared asado:', e); }
   }
 
   async function openShareAsado() {
     document.getElementById('shareAsadoModal').classList.remove('hidden');
     const el = document.getElementById('shareAsadoContent');
+    el.innerHTML = `<div class="flex flex-col items-center py-6 gap-3">
+      <span class="material-symbols-outlined text-4xl text-primary/30">link</span>
+      <p class="text-sm text-on-surface-variant">Guardando plan...</p>
+    </div>`;
 
     try {
       // Create or update asado document
