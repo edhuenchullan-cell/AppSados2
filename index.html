@@ -3468,7 +3468,9 @@ tailwind.config = {
     if (_inboxTab === 'chats') {
       try {
         const snap = await db.collection('chats').where('carniceroUid', '==', fbUser.uid).get();
-        const docs = snap.docs.sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
+        const docs = snap.docs
+          .filter(doc => doc.data().lastMsg)
+          .sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
         if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aún.</p>'; return; }
         el.innerHTML = docs.map(doc => {
           const c = doc.data();
@@ -3664,7 +3666,9 @@ tailwind.config = {
     try {
       const field = fbRole === 'carnicero' ? 'carniceroUid' : 'parrilleroUid';
       const snap  = await db.collection('chats').where(field, '==', fbUser.uid).get();
-      const docs  = snap.docs.sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
+      const docs = snap.docs
+        .filter(doc => doc.data().lastMsg) // solo conversaciones con mensajes
+        .sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
 
       if (docs.length === 0) {
         el.innerHTML = '<div class="flex flex-col items-center py-12 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">chat</span><p class="text-sm text-on-surface-variant text-center">No tienes chats aún.<br/>Busca una carnicería y empieza a conversar.</p></div>';
