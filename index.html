@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>AppSados â€” El arte del asado chileno</title>
+<title>AppSados — El arte del asado chileno</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -169,7 +169,7 @@ tailwind.config = {
     50% { transform: translateY(-3px) scale(1.08); }
   }
 
-  /* Cut distribution sliders â€” cross-browser, touch-friendly */
+  /* Cut distribution sliders — cross-browser, touch-friendly */
   .cut-slider {
     -webkit-appearance: none;
     appearance: none;
@@ -298,14 +298,14 @@ tailwind.config = {
     <!-- Desktop nav -->
     <nav class="hidden md:flex gap-6 mr-4">
       <button onclick="navigate('inicio')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="inicio">Inicio</button>
-      <button onclick="navigate('carnicerias')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="carnicerias">CarnicerÃ­as</button>
+      <button onclick="navigate('carnicerias')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="carnicerias">Carnicerías</button>
       <button onclick="navigate('tips')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="tips">Tips</button>
       <button onclick="navigate('panel')" class="desk-nav font-semibold hover:text-primary transition-colors text-sm" data-page="panel">Panel Carnicero</button>
     </nav>
     <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity" id="authBtn" onclick="openAuthModal()">
       <span class="material-symbols-outlined text-primary text-xl">account_circle</span>
     </div>
-    <!-- Chat inbox button â€” visible when logged in -->
+    <!-- Chat inbox button — visible when logged in -->
     <div id="chatInboxBtn" class="hidden relative cursor-pointer" onclick="openChatInbox()">
       <div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-surface-container-high transition-colors">
         <span class="material-symbols-outlined text-primary text-xl">chat</span>
@@ -330,10 +330,10 @@ tailwind.config = {
         <span class="material-symbols-outlined text-base">store</span> Mi Panel Carnicero
       </button>
       <button onclick="openCarniceroRegister()" id="userMenuRegisterBtn" class="hidden w-full text-left px-3 py-2.5 text-sm font-semibold text-secondary hover:bg-surface-container rounded-xl flex items-center gap-2">
-        <span class="material-symbols-outlined text-base">add_business</span> Registrar mi carnicerÃ­a
+        <span class="material-symbols-outlined text-base">add_business</span> Registrar mi carnicería
       </button>
       <button onclick="fbSignOut()" class="w-full text-left px-3 py-2.5 text-sm font-semibold text-on-surface-variant hover:bg-surface-container rounded-xl flex items-center gap-2 mt-1">
-        <span class="material-symbols-outlined text-base">logout</span> Cerrar sesiÃ³n
+        <span class="material-symbols-outlined text-base">logout</span> Cerrar sesión
       </button>
     </div>
   </div>
@@ -342,17 +342,17 @@ tailwind.config = {
 <!-- ===================== MAIN CONTENT ===================== -->
 <main class="pb-32">
 
-  <!-- ===== SCREEN: INICIO (PlanificaciÃ³n) ===== -->
+  <!-- ===== SCREEN: INICIO (Planificación) ===== -->
   <div id="screen-inicio" class="screen active">
     <div class="max-w-xl mx-auto px-6 pt-8">
       <!-- Hero -->
       <header class="mb-10">
         <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-3 block">Bienvenido</span>
         <h2 class="text-5xl font-extrabold tracking-tight text-on-surface font-headline mb-4 leading-[1.05]">
-          El asado<br/>empieza aquÃ­.
+          El asado<br/>empieza aquí.
         </h2>
         <p class="text-on-surface-variant font-medium leading-relaxed">
-          CuÃ©ntanos quiÃ©nes vienen y armamos la lista perfecta para tu parrillada.
+          Cuéntanos quiénes vienen y armamos la lista perfecta para tu parrillada.
         </p>
       </header>
 
@@ -404,7 +404,7 @@ tailwind.config = {
             </div>
             <!-- Kids -->
             <div class="bg-surface-container-lowest p-4 rounded-xl col-span-2">
-              <label class="text-xs font-bold uppercase tracking-wider text-tertiary">NiÃ±os</label>
+              <label class="text-xs font-bold uppercase tracking-wider text-tertiary">Niños</label>
               <div class="flex items-center justify-between mt-3">
                 <span class="material-symbols-outlined text-primary">child_care</span>
                 <div class="flex items-center gap-4">
@@ -451,7 +451,7 @@ tailwind.config = {
                   </filter>
                 </defs>
 
-                <!-- Coal bed â€” always visible, changes color via JS -->
+                <!-- Coal bed — always visible, changes color via JS -->
                 <g id="coalBed">
                   <rect x="8" y="88" width="64" height="8" rx="4" id="coalRect" fill="url(#coalGradCold)"/>
                   <ellipse cx="22" cy="88" rx="5" ry="3" id="ember1" fill="#3a3a3a" opacity="0.6"/>
@@ -459,7 +459,7 @@ tailwind.config = {
                   <ellipse cx="58" cy="88" rx="4.5" ry="3" id="ember3" fill="#3a3a3a" opacity="0.6"/>
                 </g>
 
-                <!-- Flame group â€” scaled from base (40,92), starts hidden -->
+                <!-- Flame group — scaled from base (40,92), starts hidden -->
                 <g id="flameGroup" style="transform-origin:40px 92px; transform:scaleY(0) scaleX(0); opacity:0; transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1), opacity 0.25s ease;">
                   <!-- Outer flame -->
                   <path fill="url(#flameGradOuter)" filter="url(#glow)"
@@ -494,7 +494,7 @@ tailwind.config = {
 
         <!-- What to grill -->
         <section class="space-y-4">
-          <h3 class="font-headline font-bold text-lg text-on-surface px-1">Â¿QuÃ© tiramos a la parrilla?</h3>
+          <h3 class="font-headline font-bold text-lg text-on-surface px-1">¿Qué tiramos a la parrilla?</h3>
           <div class="space-y-3">
             <label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
               <div class="flex items-center gap-4">
@@ -503,7 +503,7 @@ tailwind.config = {
                 </div>
                 <div>
                   <span class="block font-bold text-on-surface">Vacuno</span>
-                  <span class="text-xs text-on-surface-variant">El clÃ¡sico infaltable</span>
+                  <span class="text-xs text-on-surface-variant">El clásico infaltable</span>
                 </div>
               </div>
               <input id="check-vacuno" checked type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 cursor-pointer"/>
@@ -553,7 +553,7 @@ tailwind.config = {
           <div class="grid grid-cols-2 gap-3">
             <button onclick="selectBudget(this,'low')" class="budget-btn selected bg-surface-container-lowest py-4 rounded-xl border-2 border-primary/20 flex flex-col items-center gap-1 transition-all active:scale-95">
               <span class="text-lg font-bold text-secondary">$</span>
-              <span class="text-xs font-semibold text-on-surface-variant">EconÃ³mico</span>
+              <span class="text-xs font-semibold text-on-surface-variant">Económico</span>
             </button>
             <button onclick="selectBudget(this,'high')" class="budget-btn bg-surface-container-lowest py-4 rounded-xl border-2 border-transparent flex flex-col items-center gap-1 transition-all active:scale-95">
               <span class="text-lg font-bold text-secondary">$$$</span>
@@ -575,7 +575,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ===== SCREEN: CARNICERÃAS ===== -->
+  <!-- ===== SCREEN: CARNICERÍAS ===== -->
   <div id="screen-carnicerias" class="screen">
     <div class="max-w-6xl mx-auto px-6 pt-8 pb-4">
       <!-- Hero -->
@@ -588,7 +588,7 @@ tailwind.config = {
         <div class="flex flex-col sm:flex-row gap-3 mt-8">
           <div class="flex-1 relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <label class="sr-only" for="butcherSearch">Buscar carnicerÃ­as</label>
+            <label class="sr-only" for="butcherSearch">Buscar carnicerías</label>
             <input id="butcherSearch" class="w-full bg-surface-container-highest border-none rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all font-medium" placeholder="Buscar por nombre o barrio..." type="search"/>
           </div>
           <button onclick="toggleFilterHelp()" class="bg-surface-container-high px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors">
@@ -603,17 +603,17 @@ tailwind.config = {
         <button onclick="setChip(this)" data-filter="todas" class="chip active px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Todas</button>
         <button onclick="setChip(this)" data-filter="premium" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Premium</button>
         <button onclick="setChipCerca(this)" data-filter="cerca" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm">near_me</span> Cerca de mÃ­
+          <span class="material-symbols-outlined text-sm">near_me</span> Cerca de mí
         </button>
         <button onclick="setChip(this)" data-filter="ofertas" class="chip px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all">Ofertas</button>
-        <button onclick="setChip(this)" data-filter="misCortes" id="chipMisCortes" class="chip hidden px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all items-center gap-1.5">ðŸ¥© Mis cortes</button>
+        <button onclick="setChip(this)" data-filter="misCortes" id="chipMisCortes" class="chip hidden px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all items-center gap-1.5">🥩 Mis cortes</button>
       </div>
 
-      <!-- CarnicerÃ­as reales (Firebase) -->
+      <!-- Carnicerías reales (Firebase) -->
       <div id="firebaseCarnicerosList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="col-span-2 flex flex-col items-center py-16 text-on-surface-variant gap-3">
           <span class="material-symbols-outlined text-4xl animate-spin" style="animation-duration:1.2s">progress_activity</span>
-          <p class="text-sm font-medium">Cargando carnicerÃ­as...</p>
+          <p class="text-sm font-medium">Cargando carnicerías...</p>
         </div>
       </div>
 
@@ -623,29 +623,29 @@ tailwind.config = {
           <span class="material-symbols-outlined text-3xl text-primary">add_business</span>
         </div>
         <div class="flex-1 text-center sm:text-left">
-          <p class="font-bold text-on-surface">Â¿Tienes una carnicerÃ­a?</p>
-          <p class="text-sm text-on-surface-variant mt-0.5">RegÃ­strala en AppSados y llega a miles de parrilleros cerca de ti.</p>
+          <p class="font-bold text-on-surface">¿Tienes una carnicería?</p>
+          <p class="text-sm text-on-surface-variant mt-0.5">Regístrala en AppSados y llega a miles de parrilleros cerca de ti.</p>
         </div>
         <button onclick="fbUser ? fbSetRole('carnicero') : openAuthModal()" class="shrink-0 bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm hover:opacity-90 transition-all active:scale-95 whitespace-nowrap">
-          Registrar mi carnicerÃ­a
+          Registrar mi carnicería
         </button>
       </div>
     </div>
   </div>
   <div id="screen-recomendaciones" class="screen">
     <div class="max-w-screen-xl mx-auto px-6 pt-8 pb-4 space-y-10">
-      <!-- Bento Summary: solo CÃ¡lculo del Maestro -->
+      <!-- Bento Summary: solo Cálculo del Maestro -->
       <section>
         <div class="bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden shadow-[0_4px_24px_rgba(129,9,0,0.06)] ember-glow">
           <div class="relative z-10">
-            <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">CÃ¡lculo del Maestro</span>
+            <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Cálculo del Maestro</span>
             <h2 class="font-headline text-6xl font-extrabold text-on-surface tracking-tighter mb-3" id="meatKg">5.0 <span class="text-2xl font-bold">kg</span></h2>
             <p class="text-on-surface-variant max-w-xs" id="meatDesc">Total sugerido de carne para tu asado basado en <strong id="meatGuests">10</strong> comensales.</p>
           </div>
           <!-- Dynamic summary -->
           <div class="mt-8 grid grid-cols-3 gap-3 relative z-10" id="categorySummary">
             <div class="bg-surface-container-low rounded-2xl p-3 text-center">
-              <p class="text-xs font-bold text-on-surface-variant">CategorÃ­as</p>
+              <p class="text-xs font-bold text-on-surface-variant">Categorías</p>
               <p class="font-headline text-xl font-bold text-primary">0</p>
             </div>
             <div class="bg-surface-container-low rounded-2xl p-3 text-center">
@@ -664,17 +664,13 @@ tailwind.config = {
       <div id="distributionSection"></div>
       <div id="cutsSection"></div>
 
-      <!-- Cost estimate: aparece al final, despuÃ©s de ajustar todo -->
+      <!-- Cost estimate: aparece al final, después de ajustar todo -->
       <div class="bg-primary-container text-on-primary-container rounded-3xl p-8 flex flex-col justify-center items-center text-center shadow-[0_4px_24px_rgba(129,9,0,0.06)]">
         <span class="material-symbols-outlined fill-icon text-4xl mb-4">payments</span>
         <h3 class="font-headline text-4xl font-bold mb-2" id="meatCost"></h3>
-        <p class="text-sm opacity-90 font-medium px-4" id="meatCostSub"><span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cÃ¡lculo de las lucas ðŸ¥©</span></p>
+        <p class="text-sm opacity-90 font-medium px-4" id="meatCostSub"><span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span></p>
         <button onclick="navigate('carnicerias')" class="mt-6 bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95">
-          Encontrar carnicerÃ­a
-        </button>
-        <button onclick="saveCurrentAsadoPlan()" class="mt-3 bg-surface-container-lowest/85 text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
-          <span class="material-symbols-outlined text-base">bookmark_add</span>
-          Guardar en mi historial
+          Encontrar carnicería
         </button>
       </div>
 
@@ -685,13 +681,13 @@ tailwind.config = {
             <span class="material-symbols-outlined">lightbulb</span>
             <span class="uppercase tracking-widest text-xs">Consejo del Parrillero</span>
           </div>
-          <h3 class="font-headline text-3xl font-extrabold text-on-surface">Â¿CuÃ¡nto carbÃ³n necesitas?</h3>
+          <h3 class="font-headline text-3xl font-extrabold text-on-surface">¿Cuánto carbón necesitas?</h3>
           <p class="text-on-surface-variant leading-relaxed" id="carbonTip">
-            La regla de oro: 1 kilo de carbÃ³n por cada kilo de carne, mÃ¡s un margen de seguridad.
+            La regla de oro: 1 kilo de carbón por cada kilo de carne, más un margen de seguridad.
           </p>
           <div class="pt-2">
             <button onclick="navigate('tips')" class="text-primary font-bold flex items-center gap-1 hover:underline">
-              Ver mÃ¡s tips de preparaciÃ³n
+              Ver más tips de preparación
               <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
@@ -699,7 +695,7 @@ tailwind.config = {
         <div class="w-full md:w-1/3 aspect-square rounded-2xl overflow-hidden">
           <img class="w-full h-full object-cover"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVXFkO53AXFBQkYtwAdHoC7KvKqqInOsmKdUyZk64WGrLeunumc_nHQcFwDSLnpjZ5iWunZCSJTliR6LLxE_VOu_B9ax6Te_Sc-3xSneufifaA3Hfvn5qsGw1i6P-LyiLAojFYvT68V-9kYpykC6W8HBaB2SHyfPzRcUcrWUN0S-SfHuUprlt15Z31nxB_Ghia7sq5boiosXX0RbX30_OuqNvC3SX0NDOn2RlY0qvbqYsvKhqe-a4xBhcWZaYwKpUkE8kXTVOacrM"
-            alt="Encendido de carbÃ³n"/>
+            alt="Encendido de carbón"/>
         </div>
       </section>
     </div>
@@ -714,10 +710,10 @@ tailwind.config = {
           <div class="flex-1">
             <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-4 block">Aprende el arte</span>
             <h2 class="font-headline text-6xl md:text-7xl font-extrabold tracking-tighter mb-6 text-on-surface leading-[1.0]">
-              MaestrÃ­a<br/>en la <span class="text-primary italic">Parrilla.</span>
+              Maestría<br/>en la <span class="text-primary italic">Parrilla.</span>
             </h2>
             <p class="text-on-surface-variant max-w-md leading-relaxed">
-              Convertirse en un asador de Ã©lite requiere tÃ©cnica, paciencia y conocimiento. AquÃ­ compartimos el arte detrÃ¡s del fuego.
+              Convertirse en un asador de élite requiere técnica, paciencia y conocimiento. Aquí compartimos el arte detrás del fuego.
             </p>
           </div>
           <div class="w-full md:w-1/3 aspect-square rounded-2xl overflow-hidden shadow-2xl relative rotate-2 hover:rotate-0 transition-transform duration-500">
@@ -743,9 +739,9 @@ tailwind.config = {
           </div>
           <div class="p-8">
             <h3 class="font-headline text-3xl font-bold mb-3">Secretos para el fuego</h3>
-            <p class="text-on-surface-variant mb-5 line-clamp-2">El dominio de la temperatura es el primer paso. Aprende a controlar el oxÃ­geno y el tipo de madera para lograr el calor perfecto.</p>
+            <p class="text-on-surface-variant mb-5 line-clamp-2">El dominio de la temperatura es el primer paso. Aprende a controlar el oxígeno y el tipo de madera para lograr el calor perfecto.</p>
             <div class="flex items-center gap-2 text-primary font-bold">
-              <span>Leer artÃ­culo</span>
+              <span>Leer artículo</span>
               <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </div>
           </div>
@@ -754,10 +750,10 @@ tailwind.config = {
         <!-- Side card -->
         <div class="md:col-span-4 bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between border-l-4 border-primary">
           <div>
-            <span class="text-tertiary font-bold text-sm mb-2 block uppercase tracking-wide">TradiciÃ³n</span>
+            <span class="text-tertiary font-bold text-sm mb-2 block uppercase tracking-wide">Tradición</span>
             <h3 class="font-headline text-2xl font-bold mb-4">Diferencias entre cortes chilenos</h3>
             <p class="text-on-surface-variant text-sm leading-relaxed mb-6">
-              Lomo vetado, Huachalomo o Sobrecostilla. Entiende por quÃ© cada corte tiene su lugar sagrado en el asado nacional.
+              Lomo vetado, Huachalomo o Sobrecostilla. Entiende por qué cada corte tiene su lugar sagrado en el asado nacional.
             </p>
           </div>
           <div class="aspect-video rounded-xl overflow-hidden">
@@ -771,27 +767,27 @@ tailwind.config = {
         <div class="md:col-span-12 bg-surface-container-highest rounded-3xl p-8 md:p-12 relative overflow-hidden">
           <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 class="font-headline text-3xl font-bold mb-4">Puntos de cocciÃ³n</h3>
-              <p class="text-on-surface-variant mb-8">Desde el 'InglÃ©s' hasta el 'Bien Cocido', domina los tiempos para complacer a todos tus invitados.</p>
+              <h3 class="font-headline text-3xl font-bold mb-4">Puntos de cocción</h3>
+              <p class="text-on-surface-variant mb-8">Desde el 'Inglés' hasta el 'Bien Cocido', domina los tiempos para complacer a todos tus invitados.</p>
               <div class="space-y-5">
                 <div class="flex items-center gap-4">
                   <div class="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-white font-bold shrink-0">1</div>
                   <div>
-                    <h4 class="font-bold">A Punto (55Â°C)</h4>
+                    <h4 class="font-bold">A Punto (55°C)</h4>
                     <p class="text-sm text-on-surface-variant">Centro rojo caliente, textura tierna y jugosa.</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
                   <div class="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-white font-bold shrink-0">2</div>
                   <div>
-                    <h4 class="font-bold">Tres Cuartos (63Â°C)</h4>
+                    <h4 class="font-bold">Tres Cuartos (63°C)</h4>
                     <p class="text-sm text-on-surface-variant">Centro rosado, mayor firmeza y estructura.</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
                   <div class="w-11 h-11 rounded-full bg-tertiary flex items-center justify-center text-white font-bold shrink-0">3</div>
                   <div>
-                    <h4 class="font-bold">Bien Cocido (74Â°C)</h4>
+                    <h4 class="font-bold">Bien Cocido (74°C)</h4>
                     <p class="text-sm text-on-surface-variant">Sin rastro de rosado, textura firme y uniforme.</p>
                   </div>
                 </div>
@@ -808,7 +804,7 @@ tailwind.config = {
                 <span>Tres Cuartos</span>
                 <span>Bien Cocido</span>
               </div>
-              <p class="mt-8 text-center text-sm font-semibold text-primary italic">"El termÃ³metro es el mejor amigo del parrillero."</p>
+              <p class="mt-8 text-center text-sm font-semibold text-primary italic">"El termómetro es el mejor amigo del parrillero."</p>
             </div>
           </div>
           <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none"></div>
@@ -824,38 +820,38 @@ tailwind.config = {
         <div class="space-y-3" id="faqList">
           <div class="bg-surface-container-low rounded-2xl overflow-hidden">
             <button onclick="toggleFaq(this)" class="flex items-center justify-between w-full p-6 text-left group">
-              <span class="font-bold">Â¿Sal antes o despuÃ©s de tirar a la parrilla?</span>
+              <span class="font-bold">¿Sal antes o después de tirar a la parrilla?</span>
               <span class="material-symbols-outlined text-primary transition-transform duration-200">add</span>
             </button>
             <div class="faq-answer px-6">
-              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">Para piezas gruesas, la sal gruesa antes ayuda a crear una costra deliciosa. Para cortes delgados, salar justo despuÃ©s de la primera vuelta evita que pierda jugos.</p>
+              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">Para piezas gruesas, la sal gruesa antes ayuda a crear una costra deliciosa. Para cortes delgados, salar justo después de la primera vuelta evita que pierda jugos.</p>
             </div>
           </div>
           <div class="bg-surface-container-low rounded-2xl overflow-hidden">
             <button onclick="toggleFaq(this)" class="flex items-center justify-between w-full p-6 text-left group">
-              <span class="font-bold">Â¿CÃ³mo evitar que la carne se arrebate?</span>
+              <span class="font-bold">¿Cómo evitar que la carne se arrebate?</span>
               <span class="material-symbols-outlined text-primary transition-transform duration-200">add</span>
             </button>
             <div class="faq-answer px-6">
-              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">Usa el mÃ©todo de fuego indirecto: coloca la carne lejos de las brasas mÃ¡s intensas y cÃºbrela. Esto permite una cocciÃ³n pareja sin quemar el exterior. Nunca pongas carne frÃ­a directo al fuego.</p>
+              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">Usa el método de fuego indirecto: coloca la carne lejos de las brasas más intensas y cúbrela. Esto permite una cocción pareja sin quemar el exterior. Nunca pongas carne fría directo al fuego.</p>
             </div>
           </div>
           <div class="bg-surface-container-low rounded-2xl overflow-hidden">
             <button onclick="toggleFaq(this)" class="flex items-center justify-between w-full p-6 text-left group">
-              <span class="font-bold">Â¿CarbÃ³n o leÃ±a? El eterno dilema.</span>
+              <span class="font-bold">¿Carbón o leña? El eterno dilema.</span>
               <span class="material-symbols-outlined text-primary transition-transform duration-200">add</span>
             </button>
             <div class="faq-answer px-6">
-              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">El carbÃ³n es mÃ¡s fÃ¡cil de controlar y llega a temperatura en 20-30 minutos. La leÃ±a entrega un aroma incomparable pero requiere experiencia y tiempo de quema de al menos 1 hora. Para principiantes: carbÃ³n. Para maestros: leÃ±a de espino o quebracho.</p>
+              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">El carbón es más fácil de controlar y llega a temperatura en 20-30 minutos. La leña entrega un aroma incomparable pero requiere experiencia y tiempo de quema de al menos 1 hora. Para principiantes: carbón. Para maestros: leña de espino o quebracho.</p>
             </div>
           </div>
           <div class="bg-surface-container-low rounded-2xl overflow-hidden">
             <button onclick="toggleFaq(this)" class="flex items-center justify-between w-full p-6 text-left group">
-              <span class="font-bold">Â¿CuÃ¡ndo dar vuelta la carne?</span>
+              <span class="font-bold">¿Cuándo dar vuelta la carne?</span>
               <span class="material-symbols-outlined text-primary transition-transform duration-200">add</span>
             </button>
             <div class="faq-answer px-6">
-              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">La carne se debe dar vuelta cuando se desprende sola de la parrilla (no forzarla) y cuando aparecen gotas de jugo en la superficie superior, indicando que el calor llegÃ³ al centro. En cortes gruesos, esto suele ocurrir tras 30-40 min, mientras que cortes finos (entraÃ±a) tardan 4-5 min por lado.</p>
+              <p class="text-on-surface-variant text-sm leading-relaxed pb-6">La carne se debe dar vuelta cuando se desprende sola de la parrilla (no forzarla) y cuando aparecen gotas de jugo en la superficie superior, indicando que el calor llegó al centro. En cortes gruesos, esto suele ocurrir tras 30-40 min, mientras que cortes finos (entraña) tardan 4-5 min por lado.</p>
             </div>
           </div>
         </div>
@@ -870,22 +866,22 @@ tailwind.config = {
       <div class="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-6">
         <span class="material-symbols-outlined text-4xl text-secondary">storefront</span>
       </div>
-      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Panel exclusivo para carnicerÃ­as</h2>
-      <p class="text-on-surface-variant mb-8 leading-relaxed">RegÃ­stra tu carnicerÃ­a, gestiona tu stock, publica tus cortes y aparece en las bÃºsquedas de los parrilleros.</p>
+      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Panel exclusivo para carnicerías</h2>
+      <p class="text-on-surface-variant mb-8 leading-relaxed">Regístra tu carnicería, gestiona tu stock, publica tus cortes y aparece en las búsquedas de los parrilleros.</p>
       <button onclick="fbUser ? fbSetRole('carnicero') : openAuthModal()" class="bg-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
-        <span class="material-symbols-outlined">add_business</span> Solicitar registro como CarnicerÃ­a
+        <span class="material-symbols-outlined">add_business</span> Solicitar registro como Carnicería
       </button>
-      <p id="panelGateLoginHint" class="text-xs text-on-surface-variant mt-4">Â¿Ya tienes cuenta? <button onclick="openAuthModal()" class="text-primary font-bold underline">Inicia sesiÃ³n</button></p>
+      <p id="panelGateLoginHint" class="text-xs text-on-surface-variant mt-4">¿Ya tienes cuenta? <button onclick="openAuthModal()" class="text-primary font-bold underline">Inicia sesión</button></p>
     </div>
     <!-- Pending approval -->
     <div id="panelPending" class="hidden max-w-lg mx-auto px-6 py-20 flex flex-col items-center text-center">
       <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-6">
         <span class="material-symbols-outlined text-4xl text-amber-600">schedule</span>
       </div>
-      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Solicitud en revisiÃ³n</h2>
-      <p class="text-on-surface-variant mb-6 leading-relaxed">Tu solicitud fue enviada y estÃ¡ siendo revisada. Te notificaremos cuando sea aprobada.</p>
+      <h2 class="font-headline text-3xl font-extrabold text-on-surface mb-3">Solicitud en revisión</h2>
+      <p class="text-on-surface-variant mb-6 leading-relaxed">Tu solicitud fue enviada y está siendo revisada. Te notificaremos cuando sea aprobada.</p>
       <div class="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-sm text-amber-800 font-medium mb-8">
-        â³ Tiempo estimado de revisiÃ³n: 24â€“48 horas hÃ¡biles
+        ⏳ Tiempo estimado de revisión: 24–48 horas hábiles
       </div>
       <button onclick="openCarniceroRegister()" class="text-sm text-primary font-bold underline">Editar mi solicitud</button>
     </div>
@@ -905,8 +901,8 @@ tailwind.config = {
       <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
         <div>
           <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Superadmin</span>
-          <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-1">GestiÃ³n de CarnicerÃ­as</h2>
-          <p class="text-on-surface-variant text-sm">Aprueba, edita o elimina carnicerÃ­as registradas.</p>
+          <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-1">Gestión de Carnicerías</h2>
+          <p class="text-on-surface-variant text-sm">Aprueba, edita o elimina carnicerías registradas.</p>
         </div>
         <button onclick="renderAdminPanel()" class="flex items-center gap-2 bg-surface-container px-4 py-2 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all">
           <span class="material-symbols-outlined text-base">refresh</span> Actualizar
@@ -929,10 +925,10 @@ tailwind.config = {
       </div>
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 border-b border-outline-variant/20 pb-0">
-        <button onclick="setAdminTab('pending')"   id="adminTab-pending"   class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-primary text-primary -mb-px">â³ Pendientes</button>
-        <button onclick="setAdminTab('approved')"  id="adminTab-approved"  class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">âœ… Aprobadas</button>
-        <button onclick="setAdminTab('rejected')"  id="adminTab-rejected"  class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">âŒ Rechazadas</button>
-        <button onclick="setAdminTab('all')"       id="adminTab-all"       class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">ðŸ“‹ Todas</button>
+        <button onclick="setAdminTab('pending')"   id="adminTab-pending"   class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-primary text-primary -mb-px">⏳ Pendientes</button>
+        <button onclick="setAdminTab('approved')"  id="adminTab-approved"  class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">✅ Aprobadas</button>
+        <button onclick="setAdminTab('rejected')"  id="adminTab-rejected"  class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">❌ Rechazadas</button>
+        <button onclick="setAdminTab('all')"       id="adminTab-all"       class="admin-tab px-4 py-2.5 text-sm font-bold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface -mb-px">📋 Todas</button>
       </div>
       <div id="adminPendingList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Cargando...</p>
@@ -942,7 +938,7 @@ tailwind.config = {
       <!-- Header -->
       <div class="mb-8 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Mi CarnicerÃ­a</span>
+          <span class="text-secondary font-bold uppercase tracking-widest text-xs mb-2 block">Mi Carnicería</span>
           <h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-1" id="dashNombre">Cargando...</h2>
           <p class="text-on-surface-variant text-sm" id="dashBarrio"></p>
         </div>
@@ -973,11 +969,11 @@ tailwind.config = {
           </button>
         </div>
         <div id="dashPromoList" class="space-y-3">
-          <p class="text-sm text-on-surface-variant py-4 text-center">Sin promociones activas. Â¡Agrega una!</p>
+          <p class="text-sm text-on-surface-variant py-4 text-center">Sin promociones activas. ¡Agrega una!</p>
         </div>
       </div>
 
-      <!-- Foto de la carnicerÃ­a -->
+      <!-- Foto de la carnicería -->
       <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-headline text-xl font-bold">Foto de portada</h3>
@@ -988,7 +984,7 @@ tailwind.config = {
         <div id="dashPhotoPreview" class="w-full h-48 rounded-2xl overflow-hidden bg-surface-container flex items-center justify-center">
           <span class="material-symbols-outlined text-4xl text-on-surface-variant/30">storefront</span>
         </div>
-        <p class="text-xs text-on-surface-variant mt-3">Esta foto aparecerÃ¡ en tu card del listado de carnicerÃ­as.</p>
+        <p class="text-xs text-on-surface-variant mt-3">Esta foto aparecerá en tu card del listado de carnicerías.</p>
       </div>
     </div><!-- end panelDashboard -->
   </div>
@@ -1000,7 +996,7 @@ tailwind.config = {
 <div id="appModal" class="modal-backdrop fixed inset-0 z-[80] items-end sm:items-center justify-center bg-black/35 px-4 py-6" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:90dvh">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
-      <h3 id="modalTitle" class="font-headline text-2xl font-bold text-on-surface">AcciÃ³n</h3>
+      <h3 id="modalTitle" class="font-headline text-2xl font-bold text-on-surface">Acción</h3>
       <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-primary" aria-label="Cerrar">
         <span class="material-symbols-outlined">close</span>
       </button>
@@ -1017,13 +1013,13 @@ tailwind.config = {
   </button>
   <button onclick="navigate('carnicerias')" data-nav="carnicerias" class="nav-pill flex flex-col items-center justify-center px-4 py-2">
     <span class="material-symbols-outlined" id="nav-icon-carnicerias">storefront</span>
-    <span class="text-xs font-semibold mt-0.5">CarnicerÃ­as</span>
+    <span class="text-xs font-semibold mt-0.5">Carnicerías</span>
   </button>
   <button onclick="navigate('tips')" data-nav="tips" class="nav-pill flex flex-col items-center justify-center px-4 py-2">
     <span class="material-symbols-outlined" id="nav-icon-tips">lightbulb</span>
     <span class="text-xs font-semibold mt-0.5">Tips</span>
   </button>
-  <!-- Panel: solo carniceros | Perfil: parrilleros y sin sesiÃ³n -->
+  <!-- Panel: solo carniceros | Perfil: parrilleros y sin sesión -->
   <button id="navBtnPanel" onclick="navigate('panel')" data-nav="panel" class="nav-pill hidden flex-col items-center justify-center px-4 py-2">
     <span class="material-symbols-outlined">store</span>
     <span class="text-xs font-semibold mt-0.5">Mi Panel</span>
@@ -1053,7 +1049,7 @@ tailwind.config = {
           name: 'Huachalomo',
           tier: 'low',
           pricePerKg: 8990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
@@ -1067,11 +1063,11 @@ tailwind.config = {
           name: 'Sobrecostilla',
           tier: 'low',
           pricePerKg: 8990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-secondary/10 text-secondary',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'ClÃ¡sico chileno para parrilla, horno y cocciones largas. Tiene buen sabor y precio amable.',
+          desc: 'Clásico chileno para parrilla, horno y cocciones largas. Tiene buen sabor y precio amable.',
           tag: 'Accesible',
           tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://tienda.valledor.cl/cdn/shop/products/Sobrecostillacaja2.jpg?v=1673898777'
@@ -1081,11 +1077,11 @@ tailwind.config = {
           name: 'Asado Carnicero',
           tier: 'low',
           pricePerKg: 9690,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-primary/10 text-primary',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Corte popular para asado chileno, de buena relaciÃ³n precio-sabor. Conviene servirlo en lÃ¡minas.',
+          desc: 'Corte popular para asado chileno, de buena relación precio-sabor. Conviene servirlo en láminas.',
           tag: 'Tradicional',
           tagStyle: 'bg-primary/10 text-primary',
           img: 'https://unimarc.vtexassets.com/arquivos/ids/230371/000000000000400613-KGV-01.jpg?v=638037818636670000'
@@ -1095,11 +1091,11 @@ tailwind.config = {
           name: 'Asiento',
           tier: 'low',
           pricePerKg: 12990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Corte limpio y versÃ¡til, mÃ¡s fino que los cortes econÃ³micos y todavÃ­a razonable para una parrilla familiar.',
+          desc: 'Corte limpio y versátil, más fino que los cortes económicos y todavía razonable para una parrilla familiar.',
           tag: 'Buen equilibrio',
           tagStyle: 'bg-surface-container-low text-on-surface-variant',
           img: 'https://elcarnicero.cl/media/catalog/product/cache/1/image/1000x/9df78eab33525d08d6e5fb8d27136e95/8/2/8208_asiento_imp_2.jpg'
@@ -1111,7 +1107,7 @@ tailwind.config = {
           pricePerKg: 14990,
           badge: 'Premium',
           badgeStyle: 'bg-primary text-white',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
           desc: 'Favorito parrillero por su grasa infiltrada, jugosidad y sabor intenso. Ideal para un asado premium.',
           tag: 'Jugoso',
@@ -1120,14 +1116,14 @@ tailwind.config = {
         },
         {
           id: 'vacuno-entrana',
-          name: 'EntraÃ±a',
+          name: 'Entraña',
           tier: 'high',
           pricePerKg: 15990,
           badge: 'Premium',
           badgeStyle: 'bg-primary text-white',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Corte delgado, sabroso y muy buscado para parrilla. Se cocina rÃ¡pido y conviene servirlo jugoso.',
+          desc: 'Corte delgado, sabroso y muy buscado para parrilla. Se cocina rápido y conviene servirlo jugoso.',
           tag: 'Muy parrillera',
           tagStyle: 'bg-primary/10 text-primary',
           img: 'https://lacarne.cl/wp-content/uploads/2020/12/entrana-la-carne.jpg' 
@@ -1141,7 +1137,7 @@ tailwind.config = {
           badgeStyle: 'bg-primary text-white',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'Corte muy blando y de precio alto. Mejor para un asado especial, con cocciÃ³n precisa y porciones controladas.',
+          desc: 'Corte muy blando y de precio alto. Mejor para un asado especial, con cocción precisa y porciones controladas.',
           tag: 'Corte fino',
           tagStyle: 'bg-primary/10 text-primary',
           img: 'https://i5.walmartimages.cl/asr/102583da-e554-4e92-9095-d54f9e289229.ed040f6ecc8d62013902f8b5b2d86aac.jpeg?null=&odnHeight=612&odnWidth=612&odnBg=FFFFFF'
@@ -1161,11 +1157,11 @@ tailwind.config = {
           name: 'Pulpa de Cerdo',
           tier: 'low',
           pricePerKg: 5290,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Corte econÃ³mico y versÃ¡til. Rinde muy bien para grupos grandes y acepta marinados simples.',
+          desc: 'Corte económico y versátil. Rinde muy bien para grupos grandes y acepta marinados simples.',
           tag: 'Rendidor',
           tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://i5.walmartimages.cl/asr/57656ab0-460f-4234-ac02-1fcc0e6c7c41.4bd9973e8d766ccad9cead210d648e68.jpeg?null'
@@ -1175,7 +1171,7 @@ tailwind.config = {
           name: 'Costillar de Cerdo',
           tier: 'low',
           pricePerKg: 6990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
@@ -1191,9 +1187,9 @@ tailwind.config = {
           pricePerKg: 12990,
           badge: 'Premium',
           badgeStyle: 'bg-secondary text-white',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Muy parrillera, sabrosa y crocante. Sube de nivel por demanda y precio frente a cortes econÃ³micos de cerdo.',
+          desc: 'Muy parrillera, sabrosa y crocante. Sube de nivel por demanda y precio frente a cortes económicos de cerdo.',
           tag: 'Parrillera',
           tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://carnesproductor.cl/wp-content/uploads/2025/10/Malaya-de-cerdo-Carnes-Productor.webp'
@@ -1213,28 +1209,28 @@ tailwind.config = {
           name: 'Chorizo Parrillero',
           tier: 'low',
           pricePerKg: 9490,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Base del choripÃ¡n y del picoteo inicial. Suma grasa, sabor y rapidez al asado.',
+          desc: 'Base del choripán y del picoteo inicial. Suma grasa, sabor y rapidez al asado.',
           tag: 'Picoteo',
           tagStyle: 'bg-secondary/10 text-secondary',
           img: 'https://elcarnicero.cl/media/catalog/product/cache/1/image/1000x/9df78eab33525d08d6e5fb8d27136e95/c/h/chorizo_parrillero.jpg'
         },
         {
           id: 'embutidos-longaniza',
-          name: 'Longaniza / Longa SureÃ±a',
+          name: 'Longaniza / Longa Sureña',
           tier: 'low',
           pricePerKg: 10990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Longaniza o longa sureÃ±a para un asado con carÃ¡cter chileno. Mejor a fuego medio para dorar sin reventar.',
+          desc: 'Longaniza o longa sureña para un asado con carácter chileno. Mejor a fuego medio para dorar sin reventar.',
           tag: 'Sello chileno',
           tagStyle: 'bg-secondary/10 text-secondary',
-          img: 'https://comidaschilenas.com/wp-content/uploads/2019/05/Receta-de-longanizas-de-ChillÃ¡n.jpg.webp'
+          img: 'https://comidaschilenas.com/wp-content/uploads/2019/05/Receta-de-longanizas-de-Chillán.jpg.webp'
         },
         {
           id: 'embutidos-butifarra',
@@ -1243,9 +1239,9 @@ tailwind.config = {
           pricePerKg: 9990,
           badge: 'Premium',
           badgeStyle: 'bg-secondary text-white',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Embutido parrillero suave y especiado. Buena alternativa para variar el choripÃ¡n clÃ¡sico.',
+          desc: 'Embutido parrillero suave y especiado. Buena alternativa para variar el choripán clásico.',
           tag: 'Parrillera',
           tagStyle: 'bg-surface-container-low text-on-surface-variant',
           img: 'https://granjamagdalena.cl/cdn/shop/files/butifarra-chilena-bratwurst-peters-4-unidades-fiambreria-granja-magdalena-540518.jpg?v=1708582508'
@@ -1265,12 +1261,12 @@ tailwind.config = {
           name: 'Tutos',
           tier: 'low',
           pricePerKg: 3990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Jugosos, econÃ³micos y fÃ¡ciles de asar. Buena opciÃ³n para bajar costo sin salir de la parrilla.',
-          tag: 'FÃ¡cil',
+          desc: 'Jugosos, económicos y fáciles de asar. Buena opción para bajar costo sin salir de la parrilla.',
+          tag: 'Fácil',
           tagStyle: 'bg-surface-container-low text-on-surface-variant',
           img: 'https://granjamagdalena.cl/cdn/shop/products/trutros-largos-de-pollo-800-g-aprox-pollos-100-natural-granja-magdalena-763596.jpg?v=1742226083'
         },
@@ -1279,11 +1275,11 @@ tailwind.config = {
           name: 'Alitas Adobadas',
           tier: 'low',
           pricePerKg: 4990,
-          badge: 'EconÃ³mico',
+          badge: 'Económico',
           badgeStyle: 'bg-surface-container-high text-on-surface-variant',
-          difficulty: 'FÃ¡cil',
+          difficulty: 'Fácil',
           diffStyle: 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
-          desc: 'Buenas para picoteo y grupos con niÃ±os. Quedan doradas y crujientes si se cocinan sin apuro.',
+          desc: 'Buenas para picoteo y grupos con niños. Quedan doradas y crujientes si se cocinan sin apuro.',
           tag: 'Picoteo',
           tagStyle: 'bg-tertiary/10 text-tertiary',
           img: 'https://thecookinglab.es/wp-content/uploads/2024/09/Alitas-de-pollo-en-freidora-de-aire-1.jpg'
@@ -1297,8 +1293,8 @@ tailwind.config = {
           badgeStyle: 'bg-tertiary text-white',
           difficulty: 'Medio',
           diffStyle: 'bg-surface-container-high text-on-surface-variant',
-          desc: 'OpciÃ³n magra y limpia. Conviene marinar y cocinar a fuego medio indirecto para mantener jugosidad.',
-          tag: 'Alto en proteÃ­na',
+          desc: 'Opción magra y limpia. Conviene marinar y cocinar a fuego medio indirecto para mantener jugosidad.',
+          tag: 'Alto en proteína',
           tagStyle: 'bg-tertiary/10 text-tertiary',
           img: 'https://granjamagdalena.cl/cdn/shop/files/pechuga-de-pollo-entera-con-hueso-750-a-900-g-pollos-100-natural-granja-magdalena-758281.jpg?v=1741202844'
         }
@@ -1308,8 +1304,8 @@ tailwind.config = {
 
   // ---- State ----
   const counts = { men: 0, women: 0, kids: 0 };
-  const budgetLabels = { low: 'econÃ³mico', high: 'premium' };
-  const tierLabels = { low: 'econÃ³micos', high: 'premium' };
+  const budgetLabels = { low: 'económico', high: 'premium' };
+  const tierLabels = { low: 'económicos', high: 'premium' };
   let selectedBudget = 'low';
   let activeButcherFilter = 'todas';
   let currentPage = 'inicio';
@@ -1321,14 +1317,14 @@ tailwind.config = {
   let cutKg = {};
   let lastCutSignature = '';
   let lastPlanResults = [];
-  let _userCoords = null; // geolocation cache â€” shared across scripts
+  let _userCoords = null; // geolocation cache — shared across scripts
   const CUT_STEP = 0.1;   // 100 g por paso
   const CUT_MAX  = 8.0;
-  // CÃ¡lculo Maestro: se fija al entrar a recomendaciones, solo se resetea si cambian los invitados
+  // Cálculo Maestro: se fija al entrar a recomendaciones, solo se resetea si cambian los invitados
   let masterKgFixed = null;
   let masterGuestsFixed = null;
   function getCutMin(categoryKey) {
-    return 0; // todos los sliders parten en 0 por diseÃ±o
+    return 0; // todos los sliders parten en 0 por diseño
   }
   function sliderPct(value, min, max) {
     return (((value - min) / (max - min)) * 100).toFixed(1);
@@ -1376,7 +1372,7 @@ tailwind.config = {
         }
       }, 500);
     }
-    // Si vuelve a inicio, resetear cÃ¡lculo maestro para recalcular con nuevos invitados
+    // Si vuelve a inicio, resetear cálculo maestro para recalcular con nuevos invitados
     if (page === 'inicio') {
       masterKgFixed = null;
       masterGuestsFixed = null;
@@ -1398,7 +1394,7 @@ tailwind.config = {
   function adjustCount(key, delta) {
     counts[key] = Math.max(0, counts[key] + delta);
     document.getElementById('count-' + key).textContent = counts[key];
-    // Resetear el CÃ¡lculo del Maestro: los invitados cambiaron
+    // Resetear el Cálculo del Maestro: los invitados cambiaron
     masterKgFixed = null;
     masterGuestsFixed = null;
     updateGauge();
@@ -1423,7 +1419,7 @@ tailwind.config = {
     const ember3     = document.getElementById('ember3');
 
     if (total === 0) {
-      // Apagado: sin llama, brasas frÃ­as grises
+      // Apagado: sin llama, brasas frías grises
       if (flameGroup) {
         flameGroup.style.transform = 'scaleX(0) scaleY(0)';
         flameGroup.style.opacity   = '0';
@@ -1434,9 +1430,9 @@ tailwind.config = {
       if (ember3)   { ember3.setAttribute('fill', '#3a3a3a'); ember3.setAttribute('opacity', '0.6'); }
       heat.style.setProperty('--heat-width', '0%');
     } else {
-      // Intensidad: 1 invitado â†’ llamita pequeÃ±a; 16+ â†’ fuego completo
+      // Intensidad: 1 invitado → llamita pequeña; 16+ → fuego completo
       const intensity = Math.min(1, total / 16);
-      // Escala mÃ­nima 0.22 (llamita), mÃ¡xima 1.0
+      // Escala mínima 0.22 (llamita), máxima 1.0
       const sc = (0.22 + intensity * 0.78).toFixed(3);
       if (flameGroup) {
         flameGroup.style.transform = `scaleX(${sc}) scaleY(${sc})`;
@@ -1450,11 +1446,11 @@ tailwind.config = {
       heat.style.setProperty('--heat-width', Math.round(10 + intensity * 90) + '%');
     }
 
-    label.textContent = total === 0 ? 'Brasas apagadas' : total <= 3 ? 'Chispa inicial' : total <= 7 ? 'Fuego Ã­ntimo' : total <= 12 ? 'Brasas listas' : 'Parrilla intensa';
+    label.textContent = total === 0 ? 'Brasas apagadas' : total <= 3 ? 'Chispa inicial' : total <= 7 ? 'Fuego íntimo' : total <= 12 ? 'Brasas listas' : 'Parrilla intensa';
     hint.textContent  = total === 0
-      ? 'Agrega invitados para encender la planificaciÃ³n.'
+      ? 'Agrega invitados para encender la planificación.'
       : total <= 3
-        ? 'Una llamita tÃ­mida, perfecta para una picada pequeÃ±a.'
+        ? 'Una llamita tímida, perfecta para una picada pequeña.'
         : total <= 7
           ? 'Pocas personas, porciones medidas y fuego suave.'
           : total <= 12
@@ -1496,7 +1492,7 @@ tailwind.config = {
     });
   }
 
-  // â”€â”€ Cut state management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Cut state management ──────────────────────────────────────────────────
   function initializeCutState(availableCuts) {
     const signature = availableCuts.map(c => c.id).join('|') + ':' + selectedBudget;
     if (signature === lastCutSignature) return;
@@ -1507,11 +1503,11 @@ tailwind.config = {
       if (!availableIds.has(id)) deselectedByUser.delete(id);
     }
     // Rebuild selectedCutIds: por defecto NINGUNO seleccionado
-    // Solo mantenemos lo que el usuario explÃ­citamente eligiÃ³ antes
+    // Solo mantenemos lo que el usuario explícitamente eligió antes
     selectedCutIds = new Set();
     availableCuts.forEach(cut => {
-      // Solo agregar si el usuario lo marcÃ³ explÃ­citamente (no estÃ¡ en deselectedByUser
-      // Y ya estaba en selectedCutIds antes â€” es decir, fue marcado por el usuario)
+      // Solo agregar si el usuario lo marcó explícitamente (no está en deselectedByUser
+      // Y ya estaba en selectedCutIds antes — es decir, fue marcado por el usuario)
       if (userSelectedByUser.has(cut.id)) selectedCutIds.add(cut.id);
       // Init kg solo para cortes nuevos
       if (cutKg[cut.id] === undefined) {
@@ -1540,7 +1536,7 @@ tailwind.config = {
   function onKgManualInput(cutId, grams) {
     const g = parseInt(grams, 10);
     if (isNaN(g) || g < 0) return;
-    cutKg[cutId] = Math.min(Math.round(g / 100) * 0.1, CUT_MAX); // redondear a 100g, mÃ¡x 8kg
+    cutKg[cutId] = Math.min(Math.round(g / 100) * 0.1, CUT_MAX); // redondear a 100g, máx 8kg
     syncSliderTracks();
     updateRecomendaciones();
   }
@@ -1591,19 +1587,19 @@ tailwind.config = {
     const totalKg   = cutResults.reduce((s, c) => s + c.kg,   0);
     const totalCost = cutResults.reduce((s, c) => s + c.cost, 0);
 
-    // â”€â”€ CÃ¡lculo del Maestro: ESTÃTICO â€” basado solo en invitados â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // Solo se actualiza si cambia el nÃºmero de invitados (masterKgFixed)
+    // ── Cálculo del Maestro: ESTÁTICO — basado solo en invitados ────────────
+    // Solo se actualiza si cambia el número de invitados (masterKgFixed)
     if (masterKgFixed === null) {
-      // 500g por hombre, 400g por mujer, 250g por niÃ±o
+      // 500g por hombre, 400g por mujer, 250g por niño
       masterKgFixed = (counts.men * 0.5) + (counts.women * 0.5) + (counts.kids * 0.25);
       masterGuestsFixed = total;
     }
 
     // Actualizar UI del Cuadro 1 (siempre el valor fijo)
     document.getElementById('meatKg').innerHTML = masterKgFixed.toFixed(1) + ' <span class="text-2xl font-bold">kg</span>';
-    document.getElementById('meatDesc').innerHTML = `Tu plan para <strong>${masterGuestsFixed}</strong> comensales Â· cortes ${tierLabels[selectedBudget]}.`;
+    document.getElementById('meatDesc').innerHTML = `Tu plan para <strong>${masterGuestsFixed}</strong> comensales · cortes ${tierLabels[selectedBudget]}.`;
 
-    // â”€â”€ Cuadro 2: Costo â€” solo si hay cortes seleccionados con kg > 0 â”€â”€â”€â”€â”€â”€â”€
+    // ── Cuadro 2: Costo — solo si hay cortes seleccionados con kg > 0 ───────
     const meatCostEl = document.getElementById('meatCost');
     const meatCostSubEl = document.getElementById('meatCostSub');
     if (totalCost > 0 && activeCuts.length > 0) {
@@ -1611,13 +1607,13 @@ tailwind.config = {
       if (meatCostSubEl) meatCostSubEl.textContent = 'Costo total estimado (promedio mercado nacional)';
     } else {
       meatCostEl.textContent = '';
-      if (meatCostSubEl) meatCostSubEl.innerHTML = `<span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cÃ¡lculo de las lucas ðŸ¥©</span>`;
+      if (meatCostSubEl) meatCostSubEl.innerHTML = `<span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span>`;
     }
 
-    // â”€â”€ Resumen categorÃ­as â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Resumen categorías ───────────────────────────────────────────────────
     document.getElementById('categorySummary').innerHTML = `
       <div class="bg-surface-container-low rounded-2xl p-3 text-center">
-        <p class="text-xs font-bold text-on-surface-variant">ProteÃ­nas</p>
+        <p class="text-xs font-bold text-on-surface-variant">Proteínas</p>
         <p class="font-headline text-xl font-bold text-primary">${selected.length}</p>
       </div>
       <div class="bg-surface-container-low rounded-2xl p-3 text-center">
@@ -1629,7 +1625,7 @@ tailwind.config = {
         <p class="font-headline text-xl font-bold text-primary">${totalKg.toFixed(1)} kg</p>
       </div>`;
 
-    // â”€â”€ Render containers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Render containers ────────────────────────────────────────────────────
     const container   = document.getElementById('cutsSection');
     const distribution = document.getElementById('distributionSection');
 
@@ -1640,8 +1636,8 @@ tailwind.config = {
           <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center">
             <span class="material-symbols-outlined text-3xl text-on-surface-variant">no_meals</span>
           </div>
-          <h3 class="font-headline text-xl font-bold text-on-surface">Sin proteÃ­nas seleccionadas</h3>
-          <p class="text-on-surface-variant text-sm max-w-xs">Vuelve al inicio y elige al menos una opciÃ³n para ver las recomendaciones de cortes.</p>
+          <h3 class="font-headline text-xl font-bold text-on-surface">Sin proteínas seleccionadas</h3>
+          <p class="text-on-surface-variant text-sm max-w-xs">Vuelve al inicio y elige al menos una opción para ver las recomendaciones de cortes.</p>
           <button onclick="navigate('inicio')" class="mt-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">
             Volver a planificar
           </button>
@@ -1657,7 +1653,7 @@ tailwind.config = {
             <span class="material-symbols-outlined text-3xl text-on-surface-variant">filter_alt_off</span>
           </div>
           <h3 class="font-headline text-xl font-bold text-on-surface">Sin cortes para ese filtro</h3>
-          <p class="text-on-surface-variant text-sm max-w-sm">Cambia el presupuesto o selecciona otra proteÃ­na para ver cortes disponibles.</p>
+          <p class="text-on-surface-variant text-sm max-w-sm">Cambia el presupuesto o selecciona otra proteína para ver cortes disponibles.</p>
           <button onclick="navigate('inicio')" class="mt-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">
             Ajustar preferencias
           </button>
@@ -1665,7 +1661,7 @@ tailwind.config = {
       return;
     }
 
-    // â”€â”€ Category kg summary pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Category kg summary pills ────────────────────────────────────────────
     const categoryRows = Object.values(plannedByCategory)
       .filter(row => row.total > 0)
       .map(row => `
@@ -1674,7 +1670,7 @@ tailwind.config = {
           <p class="font-headline text-2xl font-bold text-primary">${row.total.toFixed(1)} kg</p>
         </div>`).join('');
 
-    // â”€â”€ Checkbox grid (select / deselect cuts) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Checkbox grid (select / deselect cuts) ───────────────────────────────
     const checkboxGrid = availableCuts.map(cut => {
       const checked = selectedCutIds.has(cut.id);
       return `
@@ -1684,19 +1680,19 @@ tailwind.config = {
             class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20 shrink-0 cursor-pointer">
           <span class="min-w-0">
             <span class="block font-bold text-sm truncate">${cut.name}</span>
-            <span class="block text-[10px] text-on-surface-variant">${cut.categoryLabel} Â· ${money(cut.pricePerKg)}/kg</span>
+            <span class="block text-[10px] text-on-surface-variant">${cut.categoryLabel} · ${money(cut.pricePerKg)}/kg</span>
           </span>
         </label>`;
     }).join('');
 
-    // â”€â”€ Sliders (only for active / checked cuts) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Sliders (only for active / checked cuts) ─────────────────────────────
     const masterKgRef = masterKgFixed || 0;
     function buildSliderHint(totalKgSoFar) {
       if (masterKgRef === 0) return '';
       const diff = totalKgSoFar - masterKgRef;
       const absDiff = Math.abs(diff).toFixed(1);
       if (Math.abs(diff) < 0.05) {
-        return `<p class="text-sm font-bold text-green-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">check_circle</span> Â¡Justo! EstÃ¡s en el total recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
+        return `<p class="text-sm font-bold text-green-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">check_circle</span> ¡Justo! Estás en el total recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
       } else if (diff < 0) {
         return `<p class="text-sm font-semibold text-amber-600 mt-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">arrow_downward</span> Te faltan <strong>${absDiff} kg</strong> para llegar al recomendado (${masterKgRef.toFixed(1)} kg)</p>`;
       } else {
@@ -1720,7 +1716,7 @@ tailwind.config = {
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="font-bold text-on-surface">${cut.name}</p>
-                  <p class="text-xs text-on-surface-variant">${cut.categoryLabel} Â· ${money(cut.pricePerKg)}/kg</p>
+                  <p class="text-xs text-on-surface-variant">${cut.categoryLabel} · ${money(cut.pricePerKg)}/kg</p>
                 </div>
                 <div class="text-right shrink-0">
                   <p class="font-headline text-xl font-bold text-primary">${displayKg}</p>
@@ -1731,7 +1727,7 @@ tailwind.config = {
               <div class="flex items-center gap-2">
                 <button onclick="stepKg('${cut.id}', -0.1)"
                   class="shrink-0 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-lg leading-none hover:bg-outline-variant active:scale-90 transition-transform"
-                  aria-label="Restar 100g a ${cut.name}">âˆ’</button>
+                  aria-label="Restar 100g a ${cut.name}">−</button>
                 <input class="cut-slider flex-1" type="range"
                   min="0" max="${CUT_MAX}" step="${CUT_STEP}"
                   value="${kg}" style="--pct:${pct}%"
@@ -1803,7 +1799,7 @@ tailwind.config = {
             </div>
             <div>
               <h2 class="font-headline text-2xl font-extrabold tracking-tight text-on-surface">${d.label}</h2>
-              <p class="text-on-surface-variant text-xs mt-0.5">Cortes ${tierLabels[selectedBudget]} Â· ${(plannedByCategory[key]?.total || 0).toFixed(1)} kg en tu plan</p>
+              <p class="text-on-surface-variant text-xs mt-0.5">Cortes ${tierLabels[selectedBudget]} · ${(plannedByCategory[key]?.total || 0).toFixed(1)} kg en tu plan</p>
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1817,7 +1813,7 @@ tailwind.config = {
     const carbonTip = document.getElementById('carbonTip');
     if (carbonTip && totalKg > 0) {
       const sacos = Math.ceil(totalKg / 2.5);
-      carbonTip.innerHTML = `Para tu asado de <strong class="text-on-surface">${totalKg.toFixed(1)} kg</strong> necesitas aproximadamente <strong class="text-on-surface">${sacos} saco${sacos !== 1 ? 's' : ''} de 2,5 kg</strong> de carbÃ³n. La regla de oro: 1 kg de carbÃ³n por kg de carne, mÃ¡s margen de seguridad.`;
+      carbonTip.innerHTML = `Para tu asado de <strong class="text-on-surface">${totalKg.toFixed(1)} kg</strong> necesitas aproximadamente <strong class="text-on-surface">${sacos} saco${sacos !== 1 ? 's' : ''} de 2,5 kg</strong> de carbón. La regla de oro: 1 kg de carbón por kg de carne, más margen de seguridad.`;
     }
   }
 
@@ -1837,12 +1833,12 @@ tailwind.config = {
     }
     const selected = getSelectedProteins();
     if (selected.length === 0) {
-      showToast('Elige al menos una proteÃ­na para recibir recomendaciones.');
+      showToast('Elige al menos una proteína para recibir recomendaciones.');
       return;
     }
     const availableCuts = getRecommendedCuts(selected);
     if (availableCuts.length === 0) {
-      showToast('No hay cortes para ese presupuesto y proteÃ­nas. Prueba otra combinaciÃ³n.');
+      showToast('No hay cortes para ese presupuesto y proteínas. Prueba otra combinación.');
       return;
     }
     navigate('recomendaciones');
@@ -1874,7 +1870,7 @@ tailwind.config = {
     btn.classList.add('selected');
     selectedBudget = value;
     lastCutSignature = '';
-    showToast(`Presupuesto ${budgetLabels[value]} aplicado: se mostrarÃ¡n cortes ${tierLabels[value]}.`);
+    showToast(`Presupuesto ${budgetLabels[value]} aplicado: se mostrarán cortes ${tierLabels[value]}.`);
     if (currentPage === 'recomendaciones') updateRecomendaciones();
   }
 
@@ -1887,7 +1883,7 @@ tailwind.config = {
   }
 
   function toggleFilterHelp() {
-    showToast('Usa los chips para filtrar por premium, cercanÃ­a u ofertas.');
+    showToast('Usa los chips para filtrar por premium, cercanía u ofertas.');
   }
 
   function filterButchers() {
@@ -1900,9 +1896,9 @@ tailwind.config = {
       const matchesFilter =
         activeButcherFilter === 'todas' ||
         (activeButcherFilter === 'premium' && text.includes('$$$')) ||
-        (activeButcherFilter === 'cerca' && (text.includes('las condes') || text.includes('providencia') || text.includes('Ã±uÃ±oa'))) ||
+        (activeButcherFilter === 'cerca' && (text.includes('las condes') || text.includes('providencia') || text.includes('ñuñoa'))) ||
         
-        (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('econÃ³mica') || text.includes('$') && !text.includes('$$$')));
+        (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('económica') || text.includes('$') && !text.includes('$$$')));
       const isVisible = matchesSearch && matchesFilter;
       card.classList.toggle('is-hidden', !isVisible);
       if (isVisible) visibleCount++;
@@ -1915,7 +1911,7 @@ tailwind.config = {
       empty.className = 'is-hidden md:col-span-2 bg-surface-container-low rounded-3xl p-10 text-center';
       empty.innerHTML = `
         <span class="material-symbols-outlined text-4xl text-primary mb-3">search_off</span>
-        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerÃ­as</h3>
+        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerías</h3>
         <p class="text-on-surface-variant text-sm">Prueba con otro barrio, nombre o filtro.</p>`;
       document.querySelector('#screen-carnicerias .grid.grid-cols-1.md\\:grid-cols-2').appendChild(empty);
     }
@@ -1933,12 +1929,12 @@ tailwind.config = {
     const messagesHtml = messages.length
       ? messages.map(msg => `
           <div class="${msg.from === 'user' ? 'ml-8 bg-primary text-white' : 'mr-8 bg-surface-container-low'} rounded-2xl p-4">
-            <p class="text-[10px] font-bold uppercase ${msg.from === 'user' ? 'text-white/75' : 'text-primary'} mb-1">${msg.from === 'user' ? 'TÃº' : name}</p>
+            <p class="text-[10px] font-bold uppercase ${msg.from === 'user' ? 'text-white/75' : 'text-primary'} mb-1">${msg.from === 'user' ? 'Tú' : name}</p>
             <p class="text-sm">${msg.text}</p>
           </div>`).join('')
       : `<div class="bg-surface-container-low rounded-2xl p-6 text-center">
           <span class="material-symbols-outlined text-3xl text-primary mb-2">forum</span>
-          <p class="font-bold text-on-surface">AÃºn no hay mensajes</p>
+          <p class="font-bold text-on-surface">Aún no hay mensajes</p>
           <p class="text-sm text-on-surface-variant mt-1">Pregunta por disponibilidad o reserva tus cortes desde AppSados.</p>
         </div>`;
 
@@ -1997,7 +1993,7 @@ tailwind.config = {
               <label class="flex items-center justify-between gap-3 bg-surface-container-lowest rounded-xl p-3 cursor-pointer select-none">
                 <span class="flex-1 min-w-0">
                   <span class="block font-bold text-sm">${item.name}</span>
-                  <span class="block text-xs text-on-surface-variant">${item.kg.toFixed(1)} kg Â· ${money(item.pricePerKg)}/kg Â· <strong class="text-on-surface">${money(itemCost)}</strong></span>
+                  <span class="block text-xs text-on-surface-variant">${item.kg.toFixed(1)} kg · ${money(item.pricePerKg)}/kg · <strong class="text-on-surface">${money(itemCost)}</strong></span>
                 </span>
                 <input name="cut-${index}" type="checkbox" checked
                   data-cost="${itemCost}"
@@ -2059,7 +2055,7 @@ tailwind.config = {
   const butcherPromos = [
     { name: 'Pack Parrillero', cut: 'Lomo Vetado', discount: 15, status: 'Vence en 2h', tone: 'primary' },
     { name: 'Oferta Flash', cut: 'Pulpa de Cerdo', discount: 20, status: 'Activa', tone: 'secondary' },
-    { name: 'Fin de Semana', cut: 'EntraÃ±a seleccionada', discount: 10, status: 'Activa', tone: 'tertiary' }
+    { name: 'Fin de Semana', cut: 'Entraña seleccionada', discount: 10, status: 'Activa', tone: 'tertiary' }
   ];
 
   const salesHistory = [
@@ -2076,7 +2072,7 @@ tailwind.config = {
     const list = document.getElementById('promoList');
     if (!list) return;
     if (butcherPromos.length === 0) {
-      list.innerHTML = '<div class="bg-surface-container-lowest p-6 rounded-2xl text-center text-sm text-on-surface-variant">AÃºn no tienes promociones activas.</div>';
+      list.innerHTML = '<div class="bg-surface-container-lowest p-6 rounded-2xl text-center text-sm text-on-surface-variant">Aún no tienes promociones activas.</div>';
       return;
     }
     const toneClass = {
@@ -2093,7 +2089,7 @@ tailwind.config = {
             <p class="text-xs font-bold ${tone.text} uppercase mb-1">${promo.name}</p>
             <p class="text-sm font-semibold mb-2">${promo.cut}</p>
           </div>
-          <button onclick="editPromo(${index})" class="${tone.text} hover:text-primary" aria-label="Editar promociÃ³n ${promo.name}">
+          <button onclick="editPromo(${index})" class="${tone.text} hover:text-primary" aria-label="Editar promoción ${promo.name}">
             <span class="material-symbols-outlined text-base">edit</span>
           </button>
         </div>
@@ -2134,13 +2130,13 @@ tailwind.config = {
           </div>
         </div>
       </div>`).join('');
-    const empty = '<div class="bg-surface-container-low rounded-3xl p-8 text-center text-sm text-on-surface-variant">No hay cortes que coincidan con la bÃºsqueda.</div>';
+    const empty = '<div class="bg-surface-container-low rounded-3xl p-8 text-center text-sm text-on-surface-variant">No hay cortes que coincidan con la búsqueda.</div>';
     const addCard = `
       <div onclick="openProductForm()" role="button" tabindex="0" class="border-2 border-dashed border-outline-variant/40 rounded-3xl flex flex-col items-center justify-center p-8 bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
         <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
           <span class="material-symbols-outlined text-primary">add_circle</span>
         </div>
-        <p class="font-bold text-on-surface-variant">Agregar mÃ¡s cortes</p>
+        <p class="font-bold text-on-surface-variant">Agregar más cortes</p>
         <p class="text-xs text-on-surface-variant/60 mt-1">Actualiza tu vitrina online</p>
       </div>`;
     grid.innerHTML = (cards || empty) + addCard;
@@ -2158,7 +2154,7 @@ tailwind.config = {
 
   function openProductForm(index = null) {
     const product = index === null ? { name: '', price: '', stock: '', img: '' } : butcherProducts[index];
-    openModal(index === null ? 'AÃ±adir corte' : 'Editar corte', `
+    openModal(index === null ? 'Añadir corte' : 'Editar corte', `
       <form onsubmit="saveProduct(event, ${index === null ? 'null' : index})" class="space-y-4">
         <label class="block text-sm font-bold">Nombre del corte
           <input name="name" required value="${product.name}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
@@ -2220,7 +2216,7 @@ tailwind.config = {
             <input name="status" required value="${promo.status}" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
           </label>
         </div>
-        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">${index === null ? 'Crear promociÃ³n' : 'Guardar promociÃ³n'}</button>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">${index === null ? 'Crear promoción' : 'Guardar promoción'}</button>
       </form>`);
   }
 
@@ -2232,7 +2228,7 @@ tailwind.config = {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.target).entries());
     if (promoExists(data.cut, index ?? -1)) {
-      showToast('Ya existe una promociÃ³n para ese corte.');
+      showToast('Ya existe una promoción para ese corte.');
       return;
     }
     const tones = ['primary', 'secondary', 'tertiary'];
@@ -2247,27 +2243,27 @@ tailwind.config = {
     else butcherPromos[index] = next;
     renderPromos();
     closeModal();
-    showToast(index === null ? 'PromociÃ³n creada.' : 'PromociÃ³n actualizada.');
+    showToast(index === null ? 'Promoción creada.' : 'Promoción actualizada.');
   }
 
   function openVerificationForm() {
-    openModal('VerificaciÃ³n carnicero', `
+    openModal('Verificación carnicero', `
       <form onsubmit="saveVerification(event)" class="space-y-4">
-        <p class="text-sm text-on-surface-variant leading-relaxed">Esta demo mantiene la sesiÃ³n verificada localmente. En producciÃ³n, estos datos deben validarse contra un backend seguro.</p>
+        <p class="text-sm text-on-surface-variant leading-relaxed">Esta demo mantiene la sesión verificada localmente. En producción, estos datos deben validarse contra un backend seguro.</p>
         <label class="block text-sm font-bold">RUT empresa
           <input name="rut" required placeholder="76.123.456-7" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
         </label>
         <label class="block text-sm font-bold">Correo administrador
           <input name="email" required type="email" placeholder="dueno@carniceria.cl" class="mt-2 w-full rounded-xl border-outline-variant focus:ring-primary/20" />
         </label>
-        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">Guardar verificaciÃ³n</button>
+        <button class="w-full bg-primary text-white rounded-xl py-3 font-bold">Guardar verificación</button>
       </form>`);
   }
 
   function saveVerification(event) {
     event.preventDefault();
     closeModal();
-    showToast('Cuenta carnicera verificada para esta sesiÃ³n.');
+    showToast('Cuenta carnicera verificada para esta sesión.');
   }
 
   // ---- FAQ accordion ----
@@ -2295,7 +2291,7 @@ tailwind.config = {
   document.getElementById('butcherSearch')?.addEventListener('input', filterButchers);
   document.getElementById('productSearch')?.addEventListener('input', renderProducts);
   document.querySelectorAll('#screen-carnicerias article').forEach((card) => {
-    const name = card.querySelector('h3, h4')?.textContent.trim() || 'la carnicerÃ­a';
+    const name = card.querySelector('h3, h4')?.textContent.trim() || 'la carnicería';
     card.querySelectorAll('button').forEach((button) => {
       if (!button.textContent.toLowerCase().includes('chat')) return;
       button.addEventListener('click', (event) => {
@@ -2316,7 +2312,7 @@ tailwind.config = {
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col gap-5">
     <div class="text-center mb-2">
       <h3 class="font-headline text-2xl font-extrabold text-on-surface">Bienvenido a AppSados</h3>
-      <p class="text-sm text-on-surface-variant mt-1">Inicia sesiÃ³n o crea tu cuenta</p>
+      <p class="text-sm text-on-surface-variant mt-1">Inicia sesión o crea tu cuenta</p>
     </div>
     <!-- Google -->
     <button onclick="fbSignInGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-outline-variant rounded-2xl py-3.5 font-bold text-on-surface shadow-sm hover:shadow-md transition-all active:scale-95">
@@ -2326,10 +2322,10 @@ tailwind.config = {
     <div class="flex items-center gap-3"><div class="flex-1 h-px bg-outline-variant/30"></div><span class="text-xs text-on-surface-variant font-semibold">o con correo</span><div class="flex-1 h-px bg-outline-variant/30"></div></div>
     <!-- Email form -->
     <div class="space-y-3">
-      <input id="fbEmail" type="email" placeholder="Correo electrÃ³nico" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/>
-      <input id="fbPassword" type="password" placeholder="ContraseÃ±a" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      <input id="fbEmail" type="email" placeholder="Correo electrónico" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      <input id="fbPassword" type="password" placeholder="Contraseña" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/>
       <p id="fbAuthError" class="text-xs text-error hidden"></p>
-      <button onclick="fbSignInEmail()" class="w-full bg-primary text-white rounded-xl py-3 font-bold hover:opacity-90 transition-all active:scale-95">Iniciar sesiÃ³n</button>
+      <button onclick="fbSignInEmail()" class="w-full bg-primary text-white rounded-xl py-3 font-bold hover:opacity-90 transition-all active:scale-95">Iniciar sesión</button>
       <button onclick="fbCreateEmail()" class="w-full bg-surface-container text-on-surface rounded-xl py-3 font-bold hover:bg-surface-container-high transition-all active:scale-95">Crear cuenta nueva</button>
     </div>
     <button onclick="closeFbModal('fbAuthModal')" class="text-xs text-on-surface-variant text-center hover:text-on-surface transition-colors">Cancelar</button>
@@ -2341,15 +2337,15 @@ tailwind.config = {
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col gap-5">
     <div class="text-center mb-2">
       <p id="fbRoleWelcome" class="text-sm font-bold text-secondary mb-1"></p>
-      <h3 class="font-headline text-2xl font-extrabold text-on-surface">Â¿CÃ³mo usarÃ¡s AppSados?</h3>
+      <h3 class="font-headline text-2xl font-extrabold text-on-surface">¿Cómo usarás AppSados?</h3>
     </div>
     <button onclick="fbSetRole('parrillero')" class="w-full flex items-center gap-4 bg-surface-container hover:bg-surface-container-high border-2 border-transparent hover:border-primary/20 rounded-2xl p-5 transition-all active:scale-95 text-left">
-      <span class="text-3xl">ðŸ”¥</span>
-      <div><p class="font-bold text-on-surface">Parrillero</p><p class="text-xs text-on-surface-variant">Planifica tu asado, busca carnicerÃ­as y reserva cortes</p></div>
+      <span class="text-3xl">🔥</span>
+      <div><p class="font-bold text-on-surface">Parrillero</p><p class="text-xs text-on-surface-variant">Planifica tu asado, busca carnicerías y reserva cortes</p></div>
     </button>
     <button onclick="fbSetRole('carnicero')" class="w-full flex items-center gap-4 bg-surface-container hover:bg-surface-container-high border-2 border-transparent hover:border-secondary/20 rounded-2xl p-5 transition-all active:scale-95 text-left">
-      <span class="text-3xl">ðŸ¥©</span>
-      <div><p class="font-bold text-on-surface">CarnicerÃ­a</p><p class="text-xs text-on-surface-variant">Registra tu negocio, publica cortes y aparece en bÃºsquedas</p></div>
+      <span class="text-3xl">🥩</span>
+      <div><p class="font-bold text-on-surface">Carnicería</p><p class="text-xs text-on-surface-variant">Registra tu negocio, publica cortes y aparece en búsquedas</p></div>
     </button>
   </div>
 </div>
@@ -2358,36 +2354,36 @@ tailwind.config = {
 <div id="fbRegisterModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:90dvh">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
-      <h3 class="font-headline text-xl font-bold">Perfil de CarnicerÃ­a</h3>
+      <h3 class="font-headline text-xl font-bold">Perfil de Carnicería</h3>
       <button onclick="closeFbModal('fbRegisterModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
         <span class="material-symbols-outlined text-primary">close</span>
       </button>
     </div>
     <div class="p-6 overflow-y-auto flex-1 space-y-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Nombre de la carnicerÃ­a *</span>
-          <input id="reg_nombre" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: CarnicerÃ­a El Maestro"/></label>
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Nombre de la carnicería *</span>
+          <input id="reg_nombre" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: Carnicería El Maestro"/></label>
         <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">RUT empresa *</span>
           <input id="reg_rut" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="76.123.456-7"/></label>
       </div>
-      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">DescripciÃ³n</span>
-        <textarea id="reg_descripcion" rows="2" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Especialidad, aÃ±os de experiencia..."></textarea></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Descripción</span>
+        <textarea id="reg_descripcion" rows="2" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Especialidad, años de experiencia..."></textarea></label>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">DirecciÃ³n</span>
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Dirección</span>
           <input id="reg_direccion" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Av. Principal 123"/></label>
         <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Barrio / Comuna</span>
           <input id="reg_barrio" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Las Condes, Providencia..."/></label>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">TelÃ©fono</span>
+        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Teléfono</span>
           <input id="reg_telefono" type="tel" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="+56 9 1234 5678"/></label>
         <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Horario</span>
-          <input id="reg_horario" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Lunâ€“SÃ¡b 9:00â€“20:00"/></label>
+          <input id="reg_horario" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Lun–Sáb 9:00–20:00"/></label>
       </div>
       <!-- Nivel de precios -->
       <div><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-2">Nivel de precios</span>
         <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="reg_presupuesto" value="low" class="accent-primary" checked/><span class="text-sm font-semibold">EconÃ³mico ($)</span></label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="reg_presupuesto" value="low" class="accent-primary" checked/><span class="text-sm font-semibold">Económico ($)</span></label>
           <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="reg_presupuesto" value="high" class="accent-primary"/><span class="text-sm font-semibold">Premium ($$$)</span></label>
         </div>
       </div>
@@ -2395,29 +2391,29 @@ tailwind.config = {
       <div>
         <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide block mb-3">Cortes disponibles</span>
         <div class="space-y-3">
-          <p class="text-xs font-bold text-on-surface">ðŸ„ Vacuno</p>
+          <p class="text-xs font-bold text-on-surface">🐄 Vacuno</p>
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-huachalomo"/> Huachalomo</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-sobrecostilla"/> Sobrecostilla</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-asado-carnicero"/> Asado Carnicero</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-asiento"/> Asiento</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-lomo-vetado"/> Lomo Vetado</label>
-            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-entrana"/> EntraÃ±a</label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-entrana"/> Entraña</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="vacuno-filete"/> Filete</label>
           </div>
-          <p class="text-xs font-bold text-on-surface mt-2">ðŸ· Cerdo</p>
+          <p class="text-xs font-bold text-on-surface mt-2">🐷 Cerdo</p>
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="cerdo-pulpa"/> Pulpa de Cerdo</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="cerdo-costillar"/> Costillar de Cerdo</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="cerdo-malaya"/> Malaya de Cerdo</label>
           </div>
-          <p class="text-xs font-bold text-on-surface mt-2">ðŸŒ­ Embutidos</p>
+          <p class="text-xs font-bold text-on-surface mt-2">🌭 Embutidos</p>
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="embutidos-chorizo"/> Chorizo</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="embutidos-longaniza"/> Longaniza</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="embutidos-butifarra"/> Butifarra</label>
           </div>
-          <p class="text-xs font-bold text-on-surface mt-2">ðŸ— Pollo</p>
+          <p class="text-xs font-bold text-on-surface mt-2">🍗 Pollo</p>
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="pollo-tutos"/> Tutos</label>
             <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="reg-cut accent-primary" value="pollo-alitas"/> Alitas</label>
@@ -2479,7 +2475,7 @@ tailwind.config = {
     try {
       const snap = await db.collection('users').doc(uid).get();
       const token = snap.data()?.fcmToken || null;
-      console.log('FCM: getFcmToken for uid', uid, 'â†’', token ? token.slice(0,20)+'...' : 'NO TOKEN FOUND');
+      console.log('FCM: getFcmToken for uid', uid, '→', token ? token.slice(0,20)+'...' : 'NO TOKEN FOUND');
       return token;
     } catch(e) {
       console.error('FCM: getFcmToken error', e);
@@ -2488,10 +2484,10 @@ tailwind.config = {
   }
 
   async function sendPush(toUid, title, body) {
-    console.log('FCM: sendPush called â†’ toUid:', toUid, '| title:', title);
+    console.log('FCM: sendPush called → toUid:', toUid, '| title:', title);
     const token = await getFcmToken(toUid);
     if (!token) {
-      console.warn('FCM: no token for uid', toUid, 'â€” skipping push');
+      console.warn('FCM: no token for uid', toUid, '— skipping push');
       return;
     }
     try {
@@ -2507,7 +2503,7 @@ tailwind.config = {
     }
   }
 
-  // â¬‡ Cambia esto a tu correo real de Google
+  // ⬇ Cambia esto a tu correo real de Google
   const ADMIN_EMAIL = 'edgard.huenchullan.96@gmail.com';
 
   let fbUser     = null;
@@ -2517,7 +2513,7 @@ tailwind.config = {
   const CUT_LABELS = {
     'vacuno-huachalomo':'Huachalomo','vacuno-sobrecostilla':'Sobrecostilla',
     'vacuno-asado-carnicero':'Asado Carnicero','vacuno-asiento':'Asiento',
-    'vacuno-lomo-vetado':'Lomo Vetado','vacuno-entrana':'EntraÃ±a',
+    'vacuno-lomo-vetado':'Lomo Vetado','vacuno-entrana':'Entraña',
     'vacuno-filete':'Filete','cerdo-pulpa':'Pulpa Cerdo',
     'cerdo-costillar':'Costillar','cerdo-malaya':'Malaya',
     'embutidos-chorizo':'Chorizo','embutidos-longaniza':'Longaniza',
@@ -2620,17 +2616,17 @@ tailwind.config = {
     document.getElementById('userMenuEmail').textContent = fbUser.email || '';
 
     if (fbRole === 'admin') {
-      badge.textContent = 'âš™ï¸ Admin'; badge.classList.remove('hidden');
+      badge.textContent = '⚙️ Admin'; badge.classList.remove('hidden');
       panelBtn.classList.remove('hidden');
       registerBtn.classList.add('hidden');
     } else if (fbRole === 'carnicero') {
       const approved = fbProfile?.status === 'approved';
-      badge.textContent = approved ? 'ðŸ¥© Carnicero' : 'â³ En revisiÃ³n';
+      badge.textContent = approved ? '🥩 Carnicero' : '⏳ En revisión';
       badge.classList.remove('hidden');
       panelBtn.classList.remove('hidden');
       registerBtn.classList.toggle('hidden', approved);
     } else {
-      badge.textContent = 'ðŸ”¥ Parrillero'; badge.classList.remove('hidden');
+      badge.textContent = '🔥 Parrillero'; badge.classList.remove('hidden');
       panelBtn.classList.add('hidden');
       registerBtn.classList.add('hidden');
     }
@@ -2661,7 +2657,7 @@ tailwind.config = {
   function showRoleModal() {
     document.getElementById('fbRoleModal').classList.remove('hidden');
     const name = fbUser?.displayName || fbUser?.email?.split('@')[0] || 'amigo';
-    document.getElementById('fbRoleWelcome').textContent = `Hola, ${name} ðŸ‘‹`;
+    document.getElementById('fbRoleWelcome').textContent = `Hola, ${name} 👋`;
   }
 
   function openCarniceroRegister() {
@@ -2695,21 +2691,21 @@ tailwind.config = {
   async function fbSignInEmail() {
     const email = document.getElementById('fbEmail').value.trim();
     const pass  = document.getElementById('fbPassword').value;
-    if (!email || !pass) { showAuthError('Ingresa correo y contraseÃ±a.'); return; }
+    if (!email || !pass) { showAuthError('Ingresa correo y contraseña.'); return; }
     try {
       await auth.signInWithEmailAndPassword(email, pass);
       closeFbModal('fbAuthModal');
     } catch(e) {
       showAuthError(e.code === 'auth/user-not-found' ? 'Usuario no encontrado.' :
-                   e.code === 'auth/wrong-password'  ? 'ContraseÃ±a incorrecta.' : e.message);
+                   e.code === 'auth/wrong-password'  ? 'Contraseña incorrecta.' : e.message);
     }
   }
 
   async function fbCreateEmail() {
     const email = document.getElementById('fbEmail').value.trim();
     const pass  = document.getElementById('fbPassword').value;
-    if (!email || !pass) { showAuthError('Ingresa correo y contraseÃ±a.'); return; }
-    if (pass.length < 6)  { showAuthError('La contraseÃ±a debe tener al menos 6 caracteres.'); return; }
+    if (!email || !pass) { showAuthError('Ingresa correo y contraseña.'); return; }
+    if (pass.length < 6)  { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
     try {
       await auth.createUserWithEmailAndPassword(email, pass);
       closeFbModal('fbAuthModal');
@@ -2719,7 +2715,7 @@ tailwind.config = {
   }
 
   async function fbSignOut() {
-    await auth.signOut(); closeUserMenu(); showToast('SesiÃ³n cerrada.');
+    await auth.signOut(); closeUserMenu(); showToast('Sesión cerrada.');
   }
 
   function showAuthError(msg) {
@@ -2740,7 +2736,7 @@ tailwind.config = {
       closeFbModal('fbRoleModal');
       updateAuthUI();
       if (role === 'carnicero') setTimeout(() => openCarniceroRegister(), 300);
-      else showToast('Â¡Bienvenido, parrillero! ðŸ”¥');
+      else showToast('¡Bienvenido, parrillero! 🔥');
     } catch(e) { showToast('Error al guardar el rol. Intenta de nuevo.'); }
   }
 
@@ -2770,12 +2766,12 @@ tailwind.config = {
       requestedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // Geocode address â†’ save lat/lng for distance sorting
+    // Geocode address → save lat/lng for distance sorting
     const addrForGeo = profile.direccion
       ? `${profile.direccion}, ${profile.barrio}`
       : profile.barrio;
     if (addrForGeo) {
-      showToast('Geocodificando direcciÃ³n...');
+      showToast('Geocodificando dirección...');
       const coords = await geocodeAddress(addrForGeo);
       if (coords) { profile.lat = coords.lat; profile.lng = coords.lng; }
     }
@@ -2788,10 +2784,10 @@ tailwind.config = {
       showPanelState();
       renderFirebaseCarniceros();
       if (profile.status === 'pending') {
-        showToast('Â¡Solicitud enviada! Te avisaremos cuando sea aprobada. ðŸ¥©');
+        showToast('¡Solicitud enviada! Te avisaremos cuando sea aprobada. 🥩');
         navigate('panel');
       } else {
-        showToast(`Perfil de ${nombre} actualizado. ðŸ¥©`);
+        showToast(`Perfil de ${nombre} actualizado. 🥩`);
       }
     } catch(e) {
       errEl.textContent = 'Error al guardar. Intenta de nuevo.';
@@ -2815,26 +2811,26 @@ tailwind.config = {
       document.getElementById('adminCountApproved').textContent = approved.length;
       document.getElementById('adminCountRejected').textContent = rejected.length;
 
-      if (all.length === 0) { container.innerHTML = '<p class="text-sm text-on-surface-variant py-4 text-center">No hay solicitudes aÃºn.</p>'; return; }
+      if (all.length === 0) { container.innerHTML = '<p class="text-sm text-on-surface-variant py-4 text-center">No hay solicitudes aún.</p>'; return; }
 
       container.innerHTML = all.map(c => {
-        const cuts = (c.cortes || []).map(id => CUT_LABELS[id] || id).join(', ') || 'â€”';
+        const cuts = (c.cortes || []).map(id => CUT_LABELS[id] || id).join(', ') || '—';
         const statusColors = { pending:'bg-amber-100 text-amber-700', approved:'bg-green-100 text-green-700', rejected:'bg-red-100 text-red-700' };
-        const statusLabels = { pending:'â³ Pendiente', approved:'âœ… Aprobada', rejected:'âŒ Rechazada' };
+        const statusLabels = { pending:'⏳ Pendiente', approved:'✅ Aprobada', rejected:'❌ Rechazada' };
         const st = c.status || 'pending';
         return `
           <div class="bg-surface-container-low rounded-2xl p-5 flex flex-col gap-3">
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
                 <p class="font-bold text-on-surface truncate">${c.nombre}</p>
-                <p class="text-xs text-on-surface-variant">RUT: ${c.rut} Â· ${c.email}</p>
-                <p class="text-xs text-on-surface-variant mt-0.5">${c.barrio || ''} ${c.horario ? 'Â· ' + c.horario : ''}</p>
-                <p class="text-xs text-on-surface-variant mt-1">ðŸ¥© ${cuts}</p>
+                <p class="text-xs text-on-surface-variant">RUT: ${c.rut} · ${c.email}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">${c.barrio || ''} ${c.horario ? '· ' + c.horario : ''}</p>
+                <p class="text-xs text-on-surface-variant mt-1">🥩 ${cuts}</p>
               </div>
               <span class="shrink-0 text-xs font-bold px-3 py-1 rounded-full ${statusColors[st]}">${statusLabels[st]}</span>
             </div>
-            ${st !== 'approved' ? `<button onclick="adminApprove('${c.id}')" class="w-full bg-primary text-white py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">âœ… Aprobar</button>` : ''}
-            ${st !== 'rejected' ? `<button onclick="adminReject('${c.id}')" class="w-full bg-surface-container text-error py-2.5 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">âŒ Rechazar</button>` : ''}
+            ${st !== 'approved' ? `<button onclick="adminApprove('${c.id}')" class="w-full bg-primary text-white py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">✅ Aprobar</button>` : ''}
+            ${st !== 'rejected' ? `<button onclick="adminReject('${c.id}')" class="w-full bg-surface-container text-error py-2.5 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">❌ Rechazar</button>` : ''}
           </div>`;
       }).join('');
     } catch(e) {
@@ -2845,7 +2841,7 @@ tailwind.config = {
 
   async function adminApprove(uid) {
     await db.collection('carniceros').doc(uid).update({ status: 'approved' });
-    showToast('CarnicerÃ­a aprobada âœ…');
+    showToast('Carnicería aprobada ✅');
     renderAdminPanel();
     renderFirebaseCarniceros();
   }
@@ -2866,8 +2862,8 @@ tailwind.config = {
         container.innerHTML = `
           <div class="col-span-2 flex flex-col items-center py-20 text-on-surface-variant gap-4">
             <span class="material-symbols-outlined text-5xl opacity-30">storefront</span>
-            <p class="font-bold text-lg text-on-surface">AÃºn no hay carnicerÃ­as registradas</p>
-            <p class="text-sm text-center">Las carnicerÃ­as verificadas aparecerÃ¡n aquÃ­. Â¡SÃ© el primero en registrar la tuya!</p>
+            <p class="font-bold text-lg text-on-surface">Aún no hay carnicerías registradas</p>
+            <p class="text-sm text-center">Las carnicerías verificadas aparecerán aquí. ¡Sé el primero en registrar la tuya!</p>
           </div>`;
         return;
       }
@@ -2902,7 +2898,7 @@ tailwind.config = {
           return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isMatch
             ? 'bg-secondary/15 text-secondary'
             : 'bg-surface-container text-on-surface-variant'}">${CUT_LABELS[id] || id}</span>`;
-        }).join('') + (allCuts.length > 5 ? `<span class="text-[10px] text-on-surface-variant">+${allCuts.length - 5} mÃ¡s</span>` : '');
+        }).join('') + (allCuts.length > 5 ? `<span class="text-[10px] text-on-surface-variant">+${allCuts.length - 5} más</span>` : '');
 
         const matchBadge = hasMatch
           ? `<div class="flex items-center gap-1 text-[10px] font-bold text-secondary bg-secondary/10 px-2.5 py-1 rounded-full w-fit">
@@ -2944,7 +2940,7 @@ tailwind.config = {
                     <h4 class="font-headline text-lg font-bold leading-tight">${c.nombre}</h4>
                     <span class="text-primary text-sm font-bold shrink-0">${priceSymbol(c.presupuesto)}</span>
                   </div>
-                  <p class="text-xs text-on-surface-variant mb-2">${[c.barrio, c.horario].filter(Boolean).join(' Â· ')}</p>
+                  <p class="text-xs text-on-surface-variant mb-2">${[c.barrio, c.horario].filter(Boolean).join(' · ')}</p>
                   <div class="flex flex-wrap gap-1.5">
                     ${distBadge}
                     ${matchBadge}
@@ -2956,7 +2952,7 @@ tailwind.config = {
                     <span class="material-symbols-outlined text-xs">verified</span> Verificada
                   </span>
                   <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-outline-variant/20 transition-colors">
-                    <span class="material-symbols-outlined text-xs">map</span> CÃ³mo llegar
+                    <span class="material-symbols-outlined text-xs">map</span> Cómo llegar
                   </a>
                 </div>
               </div>
@@ -2987,8 +2983,8 @@ tailwind.config = {
   async function renderCarniceroDashboard() {
     if (!fbUser || !fbProfile) return;
     const p = fbProfile;
-    document.getElementById('dashNombre').textContent = p.nombre || 'Mi CarnicerÃ­a';
-    document.getElementById('dashBarrio').textContent = [p.barrio, p.horario].filter(Boolean).join(' Â· ');
+    document.getElementById('dashNombre').textContent = p.nombre || 'Mi Carnicería';
+    document.getElementById('dashBarrio').textContent = [p.barrio, p.horario].filter(Boolean).join(' · ');
 
     // Cortes chips
     const cortesEl = document.getElementById('dashCortesList');
@@ -3003,7 +2999,7 @@ tailwind.config = {
     const photo = p.fotoUrl || '';
     const preview = document.getElementById('dashPhotoPreview');
     if (preview && photo) {
-      preview.innerHTML = `<img src="${photo}" class="w-full h-full object-cover" alt="Foto carnicerÃ­a"/>`;
+      preview.innerHTML = `<img src="${photo}" class="w-full h-full object-cover" alt="Foto carnicería"/>`;
     }
 
     // Promos from Firestore subcollection
@@ -3017,7 +3013,7 @@ tailwind.config = {
     try {
       const snap = await db.collection('carniceros').doc(fbUser.uid).collection('promos').orderBy('createdAt', 'desc').get();
       if (snap.empty) {
-        el.innerHTML = '<p class="text-sm text-on-surface-variant py-4 text-center">Sin promociones activas. Â¡Agrega una!</p>';
+        el.innerHTML = '<p class="text-sm text-on-surface-variant py-4 text-center">Sin promociones activas. ¡Agrega una!</p>';
         return;
       }
       const colors = ['border-primary text-primary bg-primary/10', 'border-secondary text-secondary bg-secondary/10', 'border-tertiary text-tertiary bg-tertiary/10'];
@@ -3060,7 +3056,7 @@ tailwind.config = {
       closeFbModal('editCortesModal');
       renderCarniceroDashboard();
       renderFirebaseCarniceros();
-      showToast('Cortes actualizados âœ…');
+      showToast('Cortes actualizados ✅');
     } catch(e) { showToast('Error al guardar. Intenta de nuevo.'); }
   }
 
@@ -3070,7 +3066,7 @@ tailwind.config = {
   async function openDashPromoForm(promoId) {
     _editingPromoId = promoId;
     document.getElementById('dashPromoModal').classList.remove('hidden');
-    document.getElementById('dashPromoModalTitle').textContent = promoId ? 'Editar PromociÃ³n' : 'Nueva PromociÃ³n';
+    document.getElementById('dashPromoModalTitle').textContent = promoId ? 'Editar Promoción' : 'Nueva Promoción';
     document.getElementById('dashPromoError').classList.add('hidden');
     if (promoId) {
       try {
@@ -3092,7 +3088,7 @@ tailwind.config = {
     const descripcion = document.getElementById('dashPromoDesc').value.trim();
     const descuento   = document.getElementById('dashPromoDesc2').value.trim();
     const errEl       = document.getElementById('dashPromoError');
-    if (!titulo) { errEl.textContent = 'El tÃ­tulo es obligatorio.'; errEl.classList.remove('hidden'); return; }
+    if (!titulo) { errEl.textContent = 'El título es obligatorio.'; errEl.classList.remove('hidden'); return; }
     errEl.classList.add('hidden');
     try {
       const ref = db.collection('carniceros').doc(fbUser.uid).collection('promos');
@@ -3103,12 +3099,12 @@ tailwind.config = {
       }
       closeFbModal('dashPromoModal');
       renderDashPromos();
-      showToast(_editingPromoId ? 'Promo actualizada âœ…' : 'Promo agregada âœ…');
+      showToast(_editingPromoId ? 'Promo actualizada ✅' : 'Promo agregada ✅');
     } catch(e) { errEl.textContent = 'Error al guardar.'; errEl.classList.remove('hidden'); }
   }
 
   async function deleteDashPromo(promoId) {
-    if (!confirm('Â¿Eliminar esta promociÃ³n?')) return;
+    if (!confirm('¿Eliminar esta promoción?')) return;
     try {
       await db.collection('carniceros').doc(fbUser.uid).collection('promos').doc(promoId).delete();
       renderDashPromos();
@@ -3134,7 +3130,7 @@ tailwind.config = {
     if (!file) return;
     const errEl = document.getElementById('photoError');
     if (file.size > 800 * 1024) {
-      errEl.textContent = 'La imagen es muy grande. MÃ¡ximo 800KB para guardar en Firestore. Comprime la imagen primero en squoosh.app';
+      errEl.textContent = 'La imagen es muy grande. Máximo 800KB para guardar en Firestore. Comprime la imagen primero en squoosh.app';
       errEl.classList.remove('hidden');
       return;
     }
@@ -3165,7 +3161,7 @@ tailwind.config = {
       closeFbModal('photoModal');
       renderCarniceroDashboard();
       renderFirebaseCarniceros();
-      showToast('Foto guardada âœ…');
+      showToast('Foto guardada ✅');
     } catch(e) { errEl.textContent = 'Error al guardar.'; errEl.classList.remove('hidden'); }
   }
 
@@ -3197,33 +3193,33 @@ tailwind.config = {
 
       const filtered = _adminTab === 'all' ? all : all.filter(c => (c.status || 'pending') === _adminTab);
       if (filtered.length === 0) {
-        container.innerHTML = '<p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Sin registros en esta categorÃ­a.</p>';
+        container.innerHTML = '<p class="text-sm text-on-surface-variant col-span-2 text-center py-8">Sin registros en esta categoría.</p>';
         return;
       }
 
       const statusColors = { pending:'bg-amber-100 text-amber-700', approved:'bg-green-100 text-green-700', rejected:'bg-red-100 text-red-700' };
-      const statusLabels = { pending:'â³ Pendiente', approved:'âœ… Aprobada', rejected:'âŒ Rechazada' };
+      const statusLabels = { pending:'⏳ Pendiente', approved:'✅ Aprobada', rejected:'❌ Rechazada' };
 
       container.innerHTML = filtered.map(c => {
-        const cuts = (c.cortes || []).map(id => CUT_LABELS[id] || id).join(', ') || 'â€”';
+        const cuts = (c.cortes || []).map(id => CUT_LABELS[id] || id).join(', ') || '—';
         const st   = c.status || 'pending';
         return `
           <div class="bg-surface-container-low rounded-2xl p-5 flex flex-col gap-3">
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0 flex-1">
                 ${c.fotoUrl ? `<img src="${c.fotoUrl}" class="w-full h-24 object-cover rounded-xl mb-3" alt="foto"/>` : ''}
-                <p class="font-bold text-on-surface">${c.nombre || 'â€”'}</p>
-                <p class="text-xs text-on-surface-variant">RUT: ${c.rut || 'â€”'} Â· ${c.email || ''}</p>
-                <p class="text-xs text-on-surface-variant mt-0.5">${c.barrio || ''} ${c.horario ? 'Â· ' + c.horario : ''}</p>
-                <p class="text-xs text-on-surface-variant mt-1">ðŸ¥© ${cuts}</p>
+                <p class="font-bold text-on-surface">${c.nombre || '—'}</p>
+                <p class="text-xs text-on-surface-variant">RUT: ${c.rut || '—'} · ${c.email || ''}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">${c.barrio || ''} ${c.horario ? '· ' + c.horario : ''}</p>
+                <p class="text-xs text-on-surface-variant mt-1">🥩 ${cuts}</p>
               </div>
               <span class="shrink-0 text-xs font-bold px-3 py-1 rounded-full ${statusColors[st]}">${statusLabels[st]}</span>
             </div>
             <div class="flex gap-2 flex-wrap">
-              ${st !== 'approved' ? `<button onclick="adminApprove('${c.id}')" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">âœ… Aprobar</button>` : ''}
-              ${st !== 'rejected' ? `<button onclick="adminReject('${c.id}')" class="flex-1 bg-surface-container text-error py-2 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">âŒ Rechazar</button>` : ''}
-              <button onclick="adminOpenEdit('${c.id}')" class="px-4 py-2 rounded-xl bg-surface-container font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">âœï¸ Editar</button>
-              <button onclick="adminDeleteCarnicero('${c.id}')" class="px-4 py-2 rounded-xl bg-error/10 text-error font-bold text-sm hover:bg-error/20 transition-all active:scale-95">ðŸ—‘ï¸</button>
+              ${st !== 'approved' ? `<button onclick="adminApprove('${c.id}')" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-sm hover:opacity-90 transition-all active:scale-95">✅ Aprobar</button>` : ''}
+              ${st !== 'rejected' ? `<button onclick="adminReject('${c.id}')" class="flex-1 bg-surface-container text-error py-2 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">❌ Rechazar</button>` : ''}
+              <button onclick="adminOpenEdit('${c.id}')" class="px-4 py-2 rounded-xl bg-surface-container font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">✏️ Editar</button>
+              <button onclick="adminDeleteCarnicero('${c.id}')" class="px-4 py-2 rounded-xl bg-error/10 text-error font-bold text-sm hover:bg-error/20 transition-all active:scale-95">🗑️</button>
             </div>
           </div>`;
       }).join('');
@@ -3235,17 +3231,17 @@ tailwind.config = {
 
   async function adminApprove(uid) {
     await db.collection('carniceros').doc(uid).update({ status: 'approved' });
-    showToast('CarnicerÃ­a aprobada âœ…'); renderAdminPanel(); renderFirebaseCarniceros();
+    showToast('Carnicería aprobada ✅'); renderAdminPanel(); renderFirebaseCarniceros();
   }
   async function adminReject(uid) {
     await db.collection('carniceros').doc(uid).update({ status: 'rejected' });
     showToast('Solicitud rechazada.'); renderAdminPanel(); renderFirebaseCarniceros();
   }
   async function adminDeleteCarnicero(uid) {
-    if (!confirm('Â¿Eliminar esta carnicerÃ­a permanentemente? Esta acciÃ³n no se puede deshacer.')) return;
+    if (!confirm('¿Eliminar esta carnicería permanentemente? Esta acción no se puede deshacer.')) return;
     try {
       await db.collection('carniceros').doc(uid).delete();
-      showToast('CarnicerÃ­a eliminada.'); renderAdminPanel(); renderFirebaseCarniceros();
+      showToast('Carnicería eliminada.'); renderAdminPanel(); renderFirebaseCarniceros();
     } catch(e) { showToast('Error al eliminar.'); }
   }
 
@@ -3274,7 +3270,7 @@ tailwind.config = {
       await db.collection('carniceros').doc(uid).update({ nombre, barrio, horario, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
       closeFbModal('adminEditModal');
       renderAdminPanel(); renderFirebaseCarniceros();
-      showToast('CarnicerÃ­a actualizada âœ…');
+      showToast('Carnicería actualizada ✅');
     } catch(e) { errEl.textContent = 'Error al guardar.'; errEl.classList.remove('hidden'); }
   }
 
@@ -3284,7 +3280,7 @@ tailwind.config = {
     adminDeleteCarnicero(uid);
   }
 
-  // ========== GEOLOCALIZACIÃ“N ==========
+  // ========== GEOLOCALIZACIÓN ==========
   function haversineKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -3331,13 +3327,13 @@ tailwind.config = {
   function _convId(uid1, uid2) { return [uid1, uid2].sort().join('_'); }
 
   async function openChat(carniceroUid, carniceroNombre, btn) {
-    if (!fbUser) { openAuthModal(); showToast('Inicia sesiÃ³n para chatear.'); return; }
+    if (!fbUser) { openAuthModal(); showToast('Inicia sesión para chatear.'); return; }
     _chatCarniceroUid = carniceroUid;
     document.getElementById('chatModalName').textContent = carniceroNombre;
     document.getElementById('chatInput').value = '';
     document.getElementById('chatMessages').innerHTML = `
       <div class="flex justify-center py-4">
-        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">Inicio de conversaciÃ³n con ${carniceroNombre}</span>
+        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">Inicio de conversación con ${carniceroNombre}</span>
       </div>`;
     document.getElementById('chatModal').classList.remove('hidden');
     document.getElementById('chatInput').focus();
@@ -3399,8 +3395,8 @@ tailwind.config = {
       // Push notification to recipient
       const recipientUid = _chatCarniceroUid;
       const senderName   = fbUser.displayName || fbUser.email?.split('@')[0] || 'Alguien';
-      sendPush(recipientUid, `ðŸ’¬ Mensaje de ${senderName}`, text.length > 60 ? text.slice(0,60)+'â€¦' : text);
-    } catch(e) { showToast('Error al enviar. Revisa tu conexiÃ³n.'); input.value = text; }
+      sendPush(recipientUid, `💬 Mensaje de ${senderName}`, text.length > 60 ? text.slice(0,60)+'…' : text);
+    } catch(e) { showToast('Error al enviar. Revisa tu conexión.'); input.value = text; }
   }
 
   function closeChat() {
@@ -3412,7 +3408,7 @@ tailwind.config = {
   let _reservaCarniceroUid = null;
 
   function openReservaModal(carniceroUid, carniceroNombre) {
-    if (!fbUser) { openAuthModal(); showToast('Inicia sesiÃ³n para reservar.'); return; }
+    if (!fbUser) { openAuthModal(); showToast('Inicia sesión para reservar.'); return; }
     _reservaCarniceroUid = carniceroUid;
     document.getElementById('reservaModalName').textContent = carniceroNombre;
     document.getElementById('reservaFecha').value  = '';
@@ -3460,10 +3456,10 @@ tailwind.config = {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       closeReservaModal();
-      showToast(`Â¡Reserva #${ticket} enviada! La carnicerÃ­a confirmarÃ¡ pronto. ðŸ“…`);
+      showToast(`¡Reserva #${ticket} enviada! La carnicería confirmará pronto. 📅`);
       // Push to carnicero
       const senderName = fbUser.displayName || fbUser.email?.split('@')[0] || 'Un parrillero';
-      sendPush(_reservaCarniceroUid, `ðŸ“… Nueva reserva de ${senderName}`, `#${ticket} Â· ${cortes || 'Sin especificar cortes'}`);
+      sendPush(_reservaCarniceroUid, `📅 Nueva reserva de ${senderName}`, `#${ticket} · ${cortes || 'Sin especificar cortes'}`);
       // Auto-open chat to notify
       setTimeout(() => openChat(_reservaCarniceroUid, carniceroNombre, null), 500);
     } catch(e) { errEl.textContent = 'Error al enviar. Intenta de nuevo.'; errEl.classList.remove('hidden'); }
@@ -3504,7 +3500,7 @@ tailwind.config = {
         const docs = snap.docs
           .filter(doc => doc.data().lastMsg)
           .sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
-        if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aÃºn.</p>'; return; }
+        if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aún.</p>'; return; }
         el.innerHTML = docs.map(doc => {
           const c = doc.data();
           const unread = c.unreadCarnicero || 0;
@@ -3516,7 +3512,7 @@ tailwind.config = {
               </div>
               <div class="flex-1 min-w-0">
                 <p class="font-bold text-sm">${c.parrilleroNombre || 'Parrillero'}</p>
-                <p class="text-xs text-on-surface-variant truncate">${c.lastMsg || 'Sin mensajes aÃºn'}</p>
+                <p class="text-xs text-on-surface-variant truncate">${c.lastMsg || 'Sin mensajes aún'}</p>
               </div>
               ${unread > 0 ? `<span class="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full">${unread}</span>` : ''}
             </div>`;
@@ -3526,9 +3522,9 @@ tailwind.config = {
       try {
         const snap = await db.collection('reservas').where('carniceroUid', '==', fbUser.uid).get();
         const docs = snap.docs.sort((a,b) => (b.data().createdAt?.seconds||0) - (a.data().createdAt?.seconds||0));
-        if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin reservas aÃºn.</p>'; return; }
+        if (snap.empty) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">Sin reservas aún.</p>'; return; }
         const statusColor = { pending:'bg-amber-100 text-amber-700', confirmed:'bg-green-100 text-green-700', cancelled:'bg-red-100 text-red-700' };
-        const statusLabel = { pending:'â³ Pendiente', confirmed:'âœ… Confirmada', cancelled:'âŒ Cancelada' };
+        const statusLabel = { pending:'⏳ Pendiente', confirmed:'✅ Confirmada', cancelled:'❌ Cancelada' };
         el.innerHTML = docs.map(doc => {
           const r  = doc.data();
           const st = r.status || 'pending';
@@ -3537,16 +3533,16 @@ tailwind.config = {
               <div class="flex items-start justify-between gap-2">
                 <div>
                   <p class="font-bold text-sm">${r.parrilleroNombre}</p>
-                  <p class="text-xs text-on-surface-variant">${r.fecha ? new Date(r.fecha).toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'}) : 'â€”'}</p>
-                  ${r.cortes ? `<p class="text-xs text-on-surface-variant mt-1">ðŸ¥© ${r.cortes}</p>` : ''}
+                  <p class="text-xs text-on-surface-variant">${r.fecha ? new Date(r.fecha).toLocaleString('es-CL',{dateStyle:'medium',timeStyle:'short'}) : '—'}</p>
+                  ${r.cortes ? `<p class="text-xs text-on-surface-variant mt-1">🥩 ${r.cortes}</p>` : ''}
                   ${r.notas  ? `<p class="text-xs text-on-surface-variant italic">"${r.notas}"</p>` : ''}
                 </div>
                 <span class="text-[10px] font-bold px-2 py-1 rounded-full shrink-0 ${statusColor[st]}">${statusLabel[st]}</span>
               </div>
               ${st === 'pending' ? `
               <div class="flex gap-2 pt-1">
-                <button onclick="updateReserva('${doc.id}','confirmed')" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition-all">âœ… Confirmar</button>
-                <button onclick="updateReserva('${doc.id}','cancelled')" class="flex-1 bg-error/10 text-error py-2 rounded-xl font-bold text-xs hover:bg-error/20 active:scale-95 transition-all">âŒ Rechazar</button>
+                <button onclick="updateReserva('${doc.id}','confirmed')" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition-all">✅ Confirmar</button>
+                <button onclick="updateReserva('${doc.id}','cancelled')" class="flex-1 bg-error/10 text-error py-2 rounded-xl font-bold text-xs hover:bg-error/20 active:scale-95 transition-all">❌ Rechazar</button>
               </div>` : ''}
             </div>`;
         }).join('');
@@ -3562,11 +3558,11 @@ tailwind.config = {
       const r    = snap.data();
       if (r?.parrilleroUid) {
         const msg = status === 'confirmed'
-          ? `âœ… Tu reserva #${r.ticket || reservaId.slice(-6)} fue confirmada por ${r.carniceroNombre}`
-          : `âŒ Tu reserva #${r.ticket || reservaId.slice(-6)} fue rechazada`;
-        sendPush(r.parrilleroUid, 'AppSados Â· Reserva actualizada', msg);
+          ? `✅ Tu reserva #${r.ticket || reservaId.slice(-6)} fue confirmada por ${r.carniceroNombre}`
+          : `❌ Tu reserva #${r.ticket || reservaId.slice(-6)} fue rechazada`;
+        sendPush(r.parrilleroUid, 'AppSados · Reserva actualizada', msg);
       }
-      showToast(status === 'confirmed' ? 'Reserva confirmada âœ…' : 'Reserva rechazada.');
+      showToast(status === 'confirmed' ? 'Reserva confirmada ✅' : 'Reserva rechazada.');
       renderInbox();
     } catch(e) { showToast('Error al actualizar.'); }
   }
@@ -3580,7 +3576,7 @@ tailwind.config = {
     document.getElementById('chatInput').value = '';
     document.getElementById('chatMessages').innerHTML = `
       <div class="flex justify-center py-4">
-        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">ConversaciÃ³n con ${parrilleroNombre}</span>
+        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">Conversación con ${parrilleroNombre}</span>
       </div>`;
     document.getElementById('chatModal').classList.remove('hidden');
     if (_chatUnsub) _chatUnsub();
@@ -3638,36 +3634,36 @@ tailwind.config = {
       const snap = await db.collection('reservas').where('parrilleroUid', '==', fbUser.uid).get();
       const docs = snap.docs.sort((a,b) => (b.data().createdAt?.seconds||0) - (a.data().createdAt?.seconds||0));
       if (docs.length === 0) {
-        el.innerHTML = '<div class="flex flex-col items-center py-10 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">event_busy</span><p class="text-sm text-on-surface-variant text-center">No tienes reservas aÃºn.<br/>Â¡Busca una carnicerÃ­a y reserva tus cortes!</p></div>';
+        el.innerHTML = '<div class="flex flex-col items-center py-10 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">event_busy</span><p class="text-sm text-on-surface-variant text-center">No tienes reservas aún.<br/>¡Busca una carnicería y reserva tus cortes!</p></div>';
         return;
       }
       const statusColor = { pending:'bg-amber-100 text-amber-700 border-amber-200', confirmed:'bg-green-100 text-green-700 border-green-200', cancelled:'bg-red-100 text-red-700 border-red-200' };
-      const statusLabel = { pending:'â³ Pendiente', confirmed:'âœ… Confirmada', cancelled:'âŒ Cancelada' };
-      const statusDesc  = { pending:'La carnicerÃ­a revisarÃ¡ tu solicitud pronto.', confirmed:'Â¡Tu reserva fue aceptada! PresÃ©ntate en la fecha indicada.', cancelled:'Esta reserva fue rechazada. Puedes hacer una nueva.' };
+      const statusLabel = { pending:'⏳ Pendiente', confirmed:'✅ Confirmada', cancelled:'❌ Cancelada' };
+      const statusDesc  = { pending:'La carnicería revisará tu solicitud pronto.', confirmed:'¡Tu reserva fue aceptada! Preséntate en la fecha indicada.', cancelled:'Esta reserva fue rechazada. Puedes hacer una nueva.' };
       el.innerHTML = docs.map(doc => {
         const r  = doc.data();
         const st = r.status || 'pending';
-        const fechaStr = r.fecha ? new Date(r.fecha).toLocaleString('es-CL', { dateStyle:'full', timeStyle:'short' }) : 'â€”';
+        const fechaStr = r.fecha ? new Date(r.fecha).toLocaleString('es-CL', { dateStyle:'full', timeStyle:'short' }) : '—';
         const [bg, text, border] = (statusColor[st] || '').split(' ');
         return `
           <div class="border ${border || 'border-outline-variant/20'} rounded-2xl p-4 space-y-3">
             <div class="flex items-start justify-between gap-2">
               <div>
                 <div class="flex items-center gap-2 mb-0.5">
-                  <p class="font-bold text-sm">${r.carniceroNombre || 'CarnicerÃ­a'}</p>
+                  <p class="font-bold text-sm">${r.carniceroNombre || 'Carnicería'}</p>
                   ${r.ticket ? `<span class="text-[10px] font-bold text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">#${r.ticket}</span>` : ''}
                 </div>
                 <p class="text-xs text-on-surface-variant">${fechaStr}</p>
               </div>
               <span class="text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${bg} ${text}">${statusLabel[st]}</span>
             </div>
-            ${r.cortes ? `<p class="text-xs text-on-surface-variant">ðŸ¥© ${r.cortes}</p>` : ''}
+            ${r.cortes ? `<p class="text-xs text-on-surface-variant">🥩 ${r.cortes}</p>` : ''}
             ${r.notas  ? `<p class="text-xs text-on-surface-variant italic">"${r.notas}"</p>` : ''}
             <p class="text-xs font-medium ${text}">${statusDesc[st]}</p>
             ${st === 'confirmed' ? `
             <button onclick="abrirChatReserva('${r.carniceroUid}','${(r.carniceroNombre||'').replace(/'/g,"\\'")}'); closeFbModal('misReservasModal')"
               class="w-full bg-primary text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
-              <span class="material-symbols-outlined text-base">chat</span> Ir al chat con la carnicerÃ­a
+              <span class="material-symbols-outlined text-base">chat</span> Ir al chat con la carnicería
             </button>` : ''}
           </div>`;
       }).join('');
@@ -3714,44 +3710,24 @@ tailwind.config = {
     };
   }
 
-  async function saveCurrentAsadoPlan() {
-    if (!fbUser) { openAuthModal(); showToast('Inicia sesión para guardar tu historial.'); return; }
-    if (fbRole && fbRole !== 'parrillero' && fbRole !== 'admin') { showToast('El historial de asados es para perfiles parrilleros.'); return; }
-    const plan = getCurrentPlanSnapshot();
-    if (!plan.guests.total) { showToast('Agrega invitados antes de guardar el asado.'); return; }
-    if (!plan.cuts.length) { showToast('Selecciona cortes y cantidades antes de guardar.'); return; }
-    try {
-      await db.collection('users').doc(fbUser.uid).collection('asados').add(plan);
-      await db.collection('users').doc(fbUser.uid).set({ lastAsadoAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-      showToast('Asado guardado en tu historial.');
-    } catch(e) {
-      console.error(e);
-      showToast('No se pudo guardar el asado. Revisa permisos de Firestore.');
-    }
-  }
-
   async function openParrilleroProfile() {
     if (!fbUser) { openAuthModal(); return; }
     document.getElementById('parrilleroProfileModal').classList.remove('hidden');
     document.getElementById('profileNameInput').value = fbUser.displayName || fbUser.email?.split('@')[0] || '';
-    document.getElementById('profilePhotoInput').value = fbUser.photoURL || '';
     document.getElementById('profileEmailText').textContent = fbUser.email || '';
     document.getElementById('profileInitial').textContent = (fbUser.displayName || fbUser.email || '?')[0].toUpperCase();
-    renderParrilleroProfile();
   }
 
   async function saveParrilleroProfile() {
     if (!fbUser) return;
     const displayName = document.getElementById('profileNameInput').value.trim();
-    const photoURL = document.getElementById('profilePhotoInput').value.trim();
     if (!displayName) { showToast('Ingresa tu nombre.'); return; }
     try {
-      await fbUser.updateProfile({ displayName, photoURL: photoURL || null });
+      await fbUser.updateProfile({ displayName });
       await db.collection('users').doc(fbUser.uid).set({
         role: fbRole || 'parrillero',
         email: fbUser.email || '',
         displayName,
-        photoURL,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
       document.getElementById('profileInitial').textContent = displayName[0].toUpperCase();
@@ -3762,47 +3738,6 @@ tailwind.config = {
       showToast('No se pudo guardar el perfil.');
     }
   }
-
-  async function renderParrilleroProfile() {
-    const statsEl = document.getElementById('profileStats');
-    const asadosEl = document.getElementById('profileAsadosList');
-    const reservasEl = document.getElementById('profileReservasList');
-    statsEl.innerHTML = '<p class="text-sm text-on-surface-variant col-span-3 text-center py-4">Cargando perfil...</p>';
-    asadosEl.innerHTML = reservasEl.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-4">Cargando...</p>';
-    try {
-      const [asadosSnap, reservasSnap] = await Promise.all([
-        db.collection('users').doc(fbUser.uid).collection('asados').get(),
-        db.collection('reservas').where('parrilleroUid', '==', fbUser.uid).get()
-      ]);
-      const asados = asadosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
-      const reservas = reservasSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
-      const confirmed = reservas.filter(r => r.status === 'confirmed').length;
-      statsEl.innerHTML = `
-        <div class="bg-surface-container-low rounded-2xl p-4 text-center"><p class="text-xs font-bold text-on-surface-variant">Asados</p><p class="font-headline text-2xl font-bold text-primary">${asados.length}</p></div>
-        <div class="bg-surface-container-low rounded-2xl p-4 text-center"><p class="text-xs font-bold text-on-surface-variant">Reservas</p><p class="font-headline text-2xl font-bold text-primary">${reservas.length}</p></div>
-        <div class="bg-surface-container-low rounded-2xl p-4 text-center"><p class="text-xs font-bold text-on-surface-variant">Confirmadas</p><p class="font-headline text-2xl font-bold text-primary">${confirmed}</p></div>`;
-      asadosEl.innerHTML = asados.length ? asados.slice(0, 8).map(plan => `
-        <div class="border border-outline-variant/20 rounded-2xl p-4">
-          <div class="flex items-start justify-between gap-3">
-            <div><p class="font-bold text-sm">${escapeHtml(plan.title || 'Asado guardado')}</p><p class="text-xs text-on-surface-variant">${fmtDate(plan.createdAt)} · ${plan.guests?.total || 0} invitados · ${plan.totalKg || 0} kg</p></div>
-            <p class="font-bold text-primary text-sm">${money(plan.totalCost || 0)}</p>
-          </div>
-          <p class="text-xs text-on-surface-variant mt-2">${(plan.cuts || []).map(c => `${escapeHtml(c.name)} ${c.kg}kg`).join(' · ') || 'Sin cortes guardados'}</p>
-        </div>`).join('') : '<p class="text-sm text-on-surface-variant text-center py-6">Todavía no guardas asados. Arma uno y toca “Guardar en mi historial”.</p>';
-      reservasEl.innerHTML = reservas.length ? reservas.slice(0, 5).map(r => `
-        <div class="border border-outline-variant/20 rounded-2xl p-4">
-          <div class="flex items-start justify-between gap-2">
-            <div><p class="font-bold text-sm">${escapeHtml(r.carniceroNombre || 'Carnicería')}</p><p class="text-xs text-on-surface-variant">${r.fecha ? new Date(r.fecha).toLocaleString('es-CL', { dateStyle:'medium', timeStyle:'short' }) : fmtDate(r.createdAt)}</p></div>
-            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant">${escapeHtml(r.status || 'pending')}</span>
-          </div>
-          ${r.cortes ? `<p class="text-xs text-on-surface-variant mt-2">${escapeHtml(r.cortes)}</p>` : ''}
-        </div>`).join('') : '<p class="text-sm text-on-surface-variant text-center py-6">No tienes reservas todavía.</p>';
-    } catch(e) {
-      console.error(e);
-      statsEl.innerHTML = '<p class="text-sm text-error col-span-3 text-center py-4">No se pudo cargar el perfil.</p>';
-    }
-  }
-
   // ========== CHAT INBOX (header button) ==========
   let _inboxUnsubHeader = null;
 
@@ -3851,7 +3786,7 @@ tailwind.config = {
         .sort((a,b) => (b.data().updatedAt?.seconds||0) - (a.data().updatedAt?.seconds||0));
 
       if (docs.length === 0) {
-        el.innerHTML = '<div class="flex flex-col items-center py-12 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">chat</span><p class="text-sm text-on-surface-variant text-center">No tienes chats aÃºn.<br/>Busca una carnicerÃ­a y empieza a conversar.</p></div>';
+        el.innerHTML = '<div class="flex flex-col items-center py-12 gap-3"><span class="material-symbols-outlined text-4xl text-on-surface-variant/30">chat</span><p class="text-sm text-on-surface-variant text-center">No tienes chats aún.<br/>Busca una carnicería y empieza a conversar.</p></div>';
         return;
       }
 
@@ -3863,7 +3798,7 @@ tailwind.config = {
         const c      = doc.data();
         const unread = c[unreadField] || 0;
         const name   = c[otherNameField] || 'Usuario';
-        const last   = c.lastMsg || 'Sin mensajes aÃºn';
+        const last   = c.lastMsg || 'Sin mensajes aún';
         const initial = name[0].toUpperCase();
         return `
           <div class="flex items-center gap-3 p-3 rounded-2xl hover:bg-surface-container cursor-pointer transition-colors ${unread > 0 ? 'bg-primary/5' : ''}"
@@ -3926,11 +3861,11 @@ tailwind.config = {
   };
 
   async function setChipCerca(btn) {
-    btn.innerHTML = '<span class="material-symbols-outlined text-sm" style="animation:spin 0.8s linear infinite">progress_activity</span> Cerca de mÃ­';
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm" style="animation:spin 0.8s linear infinite">progress_activity</span> Cerca de mí';
     await getUserLocation();
-    btn.innerHTML = '<span class="material-symbols-outlined text-sm">near_me</span> Cerca de mÃ­';
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">near_me</span> Cerca de mí';
     if (!_userCoords) {
-      showToast('No se pudo obtener tu ubicaciÃ³n. ActÃ­vala en el navegador.');
+      showToast('No se pudo obtener tu ubicación. Actívala en el navegador.');
       return;
     }
     setChip(btn);
@@ -3955,7 +3890,7 @@ tailwind.config = {
         matchesFilter = (userCuts.length === 0 || userCuts.some(c => cardCuts.includes(c))) &&
                         (!userBudget || cardBudget === userBudget || cardBudget === '');
       } else if (activeButcherFilter === 'cerca') {
-        // Show only carnicerÃ­as within 10km if we have user coords
+        // Show only carnicerías within 10km if we have user coords
         // Otherwise show all (user didn't grant location)
         const distText = card.querySelector('[data-dist]')?.dataset.dist;
         const distKm   = parseFloat(card.dataset.dist || '9999');
@@ -3970,7 +3905,7 @@ tailwind.config = {
         matchesFilter =
           activeButcherFilter === 'todas' ||
           (activeButcherFilter === 'premium' && text.includes('$$$')) ||
-          (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('econÃ³mica') || (text.includes('$') && !text.includes('$$$'))));
+          (activeButcherFilter === 'ofertas' && (text.includes('oferta') || text.includes('económica') || (text.includes('$') && !text.includes('$$$'))));
       }
       const isVisible = matchesSearch && matchesFilter;
       card.classList.toggle('is-hidden', !isVisible);
@@ -3982,7 +3917,7 @@ tailwind.config = {
       empty.id = 'butcherEmptyState';
       empty.className = 'is-hidden md:col-span-2 bg-surface-container-low rounded-3xl p-10 text-center';
       empty.innerHTML = `<span class="material-symbols-outlined text-4xl text-primary mb-3">search_off</span>
-        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerÃ­as</h3>
+        <h3 class="font-headline text-2xl font-bold mb-2">No encontramos carnicerías</h3>
         <p class="text-on-surface-variant text-sm">Prueba con otro barrio, nombre o filtro.</p>`;
       document.querySelector('#screen-carnicerias .grid.grid-cols-1.md\\:grid-cols-2')?.appendChild(empty);
     }
@@ -4009,31 +3944,31 @@ tailwind.config = {
       </button>
     </div>
     <div class="p-6 overflow-y-auto flex-1 space-y-4">
-      <p class="text-sm text-on-surface-variant">Selecciona los cortes que tienes disponibles en tu carnicerÃ­a.</p>
+      <p class="text-sm text-on-surface-variant">Selecciona los cortes que tienes disponibles en tu carnicería.</p>
       <div class="space-y-3">
-        <p class="text-xs font-bold text-on-surface">ðŸ„ Vacuno</p>
+        <p class="text-xs font-bold text-on-surface">🐄 Vacuno</p>
         <div class="grid grid-cols-2 gap-2">
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-huachalomo"/> Huachalomo</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-sobrecostilla"/> Sobrecostilla</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-asado-carnicero"/> Asado Carnicero</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-asiento"/> Asiento</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-lomo-vetado"/> Lomo Vetado</label>
-          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-entrana"/> EntraÃ±a</label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-entrana"/> Entraña</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="vacuno-filete"/> Filete</label>
         </div>
-        <p class="text-xs font-bold text-on-surface mt-2">ðŸ· Cerdo</p>
+        <p class="text-xs font-bold text-on-surface mt-2">🐷 Cerdo</p>
         <div class="grid grid-cols-2 gap-2">
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="cerdo-pulpa"/> Pulpa de Cerdo</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="cerdo-costillar"/> Costillar de Cerdo</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="cerdo-malaya"/> Malaya de Cerdo</label>
         </div>
-        <p class="text-xs font-bold text-on-surface mt-2">ðŸŒ­ Embutidos</p>
+        <p class="text-xs font-bold text-on-surface mt-2">🌭 Embutidos</p>
         <div class="grid grid-cols-2 gap-2">
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="embutidos-chorizo"/> Chorizo</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="embutidos-longaniza"/> Longaniza</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="embutidos-butifarra"/> Butifarra</label>
         </div>
-        <p class="text-xs font-bold text-on-surface mt-2">ðŸ— Pollo</p>
+        <p class="text-xs font-bold text-on-surface mt-2">🍗 Pollo</p>
         <div class="grid grid-cols-2 gap-2">
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="pollo-tutos"/> Tutos</label>
           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="edit-cut accent-primary" value="pollo-alitas"/> Alitas</label>
@@ -4051,16 +3986,16 @@ tailwind.config = {
 <div id="dashPromoModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-sm flex flex-col">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
-      <h3 class="font-headline text-xl font-bold" id="dashPromoModalTitle">Nueva PromociÃ³n</h3>
+      <h3 class="font-headline text-xl font-bold" id="dashPromoModalTitle">Nueva Promoción</h3>
       <button onclick="closeFbModal('dashPromoModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
         <span class="material-symbols-outlined text-primary">close</span>
       </button>
     </div>
     <div class="p-6 space-y-4">
       <input type="hidden" id="dashPromoEditId"/>
-      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">TÃ­tulo</span>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Título</span>
         <input id="dashPromoTitulo" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: Pack Parrillero"/></label>
-      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">DescripciÃ³n</span>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Descripción</span>
         <input id="dashPromoDesc" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: 2kg Lomo Vetado"/></label>
       <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Descuento (ej: 15%)</span>
         <input id="dashPromoDesc2" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="15% OFF"/></label>
@@ -4084,11 +4019,11 @@ tailwind.config = {
     <div class="p-6 space-y-4">
       <!-- File upload first -->
       <label class="block cursor-pointer">
-        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Subir desde tu dispositivo <span class="text-secondary normal-case font-normal">(recomendado Â· mÃ¡x 800KB)</span></span>
+        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Subir desde tu dispositivo <span class="text-secondary normal-case font-normal">(recomendado · máx 800KB)</span></span>
         <div class="mt-2 border-2 border-dashed border-outline-variant/40 rounded-2xl p-6 flex flex-col items-center gap-2 hover:border-primary/40 transition-colors">
           <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">upload</span>
           <span class="text-sm font-semibold text-on-surface-variant">Seleccionar imagen</span>
-          <span class="text-xs text-on-surface-variant/60">JPG o PNG Â· mÃ¡x 800KB</span>
+          <span class="text-xs text-on-surface-variant/60">JPG o PNG · máx 800KB</span>
         </div>
         <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handlePhotoFile(this)"/>
       </label>
@@ -4096,7 +4031,7 @@ tailwind.config = {
       <div>
         <input id="photoUrlInput" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="https://i.imgur.com/xxxxxx.jpg"
           oninput="previewPhotoUrl(this.value)"/>
-        <p class="text-xs text-on-surface-variant/70 mt-1">Si usas Imgur: abre la imagen, clic derecho â†’ "Copiar direcciÃ³n de imagen" (debe terminar en .jpg o .png)</p>
+        <p class="text-xs text-on-surface-variant/70 mt-1">Si usas Imgur: abre la imagen, clic derecho → "Copiar dirección de imagen" (debe terminar en .jpg o .png)</p>
       </div>
       <div id="photoPreviewSmall" class="hidden w-full h-36 rounded-xl overflow-hidden bg-surface-container">
         <img id="photoPreviewImg" class="w-full h-full object-cover" src="" alt="preview" onerror="this.parentElement.innerHTML='<p class=\'text-xs text-error p-4\'>No se pudo cargar la imagen. Verifica que la URL sea directa (termina en .jpg o .png)</p>'"/>
@@ -4113,7 +4048,7 @@ tailwind.config = {
 <div id="adminEditModal" class="hidden fixed inset-0 z-[90] flex items-end sm:items-center justify-center bg-black/40 px-4 py-6">
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-lg flex flex-col" style="max-height:88dvh">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15">
-      <h3 class="font-headline text-xl font-bold">Editar CarnicerÃ­a</h3>
+      <h3 class="font-headline text-xl font-bold">Editar Carnicería</h3>
       <button onclick="closeFbModal('adminEditModal')" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
         <span class="material-symbols-outlined text-primary">close</span>
       </button>
@@ -4152,8 +4087,8 @@ tailwind.config = {
         <span class="material-symbols-outlined text-primary text-xl">storefront</span>
       </div>
       <div class="flex-1 min-w-0">
-        <p class="font-bold text-sm truncate" id="chatModalName">CarnicerÃ­a</p>
-        <p class="text-xs text-secondary font-semibold">En lÃ­nea</p>
+        <p class="font-bold text-sm truncate" id="chatModalName">Carnicería</p>
+        <p class="text-xs text-secondary font-semibold">En línea</p>
       </div>
       <button onclick="closeChat()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
         <span class="material-symbols-outlined text-on-surface-variant">close</span>
@@ -4188,15 +4123,15 @@ tailwind.config = {
     <div class="p-6 overflow-y-auto space-y-4 flex-1">
       <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Fecha y hora *</span>
         <input id="reservaFecha" type="datetime-local" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
-      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Â¿QuÃ© cortes necesitas?</span>
-        <input id="reservaCortes" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: 2kg EntraÃ±a, 1kg Lomo Vetado"/></label>
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">¿Qué cortes necesitas?</span>
+        <input id="reservaCortes" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Ej: 2kg Entraña, 1kg Lomo Vetado"/></label>
       <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Notas adicionales</span>
-        <textarea id="reservaNotas" rows="2" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="MaduraciÃ³n especial, sin grasa, etc."></textarea></label>
+        <textarea id="reservaNotas" rows="2" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Maduración especial, sin grasa, etc."></textarea></label>
       <p id="reservaError" class="text-xs text-error hidden"></p>
     </div>
     <div class="p-6 pt-0 border-t border-outline-variant/15">
       <button onclick="enviarReserva()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold hover:opacity-90 transition-all active:scale-95">Enviar solicitud de reserva</button>
-      <p class="text-[10px] text-on-surface-variant text-center mt-2">La carnicerÃ­a confirmarÃ¡ tu reserva por chat</p>
+      <p class="text-[10px] text-on-surface-variant text-center mt-2">La carnicería confirmará tu reserva por chat</p>
     </div>
   </div>
 </div>
@@ -4211,17 +4146,17 @@ tailwind.config = {
       </h3>
     </div>
     <div class="flex gap-2 mb-4">
-      <button onclick="setInboxTab('chats')"   id="inboxTabChats"   class="inbox-tab px-4 py-2 rounded-xl text-sm font-bold bg-primary text-white transition-all">ðŸ’¬ Chats</button>
-      <button onclick="setInboxTab('reservas')" id="inboxTabReservas" class="inbox-tab px-4 py-2 rounded-xl text-sm font-bold bg-surface-container text-on-surface-variant transition-all">ðŸ“… Reservas</button>
+      <button onclick="setInboxTab('chats')"   id="inboxTabChats"   class="inbox-tab px-4 py-2 rounded-xl text-sm font-bold bg-primary text-white transition-all">💬 Chats</button>
+      <button onclick="setInboxTab('reservas')" id="inboxTabReservas" class="inbox-tab px-4 py-2 rounded-xl text-sm font-bold bg-surface-container text-on-surface-variant transition-all">📅 Reservas</button>
     </div>
     <div id="inboxContent" class="space-y-3">
-      <p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aÃºn.</p>
+      <p class="text-sm text-on-surface-variant text-center py-6">Sin mensajes aún.</p>
     </div>
   </div>
 </template>
 <!-- Parrillero Profile Modal -->
 <div id="parrilleroProfileModal" class="hidden fixed inset-0 z-[96] flex items-end sm:items-center justify-center bg-black/50 px-4 py-6">
-  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-2xl flex flex-col" style="max-height:90dvh">
+  <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-md flex flex-col" style="max-height:90dvh">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15 shrink-0">
       <div class="flex items-center gap-3 min-w-0">
         <div id="profileInitial" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shrink-0">?</div>
@@ -4234,37 +4169,21 @@ tailwind.config = {
         <span class="material-symbols-outlined text-primary">close</span>
       </button>
     </div>
-    <div class="p-6 overflow-y-auto flex-1 space-y-6">
-      <section class="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-end">
-        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Nombre</span>
-          <input id="profileNameInput" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Tu nombre"/></label>
-        <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Foto URL</span>
-          <input id="profilePhotoInput" type="url" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="https://..."/></label>
-        <button onclick="saveParrilleroProfile()" class="bg-primary text-white px-5 py-3 rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all">Guardar</button>
-      </section>
-      <section>
-        <div id="profileStats" class="grid grid-cols-3 gap-3"></div>
-      </section>
-      <section>
-        <div class="flex items-center justify-between gap-3 mb-3">
-          <h4 class="font-headline text-lg font-bold">Historial de asados</h4>
-          <button onclick="saveCurrentAsadoPlan(); setTimeout(renderParrilleroProfile, 700)" class="text-primary font-bold text-sm flex items-center gap-1">
-            <span class="material-symbols-outlined text-base">bookmark_add</span> Guardar actual
-          </button>
-        </div>
-        <div id="profileAsadosList" class="space-y-3"></div>
-      </section>
-      <section>
-        <div class="flex items-center justify-between gap-3 mb-3">
-          <h4 class="font-headline text-lg font-bold">Reservas activas y recientes</h4>
-          <button onclick="openMisReservas()" class="text-primary font-bold text-sm">Ver todas</button>
-        </div>
-        <div id="profileReservasList" class="space-y-3"></div>
-      </section>
+    <div class="p-6 overflow-y-auto flex-1 space-y-5">
+      <label class="block"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Nombre</span>
+        <input id="profileNameInput" type="text" class="mt-1.5 w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="Tu nombre"/></label>
+      <button onclick="saveParrilleroProfile()" class="w-full bg-primary text-white rounded-2xl py-4 font-bold hover:opacity-90 transition-all active:scale-95">Guardar nombre</button>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <button onclick="closeFbModal('parrilleroProfileModal'); openChatInbox()" class="bg-surface-container text-on-surface rounded-2xl py-4 px-4 font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all active:scale-95">
+          <span class="material-symbols-outlined text-primary">chat</span> Conversaciones
+        </button>
+        <button onclick="closeFbModal('parrilleroProfileModal'); openMisReservas()" class="bg-surface-container text-on-surface rounded-2xl py-4 px-4 font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all active:scale-95">
+          <span class="material-symbols-outlined text-primary">event_available</span> Mis reservas
+        </button>
+      </div>
     </div>
   </div>
-</div>
-<!-- Mis Reservas Modal (parrillero) -->
+</div><!-- Mis Reservas Modal (parrillero) -->
 <div id="misReservasModal" class="hidden fixed inset-0 z-[95] flex items-end sm:items-center justify-center bg-black/50 px-4 py-6">
   <div class="bg-surface-container-lowest rounded-3xl shadow-2xl w-full max-w-md flex flex-col" style="max-height:88dvh">
     <div class="flex items-center justify-between p-6 border-b border-outline-variant/15 shrink-0">
