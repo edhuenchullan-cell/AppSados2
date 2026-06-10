@@ -3070,15 +3070,17 @@ tailwind.config = {
   }
 
   function startDivideListener(asadoId) {
+    console.log('[divide] startDivideListener called for', asadoId);
     if (_divideUnsubscribe) _divideUnsubscribe();
     _divideUnsubscribe = db
       .collection('asados').doc(asadoId)
       .collection('participants')
       .orderBy('joinedAt')
       .onSnapshot(snap => {
+        console.log('[divide] snapshot received, docs:', snap.docs.length);
         const participants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderDivideUI(participants);
-      }, err => console.error('divide listener error:', err));
+      }, err => console.error('[divide] listener error:', err));
   }
 
   function refreshDivideSplit() {
@@ -3145,15 +3147,20 @@ tailwind.config = {
   }
 
   async function toggleDivideParticipation() {
+    console.log('[divide] toggleDivideParticipation called');
+    console.log('[divide] _currentAsadoId =', _currentAsadoId);
+    console.log('[divide] fbUser =', fbUser?.uid || 'no user');
     if (!_currentAsadoId) {
       showToast('Primero comparte el asado para usar esta función.');
       return;
     }
     const myKey  = getMyParticipantKey();
     const myName = getMyDisplayName();
+    console.log('[divide] myKey =', myKey, '| myName =', myName);
     const ref = db.collection('asados').doc(_currentAsadoId).collection('participants').doc(myKey);
     try {
       const snap = await ref.get();
+      console.log('[divide] snap.exists =', snap.exists);
       if (snap.exists) {
         await ref.delete();
         showToast('Te retiraste de la vaca. 👋');
@@ -3161,7 +3168,7 @@ tailwind.config = {
         await ref.set({ name: myName, joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
         showToast(`¡Apuntado como ${myName}! 🤝`);
       }
-    } catch(e) { console.error('divide toggle error:', e); showToast('Error al actualizar. Intenta de nuevo.'); }
+    } catch(e) { console.error('[divide] toggle error:', e); showToast('Error al actualizar. Intenta de nuevo.'); }
   }
 
   function scrollToDivide() {
