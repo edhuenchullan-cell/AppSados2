@@ -3017,6 +3017,7 @@ tailwind.config = {
       invitados:     { ...counts },
       cortes:        { ...cutKg },
       selectedCuts:  typeof selectedCutIds !== 'undefined' ? Array.from(selectedCutIds) : [],
+      proteinas:     ['vacuno','cerdo','embutidos','pollo'].filter(k => document.getElementById('check-' + k)?.checked),
       presupuesto:   typeof selectedBudget !== 'undefined' ? selectedBudget : 'low',
       masterKg:      masterKgFixed || 0,
       updatedAt:     firebase.firestore.FieldValue.serverTimestamp()
@@ -3037,9 +3038,18 @@ tailwind.config = {
       if (elKids)  elKids.textContent  = counts.kids;
       if (typeof updateGauge === 'function') updateGauge();
     }
+    // Restore protein checkboxes
+    if (data.proteinas?.length) {
+      ['vacuno','cerdo','embutidos','pollo'].forEach(k => {
+        const el = document.getElementById('check-' + k);
+        if (el) el.checked = data.proteinas.includes(k);
+      });
+    }
     // Restore selected cuts
     if (data.selectedCuts?.length && typeof selectedCutIds !== 'undefined') {
       selectedCutIds = new Set(data.selectedCuts);
+      // Also populate userSelectedByUser so initializeCutState doesn't wipe the selection
+      data.selectedCuts.forEach(id => userSelectedByUser.add(id));
       // Check the checkboxes visually
       document.querySelectorAll('.cut-checkbox').forEach(cb => {
         cb.checked = selectedCutIds.has(cb.dataset.cutId || cb.value);
@@ -3061,26 +3071,6 @@ tailwind.config = {
     setTimeout(() => {
       if (typeof updateRecomendaciones === 'function') updateRecomendaciones();
     }, 100);
-  }
-
-  async function loadSharedAsadoIfNeeded() {
-    if (_sharedAsadoLoaded) return;
-    const params  = new URLSearchParams(window.location.search);
-    const asadoId = params.get('asado');
-    if (!asadoId) return;
-    _sharedAsadoLoaded = true;
-    _currentAsadoId = asadoId;
-    try {
-      const snap = await db.collection('asados').doc(asadoId).get();
-      if (!snap.exists) { showToast('El link del asado no existe o expiró.'); return; }
-      applyAsadoSnapshot(snap.data());
-      showToast('🔥 Asado compartido cargado. ¡Puedes editarlo!');
-      navigate('recomendaciones');
-      // Real-time sync
-      db.collection('asados').doc(asadoId).onSnapshot(doc => {
-        if (doc.exists) applyAsadoSnapshot(doc.data(), true);
-      });
-    } catch(e) { console.error('Error loading shared asado:', e); }
   }
 
   async function openShareAsado() {
@@ -3130,9 +3120,11 @@ tailwind.config = {
 
   // Load shared asado from URL param on page load
   async function loadSharedAsadoIfNeeded() {
+    if (_sharedAsadoLoaded) return;
     const params  = new URLSearchParams(window.location.search);
     const asadoId = params.get('asado');
     if (!asadoId) return;
+    _sharedAsadoLoaded = true;
     _currentAsadoId = asadoId;
     try {
       const snap = await db.collection('asados').doc(asadoId).get();
