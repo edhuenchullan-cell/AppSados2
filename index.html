@@ -669,9 +669,40 @@ tailwind.config = {
         <span class="material-symbols-outlined fill-icon text-4xl mb-4">payments</span>
         <h3 class="font-headline text-4xl font-bold mb-2" id="meatCost"></h3>
         <p class="text-sm opacity-90 font-medium px-4" id="meatCostSub"><span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span></p>
-        <button onclick="navigate('carnicerias')" class="mt-6 bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95">
-          Encontrar carnicería
-        </button>
+        <div class="flex gap-3 mt-6 flex-wrap justify-center">
+          <button onclick="navigate('carnicerias')" class="bg-surface-container-lowest text-primary px-6 py-3 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-all active:scale-95">
+            Encontrar carnicería
+          </button>
+          <button id="divideBtnMain" onclick="scrollToDivide()" class="hidden bg-white/20 text-on-primary-container border border-white/30 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white/30 transition-all active:scale-95 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">group</span>
+            Dividir la cuenta
+          </button>
+        </div>
+      </div>
+
+      <!-- Dividir la cuenta -->
+      <div id="divideSection" class="hidden bg-surface-container-lowest rounded-3xl p-6 shadow-[0_4px_24px_rgba(129,9,0,0.06)] space-y-5">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 text-primary font-bold mb-1">
+              <span class="material-symbols-outlined text-base">group</span>
+              <span class="uppercase tracking-widest text-xs">Dividir la cuenta</span>
+            </div>
+            <h3 class="font-headline text-2xl font-extrabold text-on-surface">¿Quién pone plata?</h3>
+          </div>
+          <button id="divideJoinBtn" onclick="toggleDivideParticipation()"
+            class="shrink-0 px-5 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95">
+            Voy a poner
+          </button>
+        </div>
+        <!-- Participants list -->
+        <div id="divideParticipantsList" class="space-y-2"></div>
+        <!-- Per-person amount -->
+        <div id="divideResult" class="hidden bg-primary/5 border border-primary/15 rounded-2xl p-4 text-center">
+          <p class="text-xs font-bold text-on-surface-variant mb-1">Cada uno pone</p>
+          <p class="font-headline text-4xl font-extrabold text-primary" id="dividePerPerson">$0</p>
+          <p class="text-xs text-on-surface-variant mt-1" id="divideSummaryText"></p>
+        </div>
       </div>
 
       <!-- Tips Banner -->
@@ -1617,6 +1648,18 @@ tailwind.config = {
     if (totalCost > 0 && activeCuts.length > 0) {
       meatCostEl.textContent = '$' + Math.round(totalCost).toLocaleString('es-CL');
       if (meatCostSubEl) meatCostSubEl.textContent = 'Costo total estimado (promedio mercado nacional)';
+      // Show divide button only when there's a shared asado
+      const divideBtn = document.getElementById('divideBtnMain');
+      if (divideBtn && _currentAsadoId) divideBtn.classList.remove('hidden');
+      // Update per-person split live
+      _lastTotalCost = totalCost;
+      const participants = document.querySelectorAll('#divideParticipantsList > div').length;
+      if (participants > 0) {
+        const perPerson = document.getElementById('dividePerPerson');
+        const summaryEl = document.getElementById('divideSummaryText');
+        if (perPerson) perPerson.textContent = '$' + Math.ceil(totalCost / participants).toLocaleString('es-CL');
+        if (summaryEl) summaryEl.textContent = `$${Math.round(totalCost).toLocaleString('es-CL')} total ÷ ${participants} persona${participants !== 1 ? 's' : ''}`;
+      }
     } else {
       meatCostEl.textContent = '';
       if (meatCostSubEl) meatCostSubEl.innerHTML = `<span class="text-base font-semibold opacity-80 leading-snug">Primero selecciona los cortes de tu preferencia y te ayudamos con el cálculo de las lucas 🥩</span>`;
@@ -3007,6 +3050,127 @@ tailwind.config = {
     } catch(e) { console.error('Error loading carniceros:', e); }
   }
 
+  // ========== DIVIDIR LA CUENTA ==========
+  // Each participant is stored in Firestore under asados/{id}/participants/{uid}
+  // { name, joinedAt } — presence is the vote. Remove doc = retract.
+
+  let _divideUnsubscribe = null;
+  let _myParticipantId   = null; // Firestore doc id for this session
+  let _lastTotalCost     = 0;
+
+  function getMyDisplayName() {
+    if (fbUser?.displayName) return fbUser.displayName;
+    if (fbUser?.email)       return fbUser.email.split('@')[0];
+    return 'Anónimo';
+  }
+
+  function getMyParticipantKey() {
+    // Use Firebase UID if logged in, otherwise a stable session key
+    if (fbUser?.uid) return fbUser.uid;
+    if (!sessionStorage.getItem('_appsados_anon_id')) {
+      sessionStorage.setItem('_appsados_anon_id', 'anon_' + Math.random().toString(36).slice(2, 10));
+    }
+    return sessionStorage.getItem('_appsados_anon_id');
+  }
+
+  function startDivideListener(asadoId) {
+    if (_divideUnsubscribe) _divideUnsubscribe();
+    _divideUnsubscribe = db
+      .collection('asados').doc(asadoId)
+      .collection('participants')
+      .orderBy('joinedAt')
+      .onSnapshot(snap => {
+        const participants = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderDivideUI(participants);
+      }, err => console.error('divide listener error:', err));
+  }
+
+  function renderDivideUI(participants) {
+    const myKey = getMyParticipantKey();
+    const amIn  = participants.some(p => p.id === myKey);
+    const count = participants.length;
+
+    // Show/hide the section
+    const section = document.getElementById('divideSection');
+    if (!section) return;
+    // Always show divide section when we have a shared asado
+    section.classList.remove('hidden');
+
+    // Join button state
+    const joinBtn = document.getElementById('divideJoinBtn');
+    if (joinBtn) {
+      if (amIn) {
+        joinBtn.textContent = 'Me retiro';
+        joinBtn.className = 'shrink-0 px-5 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 bg-error/10 text-error hover:bg-error/20';
+      } else {
+        joinBtn.textContent = 'Voy a poner';
+        joinBtn.className = 'shrink-0 px-5 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 bg-primary text-white hover:opacity-90';
+      }
+    }
+
+    // Participants list
+    const list = document.getElementById('divideParticipantsList');
+    if (list) {
+      if (count === 0) {
+        list.innerHTML = `<p class="text-sm text-on-surface-variant text-center py-3">Aún nadie se ha apuntado. Sé el primero.</p>`;
+      } else {
+        list.innerHTML = participants.map(p => {
+          const isMe = p.id === myKey;
+          return `
+            <div class="flex items-center gap-3 bg-surface-container rounded-xl px-4 py-3">
+              <div class="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-sm shrink-0">
+                ${(p.name || 'A').charAt(0).toUpperCase()}
+              </div>
+              <span class="flex-1 font-semibold text-sm text-on-surface">${p.name || 'Anónimo'}${isMe ? ' <span class="text-xs font-bold text-primary">(tú)</span>' : ''}</span>
+              ${isMe ? `<span class="material-symbols-outlined text-base text-green-600">check_circle</span>` : ''}
+            </div>`;
+        }).join('');
+      }
+    }
+
+    // Per-person split
+    const resultEl  = document.getElementById('divideResult');
+    const perPerson = document.getElementById('dividePerPerson');
+    const summaryEl = document.getElementById('divideSummaryText');
+    if (resultEl && perPerson && summaryEl) {
+      if (count > 0 && _lastTotalCost > 0) {
+        resultEl.classList.remove('hidden');
+        const split = Math.ceil(_lastTotalCost / count);
+        perPerson.textContent = '$' + split.toLocaleString('es-CL');
+        summaryEl.textContent = `$${Math.round(_lastTotalCost).toLocaleString('es-CL')} total ÷ ${count} persona${count !== 1 ? 's' : ''}`;
+      } else {
+        resultEl.classList.add('hidden');
+      }
+    }
+  }
+
+  async function toggleDivideParticipation() {
+    if (!_currentAsadoId) {
+      showToast('Primero comparte el asado para usar esta función.');
+      return;
+    }
+    const myKey  = getMyParticipantKey();
+    const myName = getMyDisplayName();
+    const ref = db.collection('asados').doc(_currentAsadoId).collection('participants').doc(myKey);
+    try {
+      const snap = await ref.get();
+      if (snap.exists) {
+        await ref.delete();
+        showToast('Te retiraste de la vaca. 👋');
+      } else {
+        await ref.set({ name: myName, joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        showToast(`¡Apuntado como ${myName}! 🤝`);
+      }
+    } catch(e) { console.error('divide toggle error:', e); showToast('Error al actualizar. Intenta de nuevo.'); }
+  }
+
+  function scrollToDivide() {
+    const el = document.getElementById('divideSection');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ========== END DIVIDIR LA CUENTA ==========
+
   // ========== COMPARTIR ASADO ==========
   let _currentAsadoId = null;
 
@@ -3096,6 +3260,14 @@ tailwind.config = {
 
       const link = `${window.location.origin}${window.location.pathname}?asado=${_currentAsadoId}`;
 
+      // Start divide listener for the creator too
+      startDivideListener(_currentAsadoId);
+      // Show divide section
+      const divideSection = document.getElementById('divideSection');
+      if (divideSection) divideSection.classList.remove('hidden');
+      const divideBtn = document.getElementById('divideBtnMain');
+      if (divideBtn && _lastTotalCost > 0) divideBtn.classList.remove('hidden');
+
       el.innerHTML = `
         <div class="space-y-4">
           <div class="bg-surface-container rounded-2xl p-4 flex items-center gap-3">
@@ -3132,6 +3304,7 @@ tailwind.config = {
       applyAsadoSnapshot(snap.data());
       showToast('🔥 Asado compartido cargado. ¡Puedes editarlo!');
       navigate('recomendaciones');
+      startDivideListener(asadoId);
       // Listen for real-time updates from other collaborators
       db.collection('asados').doc(asadoId).onSnapshot(doc => {
         if (doc.exists) applyAsadoSnapshot(doc.data());
